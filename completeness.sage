@@ -65,9 +65,8 @@ def solve_double_loop():
     a, L = var('a L')
     assume(a, 'real')
     assume(L, 'real')
-    # a = 1
-    # L = 1
 
+    # TODO: for some reason, doesn't work, solve function stucks :(
     # f2(x) = A * exp(-i * k * x) + B * exp(-i * k * x)
     # f3(x) = C * exp(-i * k * x) + D * exp(-i * k * x)
     f2(x) = A * sin(k * x) + B * cos(k * x)
@@ -84,13 +83,13 @@ def solve_double_loop():
         -f_inc_d(x=-L) + f2d(x=-L) + f3d(x=-L) == a * f_inc(x=-L), 
         f_out_d(x=L) - f2d(x=L) - f3d(x=L) == a * f_out(x=L)
     ]
-    show(equations)
+    # show(equations)
 
     solutions = solve(equations, R, T, A, B, C, D, solution_dict=True)
     Rs = solutions[0][R].full_simplify()
     Ts = solutions[0][T].full_simplify()
 
-    return Rs(a = 1, L = 1), Ts(a = 1, L = 1)
+    return Rs(a = -1, L = 1), Ts(a = -1, L = 1)
 
 
 Rs, Ts = solve_double_loop()
@@ -105,7 +104,7 @@ Sdet = S.det()
 
 show("Det = ", Sdet)
 
-rrange = (-100, 100)
+rrange = (-30, 30)
 irange = (-5, 5)
 points = 400
 
@@ -124,52 +123,5 @@ def plot_all(Sdet):
     complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln.png', dpi=DPI)
     unit_circle = circle((0, 0), 1)
     (complex_plot(ln(Sdet(k=cayley(k))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
-    # t = var('t')
-    # R = 100
-    # ft = ln(Sdet(k=R * exp(i * t) + R)) * R * i * exp(i * t)
-    # print(n(ln(Sdet(k=1))))
-    # print(n(ln(Sdet(k=i))))
-    # print(n(ft(t=0)))
-    # print(n(ft(t=pi/2)))
-    # pieces = 100
-    # print(sum([R * 2 * pi / pieces * n(ft(t = q / pieces * 2 * pi + 0.01)) for q in range(pieces)]))
-    # plot(ft.real(), (t, 0, pi), plot_points=10).save('pppp.png')
-    # show(ft.real().integrate(t, 0, pi))
 
 plot_all(Sdet)
-
-
-delta = 0.1
-
-# ll = 0.4
-# pieces = 50
-# for zz in range(-pieces / 2, pieces / 2):
-#     kk = pi + zz * ll / pieces
-#     print(n(kk))
-#     print(n(ln(Sdet(k=kk))))
-
-# for qq in range(-100, 100):
-#    print(n(ln(Sdet(k=qq * pi/2 + delta)) + ln(Sdet(k=qq * pi/2 - delta))))
-
-# ff = ln(Sdet(k))
-# ff2 = ln(Sdet(k)) * 1 / (k - 1) ** 2
-
-# print(n(ff(k = 1000 * exp(i * 19 * pi / 20))))
-# show(integrate())
-
-
-# for qq in range(-1000, 1000):
-#     print(n(ln(Sdet(k=100 * i + qq))))
-
-# print(n(ff(k=(1 * i) * 100000 - 0.1))))
-# print(n(ff(k=100 + 2 * i)))
-# print(n(ff(k=-100 + 2 * i)))
-
-
-# show((ln(S.det())).maxima_methods().residue(z, pi + 0.5 * i * ln(3)))
-# show(n(S.det()(z = pi+ 0.5 * i * ln(3))))
-# show(complex_plot((i * (exp(i * x) + 1) / (exp(i * x) - 1)).abs(), 0, 2 * pi), ymin=0, ymax=3)
-# show(S(i * (k + 1) / (k - 1)).det().full_simplify())
-
-# show(complex_plot(ln(S.det()) + 2 * pi * i, (-10, 10), (-3, 3), plot_points=points))
-# show(complex_plot(ln(S(i * (k + 1) / (k - 1)).det()), rrange, irange, plot_points=points) + circle((0, 0), 1), aspect_ratio=1.0) #  + plot(10 * Ts.abs(), rrange))# , aspect_ratio=20.0)
