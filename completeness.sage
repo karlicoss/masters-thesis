@@ -1,11 +1,11 @@
 reset()
 
-AA, BB, CC, DD = var('AA BB CC DD')
+A, B, C, D = var('A B C D')
 k = var('k')
 assume(k, 'imaginary')
 
-f_inc(x) = AA * exp(i * k * x) + BB * exp(-i * k * x)
-f_out(x) = CC * exp(i * k * x) + DD * exp(-i * k * x)
+f_inc(x) = A * exp(i * k * x) + B * exp(-i * k * x)
+f_out(x) = C * exp(i * k * x) + D * exp(-i * k * x)
 
 f_inc_d = f_inc.derivative(x)
 f_out_d = f_out.derivative(x)
@@ -15,6 +15,13 @@ def symmetric_Smatrix(R, T):
     return matrix([
         [R, T], 
         [T, R]
+    ])
+
+
+def asymmetric_Smatrix(Bs, Cs):
+    return matrix([
+        [Bs.coefficient(A), Bs.coefficient(D)],
+        [Cs.coefficient(A), Cs.coefficient(D)],
     ])
 
 
@@ -50,13 +57,13 @@ def solve_popov():
     return symmetric_Smatrix(Rs, Ts)(a = aa, L = LL)
 
 def solve_interval():
-    A, B = var('A B')
+    Q1, Q2 = var('C1 C2')
     a, b, L = var('a b L')
     assume(a, 'real')
     assume(b, 'real')
     assume(L, 'real')
 
-    f2(x) = A * exp(i * k * x) + B * exp(-i * k * x)
+    f2(x) = Q1 * exp(i * k * x) + Q2 * exp(-i * k * x)
     f2d = f2.derivative(x)
 
     solutions = solve(
@@ -64,26 +71,23 @@ def solve_interval():
             f_inc(x=-L) == f2(x=-L), 
             f2(x=L) == f_out(x=L), 
             -f_inc_d(x=-L) + f2d(x=-L) == a * f_inc(x=-L), 
-            -f2d(x=L) + f_out_d(x=L) == a * f_out(x=L)
+            -f2d(x=L) + f_out_d(x=L) == b * f_out(x=L)
         ],
-        BB, CC, A, B, 
+        B, C, Q1, Q2, 
         solution_dict=True
     )
 
 
-    BBs = solutions[0][BB].full_simplify()
-    CCs = solutions[0][CC].full_simplify()
-    SM = matrix([
-        [BBs.coefficient(AA), BBs.coefficient(DD)],
-        [CCs.coefficient(AA), CCs.coefficient(DD)],
-    ])
-
-    aa = -1
+    Bs = solutions[0][B].full_simplify()
+    Cs = solutions[0][C].full_simplify()
+    SM = asymmetric_Smatrix(Bs, Cs)
+    aa = -10
+    bb = 10
     LL = 1
-    return SM(a = aa, L = LL)
+    return SM(a = aa, b = bb, L = LL)
 
 def solve_loop():
-    A, B = var('A B')
+    A, B = var('A B') # TODO FIXME
     a, L = var('a L')
     assume(a, 'real')
     assume(L, 'real')
@@ -101,7 +105,7 @@ def solve_loop():
     return Rs(a = 1, L = 1), Ts(a = 1, L = 1)
 
 def solve_double_loop():
-    A, B, C, D = var('A B C D')
+    A, B, C, D = var('A B C D') # TODO FIXME 
     a, L = var('a L')
     assume(a, 'real')
     assume(L, 'real')
