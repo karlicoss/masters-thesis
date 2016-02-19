@@ -13,8 +13,8 @@ f_out_d = f_out.derivative(x)
 
 def symmetric_Smatrix(R, T):
     return matrix([
-        [T, R], 
-        [R, T]
+        [R, T], 
+        [T, R]
     ])
 
 
@@ -45,7 +45,9 @@ def solve_popov():
     Rs = solutions[0][R].full_simplify()
     Ts = solutions[0][T].full_simplify()
 
-    return Rs(a = 2, L = 1), Ts(a = 2, L = 1)
+    aa = 0
+    LL = 1
+    return symmetric_Smatrix(Rs, Ts)(a = aa, L = LL)
 
 def solve_interval():
     A, B = var('A B')
@@ -128,16 +130,17 @@ def solve_double_loop():
 
 
 # interesting at a = 0
-S = solve_interval()
+S = solve_popov()
 sanity_checks(S)
 
 
+show(S)
 Sdet = S.det()
 
 show("Det = ", Sdet)
 
 rrange = (-30, 30)
-irange = (-2, 2)
+irange = (-3, 3)
 points = 500
 
 
