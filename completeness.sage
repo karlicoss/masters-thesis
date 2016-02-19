@@ -1,11 +1,11 @@
 reset()
 
-R, T = var('R T')
+AA, BB, CC, DD = var('AA BB CC DD')
 k = var('k')
 assume(k, 'imaginary')
 
-f_inc(x) = exp(i * k * x) + R * exp(-i * k * x)
-f_out(x) = T * exp(i * k * x)
+f_inc(x) = AA * exp(i * k * x) + BB * exp(-i * k * x)
+f_out(x) = CC * exp(i * k * x) + DD * exp(-i * k * x)
 
 f_inc_d = f_inc.derivative(x)
 f_out_d = f_out.derivative(x)
@@ -66,16 +66,21 @@ def solve_interval():
             -f_inc_d(x=-L) + f2d(x=-L) == a * f_inc(x=-L), 
             -f2d(x=L) + f_out_d(x=L) == a * f_out(x=L)
         ],
-        R, T, A, B, 
+        BB, CC, A, B, 
         solution_dict=True
     )
 
-    Rs = solutions[0][R].full_simplify()
-    Ts = solutions[0][T].full_simplify()
 
-    aa = 0
+    BBs = solutions[0][BB].full_simplify()
+    CCs = solutions[0][CC].full_simplify()
+    SM = matrix([
+        [BBs.coefficient(AA), BBs.coefficient(DD)],
+        [CCs.coefficient(AA), CCs.coefficient(DD)],
+    ])
+
+    aa = -1
     LL = 1
-    return symmetric_Smatrix(Rs, Ts)(a = aa, L = LL)
+    return SM(a = aa, L = LL)
 
 def solve_loop():
     A, B = var('A B')
@@ -130,7 +135,7 @@ def solve_double_loop():
 
 
 # interesting at a = 0
-S = solve_popov()
+S = solve_interval()
 sanity_checks(S)
 
 
