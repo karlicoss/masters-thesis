@@ -105,41 +105,46 @@ def solve_loop():
     return Rs(a = 1, L = 1), Ts(a = 1, L = 1)
 
 def solve_double_loop():
-    A, B, C, D = var('A B C D') # TODO FIXME 
+    Q1, Q2, W1, W2 = var('Q1 Q2 W1 W2')
     a, L = var('a L')
     assume(a, 'real')
     assume(L, 'real')
 
     # TODO: for some reason, doesn't work, solve function stucks :(
-    # f2(x) = A * exp(-i * k * x) + B * exp(-i * k * x)
-    # f3(x) = C * exp(-i * k * x) + D * exp(-i * k * x)
-    f2(x) = A * sin(k * x) + B * cos(k * x)
-    f3(x) = C * sin(k * x) + D * cos(k * x)
+    # f2(x) = Q1 * exp(-i * k * x) + Q2 * exp(-i * k * x)
+    # f3(x) = W1 * exp(-i * k * x) + W2 * exp(-i * k * x)
+    fQ(x) = Q1 * sin(k * x) + Q2 * cos(k * x)
+    fW(x) = W1 * sin(k * x) + W2 * cos(k * x)
     
-    f2d = f2.derivative(x)
-    f3d = f3.derivative(x)
+    fQd = fQ.derivative(x)
+    fWd = fW.derivative(x)
     
     equations = [
-        f_inc(x=-L) == f2(x=-L), 
-        f2(x=-L) == f3(x=-L), 
-        f2(x=L) == f3(x=L),
-        f3(x=L) == f_out(x=L),
-        -f_inc_d(x=-L) + f2d(x=-L) + f3d(x=-L) == a * f_inc(x=-L), 
-        f_out_d(x=L) - f2d(x=L) - f3d(x=L) == a * f_out(x=L)
+        f_inc(x=-L) == fQ(x=-L), 
+        fQ(x=-L) == fW(x=-L), 
+        fQ(x=L) == fW(x=L),
+        fW(x=L) == f_out(x=L),
+        -f_inc_d(x=-L) + fQd(x=-L) + fWd(x=-L) == a * f_inc(x=-L), 
+        f_out_d(x=L) - fQd(x=L) - fWd(x=L) == a * f_out(x=L)
     ]
     # show(equations)
 
-    solutions = solve(equations, R, T, A, B, C, D, solution_dict=True)
-    Rs = solutions[0][R].full_simplify()
-    Ts = solutions[0][T].full_simplify()
+    solutions = solve(equations, B, C, Q1, Q2, W1, W2, solution_dict=True)
+    Bs = solutions[0][B].full_simplify()
+    Cs = solutions[0][C].full_simplify()
 
-    aa = 0
+    SM = asymmetric_Smatrix(Bs, Cs)
+    aa = 1
     LL = 1
-    return Rs(a = aa, L = LL), Ts(a = aa, L = LL)
+    return SM(a=aa, L=LL)
 
 
 # interesting at a = 0
-S = solve_interval()
+# S = solve_interval()
+
+
+S = solve_double_loop()
+
 sanity_checks(S)
 
 
