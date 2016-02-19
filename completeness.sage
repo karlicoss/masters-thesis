@@ -104,10 +104,11 @@ def solve_loop():
     show("T = ", Ts)
     return Rs(a = 1, L = 1), Ts(a = 1, L = 1)
 
-def solve_double_loop():
+def solve_double_loop(a_val=1, b_val=-1, L_val=1):
     Q1, Q2, W1, W2 = var('Q1 Q2 W1 W2')
-    a, L = var('a L')
+    a, b, L = var('a b L')
     assume(a, 'real')
+    assume(b, 'real')
     assume(L, 'real')
 
     # TODO: for some reason, doesn't work, solve function stucks :(
@@ -125,7 +126,7 @@ def solve_double_loop():
         fQ(x=L) == fW(x=L),
         fW(x=L) == f_out(x=L),
         -f_inc_d(x=-L) + fQd(x=-L) + fWd(x=-L) == a * f_inc(x=-L), 
-        f_out_d(x=L) - fQd(x=L) - fWd(x=L) == a * f_out(x=L)
+        f_out_d(x=L) - fQd(x=L) - fWd(x=L) == b * f_out(x=L)
     ]
     # show(equations)
 
@@ -134,27 +135,17 @@ def solve_double_loop():
     Cs = solutions[0][C].full_simplify()
 
     SM = asymmetric_Smatrix(Bs, Cs)
-    aa = 1
-    LL = 1
-    return SM(a=aa, L=LL)
+    return SM(a=a_val, b=b_val, L=L_val)
 
 
 # interesting at a = 0
 # S = solve_interval()
 
 
-S = solve_double_loop()
+# sanity_checks(S)
 
-sanity_checks(S)
-
-
-show(S)
-Sdet = S.det()
-
-show("Det = ", Sdet)
-
-rrange = (-30, 30)
-irange = (-3, 3)
+rrange = (-10, 10)
+irange = (-4, 4)
 points = 500
 
 
@@ -163,12 +154,27 @@ def cayley(x):
 
 DPI = 200
 
-def plot_all(Sdet):
-    complex_plot(abs(Sdet), rrange, irange, plot_points=points).save('plot.png', dpi=DPI)
-    complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln.png', dpi=DPI)
+def plot_all(S, suffix=""):
+    complex_plot(abs(S.det()), rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), dpi=DPI)
+    complex_plot(ln(abs(S.det())), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), dpi=DPI)
     # unit_circle = circle((0, 0), 1)
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
-plot_all(Sdet)
+from numpy import arange
+from sage.plot.colors import rainbow
+# for q in arange(0, 3, 1):
+#     S = solve_double_loop(a_val=q, b_val=-q)
+#     plot_all(S, str(q))
+
+p = var('p')
+plots = []
+values = arange(0, 3, 0.3)
+for q, col in zip(values, rainbow(len(values))):
+    print("Plotting for " + str(q))
+    S = solve_double_loop(a_val=q, b_val=-q)
+    plots.append(plot(abs(S.det()(k = p * i)), (p, 0, 4), ymin=0, ymax=10, plot_points=30, color=col, legend_label="q={}".format(q)))
+
+sum(plots).save('plot_fewfef.png', dpi=DPI)
+
 
 # show(plot(abs(Sdet(z = x * i)), (x, -10, 10)), ymin=0, ymax=2)
