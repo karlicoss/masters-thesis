@@ -38,7 +38,7 @@ def sanity_checks(S): # variable: k
 
 # Simple form:
 # Sdet = -(cos(k) + 2 * i * sin(k)) / (cos(k) - 2 * i * sin(k))
-def solve_popov():
+def solve_popov(a_val=0, L_val=1):
     P = var('P')
     a, L = var('a L')
     assume(a, 'real')
@@ -47,14 +47,13 @@ def solve_popov():
     f2(x) = P * sin(k * x)
     f2d = f2.derivative(x)
 
-    solutions = solve([f_inc(0) == f2(L), f2(L) == f_out(0), -f_inc_d(0) - f2d(L) + f_out_d(0) == a * f_inc(0)], R, T, P, solution_dict=True)
+    solutions = solve([f_inc(0) == f2(L), f2(L) == f_out(0), -f_inc_d(0) - f2d(L) + f_out_d(0) == a * f_inc(0)], B, C, P, solution_dict=True)
 
-    Rs = solutions[0][R].full_simplify()
-    Ts = solutions[0][T].full_simplify()
+    Bs = solutions[0][B].full_simplify()
+    Cs = solutions[0][C].full_simplify()
+    SM = asymmetric_Smatrix(Bs, Cs)
 
-    aa = 0
-    LL = 1
-    return symmetric_Smatrix(Rs, Ts)(a = aa, L = LL)
+    return SM(a=a_val, L=L_val)
 
 def solve_interval():
     Q1, Q2 = var('C1 C2')
@@ -135,6 +134,7 @@ def solve_double_loop(a_val=1, b_val=-1, L_val=1):
     Cs = solutions[0][C].full_simplify()
 
     SM = asymmetric_Smatrix(Bs, Cs)
+    show(SM(L = L_val, a=0,  b=0).det())
     return SM(a=a_val, b=b_val, L=L_val)
 
 
@@ -163,18 +163,34 @@ def plot_all(S, suffix=""):
 from numpy import arange
 from sage.plot.colors import rainbow
 # for q in arange(0, 3, 1):
-#     S = solve_double_loop(a_val=q, b_val=-q)
-#     plot_all(S, str(q))
+    # S = solve_double_loop(a_val=q, b_val=-q)
+    # plot_all(S, str(q))
 
-p = var('p')
-plots = []
-values = arange(0, 3, 0.3)
-for q, col in zip(values, rainbow(len(values))):
-    print("Plotting for " + str(q))
-    S = solve_double_loop(a_val=q, b_val=-q)
-    plots.append(plot(abs(S.det()(k = p * i)), (p, 0, 4), ymin=0, ymax=10, plot_points=30, color=col, legend_label="q={}".format(q)))
+def plot_bound_energies():
+    p = var('p')
+    plots = []
+    values = arange(0, 3, 0.3)
+    for q, col in zip(values, rainbow(len(values))):
+        print("Plotting for " + str(q))
+        S = solve_double_loop(a_val=q, b_val=-q)
+        show(S)
+        plots.append(plot(abs(S.det()(k = p * i)), (p, 0, 4), ymin=0, ymax=10, plot_points=30, color=col, legend_label="q={}".format(q)))
 
-sum(plots).save('plot_fewfef.png', dpi=DPI)
+    sum(plots).save('plot_fewfef.png', dpi=DPI)
 
 
-# show(plot(abs(Sdet(z = x * i)), (x, -10, 10)), ymin=0, ymax=2)
+def check_zero(S):
+    t = var('t')
+    R = 10
+    ig = abs(ln(S.det())) * 1 / (k - 1) ** 2
+    ff = ig(k = R * exp(i * t) + i * R) * R * i * exp(i * t)
+    # for q in arange(0, 2 * pi, pi / 10):
+        # show("q = ", q)
+        # show(n(ff(t=q)))
+    show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
+    show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))
+
+# S = solve_popov(a_val=0, b_val=0)
+S = solve_popov(a_val=0)
+# plot_all(S)
+check_zero(S)
