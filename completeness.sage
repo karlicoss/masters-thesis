@@ -1,5 +1,11 @@
 reset()
 
+from sage.misc.viewer import viewer
+viewer.pdf_viewer("atril")
+
+
+# B is R
+# C is T
 A, B, C, D = var('A B C D')
 k = var('k')
 assume(k, 'imaginary')
@@ -37,7 +43,7 @@ def sanity_checks(S): # variable: k
 
 
 # Simple form:
-# Sdet = -(cos(k) + 2 * i * sin(k)) / (cos(k) - 2 * i * sin(k))
+# Sdet = -(k * cos(k) + a * sin(k) + 2 * i * k * sin(k)) / (k * cos(k) + a * sin(k) - 2 * i * k * sin(k))
 def solve_popov(a_val=0, L_val=1):
     P = var('P')
     a, L = var('a L')
@@ -120,22 +126,32 @@ def solve_double_loop(a_val=1, b_val=-1, L_val=1):
     fWd = fW.derivative(x)
     
     equations = [
-        f_inc(x=-L) == fQ(x=-L), 
+        f_inc(x=0) == fQ(x=-L), 
         fQ(x=-L) == fW(x=-L), 
         fQ(x=L) == fW(x=L),
-        fW(x=L) == f_out(x=L),
-        -f_inc_d(x=-L) + fQd(x=-L) + fWd(x=-L) == a * f_inc(x=-L), 
-        f_out_d(x=L) - fQd(x=L) - fWd(x=L) == b * f_out(x=L)
+        fW(x=L) == f_out(x=0),
+        -f_inc_d(x=0) + fQd(x=-L) + fWd(x=-L) == a * f_inc(x=0), 
+        f_out_d(x=0) - fQd(x=L) - fWd(x=L) == b * f_out(x=0)
     ]
-    # show(equations)
+    show(equations)
 
     solutions = solve(equations, B, C, Q1, Q2, W1, W2, solution_dict=True)
     Bs = solutions[0][B].full_simplify()
     Cs = solutions[0][C].full_simplify()
 
+    # show(Bs)
+    # show(Cs)
     SM = asymmetric_Smatrix(Bs, Cs)
-    show(SM(L = L_val, a=0,  b=0).det())
     return SM(a=a_val, b=b_val, L=L_val)
+
+def solve_double_loop_analytic(a_val=1):
+    a = a_val
+    b = a_val
+    L = 1 # TODO L is ignored for now
+    rp = (a**2 - 5 * k**2) * cos(k) * sin(k) - 4 * a * k * sin(k)**2 + 2 * a * k
+    ip = 2 * a * k * cos(k) * sin(k) - 4 * k**2 * sin(k)**2 + 2 * k**2
+    Sd = (rp + i * ip) / (rp - i * ip)
+    return Sd
 
 
 # interesting at a = 0
@@ -154,11 +170,14 @@ def cayley(x):
 
 DPI = 200
 
-def plot_all(S, suffix=""):
-    complex_plot(abs(S.det()), rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), dpi=DPI)
-    complex_plot(ln(abs(S.det())), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), dpi=DPI)
+def plot_all(Sdet, suffix=""):
+    complex_plot(abs(Sdet), rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), dpi=DPI)
+    complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), dpi=DPI)
     # unit_circle = circle((0, 0), 1)
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
+
+# S = solve_double_loop(a_val=-1, b_val=-1)
+# plot_all(S)
 
 from numpy import arange
 from sage.plot.colors import rainbow
@@ -190,7 +209,14 @@ def check_zero(S):
     show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
     show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))
 
-# S = solve_popov(a_val=0, b_val=0)
-S = solve_popov(a_val=0)
-# plot_all(S)
-check_zero(S)
+# S = solve_popov(a_val=0)
+
+y = var('y')
+# S = solve_double_loop(a_val=-2, b_val=-2)
+# Sd = S.det()
+Sd = solve_double_loop_analytic(a_val=-2)
+
+
+plot_all(Sd)
+# view([Sd(y=2)], tightpage=True)
+
