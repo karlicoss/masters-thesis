@@ -42,8 +42,13 @@ def sanity_checks(S): # variable: k
         show(n(S(k=v) * S(k=v.conjugate()).H))
 
 
-# Simple form:
-# Sdet = -(k * cos(k) + a * sin(k) + 2 * i * k * sin(k)) / (k * cos(k) + a * sin(k) - 2 * i * k * sin(k))
+def solve_popov_analytic(a_val=0):
+    a = a_val
+    rp = k * cos(k) + a * sin(k)
+    ip = 2 * k * sin(k)
+    Sd = (rp + i * ip) / (rp - i * ip)
+    return Sd
+
 def solve_popov(a_val=0, L_val=1):
     P = var('P')
     a, L = var('a L')
@@ -171,7 +176,7 @@ def cayley(x):
 DPI = 200
 
 def plot_all(Sdet, suffix=""):
-    complex_plot(abs(Sdet), rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), dpi=DPI)
+    complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), dpi=DPI)
     complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), dpi=DPI)
     # unit_circle = circle((0, 0), 1)
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
@@ -211,10 +216,10 @@ def check_zero(S):
 
 # S = solve_popov(a_val=0)
 
-y = var('y')
+# y = var('y')
 # S = solve_double_loop(a_val=-2, b_val=-2)
 # Sd = S.det()
-Sd = solve_double_loop_analytic(a_val=-2)
+Sd = solve_popov(a_val=0).det()
 
 
 plot_all(Sd)
