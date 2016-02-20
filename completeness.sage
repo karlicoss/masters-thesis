@@ -203,25 +203,24 @@ def plot_bound_energies():
     sum(plots).save('plot_fewfef.png', dpi=DPI)
 
 
-def check_zero(S):
+def check_zero(Sdet):
     t = var('t')
-    R = 10
-    ig = abs(ln(S.det())) * 1 / (k - 1) ** 2
-    ff = ig(k = R * exp(i * t) + i * R) * R * i * exp(i * t)
-    # for q in arange(0, 2 * pi, pi / 10):
-        # show("q = ", q)
-        # show(n(ff(t=q)))
-    show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
-    show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))
+    for R in [1, 2, 4, 16, 32, 54, 128, 256]:
+        ig = ln(abs(Sdet)) * 1 / (k - 1) ** 2
+        ff = ig(k = R * exp(i * t) + i * R) * R * i * exp(i * t)
+        print("R = {}".format(R))
+        show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
+        show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))    
+    
 
 # S = solve_popov(a_val=0)
 
 # y = var('y')
 # S = solve_double_loop(a_val=-2, b_val=-2)
 # Sd = S.det()
-Sd = solve_popov(a_val=0).det()
+Sd = solve_popov_analytic(a_val=0)
+check_zero(Sd)
 
-
-plot_all(Sd)
-# view([Sd(y=2)], tightpage=True)
+# plot_all(Sd)
+# view([Sd], tightpage=True)
 
