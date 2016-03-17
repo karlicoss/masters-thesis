@@ -9,7 +9,7 @@ def view_later(formula):
     _view_later.append(formula)
 
 def view_all():
-    view(_view_later, tightpage=True)
+    view(_view_later, tightpage=True, debug=True)
 
 
 # B is R
@@ -71,10 +71,10 @@ def solve_popov(a_val=0, L_val=1):
     Bs = solutions[0][B].full_simplify()
     Cs = solutions[0][C].full_simplify()
     SM = asymmetric_Smatrix(Bs, Cs)
-
+    # view_later(SM(L=1).eigenvalues())
     return SM(a=a_val, L=L_val)
 
-def solve_interval():
+def solve_interval(a_val=1, b_val=1, L_val=1):
     Q1, Q2 = var('C1 C2')
     a, b, L = var('a b L')
     assume(a, 'real')
@@ -99,10 +99,9 @@ def solve_interval():
     Bs = solutions[0][B].full_simplify()
     Cs = solutions[0][C].full_simplify()
     SM = asymmetric_Smatrix(Bs, Cs)
-    aa = -10
-    bb = 10
-    LL = 1
-    return SM(a = aa, b = bb, L = LL)
+    view_later(SM(L=1, a=-1, b=-1, k=2).eigenvalues()[0].n())
+    view_later(SM(L=1, a=-1, b=-1, k=2).eigenvalues()[1].n())
+    return SM(a=a_val, b=b_val, L=L_val)
 
 def solve_loop():
     A, B = var('A B') # TODO FIXME
@@ -180,12 +179,15 @@ def solve_double_loop(a_val=1, b_val=-1, L_val=1):
     Bs = solutions[0][B].full_simplify()
     Cs = solutions[0][C].full_simplify()
 
-    view_later(Bs)
-    view_later(Cs)
+    # view_later(Bs)
+    # view_later(Cs)
     SM = asymmetric_Smatrix(Bs, Cs)
-    return SM(a=a_val, b=b_val, L=L_val)
+    # view_later(SM(L=1, a=0, b=0).eigenvalues())
+    view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[0]))
+    view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[1]))
+    return SM(a=a_val, b=b_val, L=L_val).det()
 
-def solve_double_loop_analytic(a_val=1):
+def solve_double_loop_analytic(a_val=var('a')):
     a = a_val
     b = a_val
     L = 1 # TODO L is ignored for now
@@ -194,6 +196,7 @@ def solve_double_loop_analytic(a_val=1):
     ip = 2 * a * k * cos(k) * sin(k) - 4 * k**2 * sin(k)**2 + 2 * k**2
     view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
+    view_later(Sd)
     return Sd
 
 
@@ -203,8 +206,8 @@ def solve_double_loop_analytic(a_val=1):
 
 # sanity_checks(S)
 
-rrange = (-10, 10)
-irange = (-4, 4)
+rrange = (0, 1000)
+irange = (0, 10)
 points = 500
 
 
@@ -214,13 +217,35 @@ def icayley(x):
 DPI = 200
 
 def plot_all(Sdet, suffix=""):
-    complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), dpi=DPI)
-    complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), dpi=DPI)
+    complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
+    complex_plot(abs(Sdet), rrange, irange, plot_points=points).save('plot_abs{}.png'.format(suffix), figsize=[12, 2])
+    complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
     # unit_circle = circle((0, 0), 1)
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
-# S = solve_double_loop(a_val=-1, b_val=-1)
+# S = solve_popov_analytic(a_val=10)
+# S = solve_double_loop(a_val=5, b_val=5)
+
+def contour_integral_analysis(expr):
+    ig(k) = ln(abs(expr(k=k))) / (k - 1) ** 2
+    for R in [1, 5, 10, 20, 50, 100, 200, 400, 500, 1000, 10000]:
+        pig(t) = ig(k = R * exp(i * t) + R * i) * R * i * exp(i * t)
+        show(numerical_integral(lambda q: pig(t=q).real(), 0, pi))
+        show(numerical_integral(lambda q: pig(t=q).imag(), 0, pi))    
+
+
+def region_analysis(expr):
+    x, y = var('x y')
+    region_plot(lambda x, y: 0 <= abs(expr(k=x + i * y)) <= 0.5, (x, -10, 10), (y, -10, 10)).save('region.png')
+
+
+# contour_integral_analysis(S)
+S = solve_double_loop_analytic(a_val=5)
+region_analysis(S)
+
 # plot_all(S)
+# view_all()
+
 
 from numpy import arange
 from sage.plot.colors import rainbow
@@ -254,7 +279,7 @@ def check_zero(Sdet):
 
 # S = solve_double_loop(a_val=-2, b_val=-2)
 # Sd = S.det()
-y = var('y')
+# y = var('y')
 # solve_double_loop(a_val=1)
 # Sd = solve_double_loop_analytic(a_val=y)
 # check_zero(Sd)
@@ -263,5 +288,11 @@ y = var('y')
 # plot_all(Sd)
 
 # view_later(Sd)
+# solve_popov()
+# solve_interval()
 # view_all()
-draw_double_loop()
+# draw_double_loop()
+# SM = solve_popov(a_val=0, L_val=1)
+# v = SM.eigenvalues()[0]
+# t = var('t')
+# plot(ln(v(k=i*t).real()), (t, 0, 10)).save('plot.png')

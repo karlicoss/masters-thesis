@@ -1,0 +1,27 @@
+For real k: S(k) S(k)* = I
+FOr any k: S(k) S(k*)* = I
+
+If, S(k) = s
+then:
+* S(k*) = 1/s*
+* S(-k*) = s*
+* S(-k) = 1/s
+
+
+(B, C)^T = S (A, D)^T
+
+f_left(x) = A * exp(i * k * x) + B * exp(-i * k * x)
+f_right(x) = C * exp(i * k * x) + D * exp(-i * k * x)
+
+B and C are outgoing, A and D are incoming
+
+
+S = exp(2 i delta_i) // TODO calculate eigenvalues
+
+Unitarity: lec2_compressed, p. 21
+
+
+
+
+Scattering for delta function: R = z / (1 - z), T = 1 / (1 - z); u / (2 * i * k), u is coupling V(x) = u delta(x)
+
