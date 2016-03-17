@@ -1,0 +1,68 @@
+\documentclass[12pt,twoside]{article}
+
+\def\refname{\underline{\normalsize References}}
+\def\title#1{\begin{center}{\large\bf #1}\end{center}}
+
+\renewcommand{\author}[2]{\noindent\underbar{#1}\\#2\\}
+\newcommand{\coauthor}[2]{\noindent\underbar{#1}\\#2\\}
+
+\usepackage[paperwidth=20.5cm,paperheight=29.7cm,width=18cm,height=26.5cm,top=24mm,left=14mm,headsep=11mm]{geometry}
+
+\usepackage{graphicx}
+
+\usepackage{amsmath,bm}
+
+\pagestyle{myheadings} \markboth{DAYS on DIFFRACTION 2015}{DAYS on DIFFRACTION 2015}
+
+\begin{document}
+
+\title{Title of paper}
+
+\author{Author A.B., \textbf{Author B.A.}} % presenting author is marked out by \textbf 
+{Institute1, address1\\ e-mail: {\tt usernameA@example.com, usernameB@example.com} }
+
+% for name index
+\index{Author, A.B.} 
+\index{Author, B.A.}
+
+\coauthor{Author C.B.} {Institute2, address2\\ e-mail: {\tt usernameC@example.com}}
+
+\index{Author, C.B.}
+
+%OR
+
+%\def\supind#1{${}^\mathrm{#1}$}
+%
+%\author{Author A.B.\supind{1,2}, \textbf{Author B.A.}\supind{1}, Author C.B.\supind{2,3}}
+%{\supind{1}Institute1, address1\\ \supind{2}Institute2, address2\\ \supind{3}Institute3,
+%address3\\e-mail: {\tt usernameA@example.com, usernameB@example.com,
+%usernameC@example.com} }
+%
+%\index{Author, A.B.} \index{Author, B.C.} \index{Author, C.B.}
+
+
+Text of abstract
+
+\medskip
+
+\centerline{\includegraphics[width=80mm]{fig_example}}
+
+\medskip
+
+{\narrower\noindent \textbf{Fig.~1:} Text of long caption.\par}
+
+\medskip
+
+%\centerline{\textbf{Fig. 1:} Text of short caption.}
+
+
+\begin{thebibliography}{9}
+
+\bibitem{1} A. Author, B. Author, \textit{Some good book}, Some University Press, Some City
+(2010).
+
+\bibitem{2} C. Author, \textit{Journal of Something}, \textbf{90}, 34--42 (2003).
+
+\end{thebibliography}
+
+\end{document}
