@@ -121,12 +121,9 @@ def solve_loop():
     show("T = ", Ts)
     return Rs(a = 1, L = 1), Ts(a = 1, L = 1)
 
-def solve_double_loop(a_val=1, b_val=-1, L_val=1):
+def solve_double_loop(a=var('a', domain='real'), b=var('b', domain='real'), L_val=1):
     Q1, Q2, W1, W2 = var('Q1 Q2 W1 W2')
-    a, b, L = var('a b L')
-    assume(a, 'real')
-    assume(b, 'real')
-    assume(L, 'real')
+    L = var('L', domain='real')
 
     # TODO: for some reason, doesn't work, solve function stucks :(
     # f2(x) = Q1 * exp(-i * k * x) + Q2 * exp(-i * k * x)
@@ -157,15 +154,24 @@ def solve_double_loop(a_val=1, b_val=-1, L_val=1):
     # view_later(SM(L=1, a=0, b=0).eigenvalues())
     # view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[0]))
     # view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[1]))
-    return SM(a=a_val, b=b_val, L=L_val).det()
+    return SM(L=L_val).det()
 
-def solve_double_loop_analytic(a_val=var('a')):
-    a = a_val
-    b = a_val
+
+def alala(expr):
+    num = expr.numerator()
+    denom = expr.denominator()
+    Nr = num.real()
+    Ni = num.imag()
+    Dr = denom.real()
+    Di = denom.imag()
+    view_later(expand(num) / expand(denom).simplify_trig())
+    # view_later(num.simplify_rectform().simplify_trig() / denom.simplify_rectform().simplify_trig())
+
+def solve_double_loop_analytic(a=var('a', domain='real')):
     L = 1 # TODO L is ignored for now
     rp = (a**2 - 5 * k**2) * cos(k) * sin(k) - 4 * a * k * sin(k)**2 + 2 * a * k
     # view_later(rp)
-    ip = 2 * a * k * cos(k) * sin(k) - 4 * k**2 * sin(k)**2 + 2 * k**2
+    ip = 2 * k * (a * cos(k) * sin(k) - k * sin(k)**2 + k * cos(k)**2)
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
     # view_later(Sd)
@@ -227,17 +233,25 @@ def test_matrices(S, Sa):
                 else:
                     raise err
 
+a_val = 2
+b_val = 2
+
+
 # contour_integral_analysis(S)
 # S = solve_double_loop(a_val=5)
-S = solve_double_loop(a_val=2, b_val=2) # .full_simplify()
+# a = var('a', domain='real')
+S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val)
+alala(S)
 view_later(S)
 
-Sa = solve_double_loop_analytic(a_val=2)
+# rect_form
+
+Sa = solve_double_loop_analytic()(a=a_val)
 view_later(Sa)
 
 test_matrices(S, Sa)
 
-view_all()
+# view_all()
 
 # region_analysis(S)
 
