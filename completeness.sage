@@ -4,12 +4,15 @@ from sage.misc.viewer import viewer
 viewer.pdf_viewer("atril")
 
 
+def rvar(name):
+    return var(name, domain='real')
+
 _view_later = []
 def view_later(formula):
     _view_later.append(formula)
 
 def view_all():
-    view(_view_later, tightpage=True, debug=True)
+    view(_view_later, tightpage=True, debug=False)
 
 
 # B is R
@@ -74,12 +77,9 @@ def solve_popov(a_val=0, L_val=1):
     # view_later(SM(L=1).eigenvalues())
     return SM(a=a_val, L=L_val)
 
-def solve_interval(a_val=1, b_val=1, L_val=1):
+def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     Q1, Q2 = var('C1 C2')
-    a, b, L = var('a b L')
-    assume(a, 'real')
-    assume(b, 'real')
-    assume(L, 'real')
+    L = rvar('L')
 
     f2(x) = Q1 * exp(i * k * x) + Q2 * exp(-i * k * x)
     f2d = f2.derivative(x)
@@ -89,7 +89,7 @@ def solve_interval(a_val=1, b_val=1, L_val=1):
             f_inc(x=-L) == f2(x=-L), 
             f2(x=L) == f_out(x=L), 
             -f_inc_d(x=-L) + f2d(x=-L) == a * f_inc(x=-L), 
-            -f2d(x=L) + f_out_d(x=L) == b * f_out(x=L)
+            -f2d(x=L) + f_out_d(x=L) == a * f_out(x=L) # TODO
         ],
         B, C, Q1, Q2, 
         solution_dict=True
@@ -99,9 +99,9 @@ def solve_interval(a_val=1, b_val=1, L_val=1):
     Bs = solutions[0][B].full_simplify()
     Cs = solutions[0][C].full_simplify()
     SM = asymmetric_Smatrix(Bs, Cs)
-    view_later(SM(L=1, a=-1, b=-1, k=2).eigenvalues()[0].n())
-    view_later(SM(L=1, a=-1, b=-1, k=2).eigenvalues()[1].n())
-    return SM(a=a_val, b=b_val, L=L_val)
+    return SM(L=L_val).det()
+
+# TODO analytic
 
 def solve_loop():
     A, B = var('A B') # TODO FIXME
@@ -123,7 +123,7 @@ def solve_loop():
 
 def solve_double_loop(a=var('a', domain='real'), b=var('b', domain='real'), L_val=1):
     Q1, Q2, W1, W2 = var('Q1 Q2 W1 W2')
-    L = var('L', domain='real')
+    L = rvar('L')
 
     # TODO: for some reason, doesn't work, solve function stucks :(
     # f2(x) = Q1 * exp(-i * k * x) + Q2 * exp(-i * k * x)
@@ -171,7 +171,7 @@ def solve_double_loop_analytic(a=var('a', domain='real')):
     L = 1 # TODO L is ignored for now
     rp = (a**2 - 5 * k**2) * cos(k) * sin(k) - 4 * a * k * sin(k)**2 + 2 * a * k
     # view_later(rp)
-    ip = 2 * k * (a * cos(k) * sin(k) - k * sin(k)**2 + k * cos(k)**2)
+    ip = 2 * k * (1/2 * a * cos(k) * sin(k) - k * sin(k)**2 + k * cos(k)**2)
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
     # view_later(Sd)
@@ -240,23 +240,23 @@ b_val = 2
 # contour_integral_analysis(S)
 # S = solve_double_loop(a_val=5)
 # a = var('a', domain='real')
-S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val)
-alala(S)
+S = solve_interval()(a=a_val)
 view_later(S)
 
-# rect_form
+# S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val)
+# alala(S)
+# view_later(S)
+# Sa = solve_double_loop_analytic()(a=a_val)
+# view_later(Sa)
 
-Sa = solve_double_loop_analytic()(a=a_val)
-view_later(Sa)
+# test_matrices(S, Sa)
 
-test_matrices(S, Sa)
+view_all()
 
-# view_all()
+
 
 # region_analysis(S)
 
-# plot_all(S)
-# view_all()
 
 
 
