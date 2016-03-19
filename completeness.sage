@@ -143,7 +143,7 @@ def solve_double_loop(a_val=1, b_val=-1, L_val=1):
         fQ(x=L) == fW(x=L),
         fW(x=L) == f_out(x=0),
         -f_inc_d(x=0) + fQd(x=-L) + fWd(x=-L) == a * f_inc(x=0), 
-        f_out_d(x=0) - fQd(x=L) - fWd(x=L) == a * f_out(x=0) # TODO FIXME TO b
+        f_out_d(x=0) - fQd(x=L) - fWd(x=L) == b * f_out(x=0)
     ]
     show(equations)
 
@@ -155,8 +155,8 @@ def solve_double_loop(a_val=1, b_val=-1, L_val=1):
     # view_later(Cs)
     SM = asymmetric_Smatrix(Bs, Cs)
     # view_later(SM(L=1, a=0, b=0).eigenvalues())
-    view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[0]))
-    view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[1]))
+    # view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[0]))
+    # view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[1]))
     return SM(a=a_val, b=b_val, L=L_val).det()
 
 def solve_double_loop_analytic(a_val=var('a')):
@@ -217,7 +217,7 @@ def test_matrices(S, Sa):
             k = rp + i * ip
             try:
                 diff = n(S(k=k)) - n(Sa(k=k))
-                if abs(diff) < 0.001:
+                if abs(diff) < 0.0001:
                     print("OK")
                 else:
                     print("ERROR")
@@ -227,18 +227,17 @@ def test_matrices(S, Sa):
                 else:
                     raise err
 
-
 # contour_integral_analysis(S)
 # S = solve_double_loop(a_val=5)
-S = solve_double_loop(a_val=1, b_val=1) # .full_simplify()
+S = solve_double_loop(a_val=2, b_val=2) # .full_simplify()
 view_later(S)
 
-Sa = solve_double_loop_analytic(a_val=1)
+Sa = solve_double_loop_analytic(a_val=2)
 view_later(Sa)
 
-# view_all()
-
 test_matrices(S, Sa)
+
+view_all()
 
 # region_analysis(S)
 
