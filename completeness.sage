@@ -164,11 +164,11 @@ def solve_double_loop_analytic(a_val=var('a')):
     b = a_val
     L = 1 # TODO L is ignored for now
     rp = (a**2 - 5 * k**2) * cos(k) * sin(k) - 4 * a * k * sin(k)**2 + 2 * a * k
-    view_later(rp)
+    # view_later(rp)
     ip = 2 * a * k * cos(k) * sin(k) - 4 * k**2 * sin(k)**2 + 2 * k**2
-    view_later(ip)
+    # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
-    view_later(Sd)
+    # view_later(Sd)
     return Sd
 
 
@@ -211,12 +211,40 @@ def region_analysis(expr):
     region_plot(lambda x, y: 0 <= abs(expr(k=x + i * y)) <= 0.5, (x, -10, 10), (y, -10, 10)).save('region.png')
 
 
+def test_matrices(S, Sa):
+    for rp in range(0, 5):
+        for ip in range(0, 5):
+            k = rp + i * ip
+            try:
+                diff = n(S(k=k)) - n(Sa(k=k))
+                if abs(diff) < 0.001:
+                    print("OK")
+                else:
+                    print("ERROR")
+            except ValueError as err:
+                if "division by zero" in err.message:
+                    print("computation failed on {}".format(k))
+                else:
+                    raise err
+
+
 # contour_integral_analysis(S)
-S = solve_double_loop_analytic(a_val=5)
-region_analysis(S)
+# S = solve_double_loop(a_val=5)
+S = solve_double_loop(a_val=1, b_val=1) # .full_simplify()
+view_later(S)
+
+Sa = solve_double_loop_analytic(a_val=1)
+view_later(Sa)
+
+# view_all()
+
+test_matrices(S, Sa)
+
+# region_analysis(S)
 
 # plot_all(S)
 # view_all()
+
 
 
 from numpy import arange
