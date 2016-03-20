@@ -96,8 +96,10 @@ def solve_delta(a=rvar('a'), b=rvar('b'), L_val=1):
 
 def solve_delta_analytic(a=rvar('a'), L_val=1):
     L = 1 # TODO L is ignored for now
-    nom = a * sin(2 * k) + 2 * i * k * sin(2 * k) # k**2 TODO DOESN'T MAKE MUCH SENSE
-    den = a * sin(2 * k) - 2 * i * k * sin(2 * k)
+    nom = -i * a * k * sin(2 * k) + 2 * k**2 * sin(2 * k)
+    den =  i * a * k * sin(2 * k) + 2 * k**2 * sin(2 * k)
+    nom = a + 2 * i * k # | * i * k * sin(2 * k)
+    den = a - 2 * i * k
     Sd = nom / den
     return Sd
 
@@ -297,16 +299,16 @@ def test_matrices(S, Sa):
 # S = solve_interval()(a=a)
 # view_later(S)
 
-a = 1
-b = 0
-# a = var('a', domain='real')
-# b = var('b', domain='real')
+# a = 2
+# b = 0
+a = var('a', domain='real')
+b = var('b', domain='real')
 
 S = solve_delta().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
 Sa = solve_delta_analytic()(a=a, b=b)
 view_later(Sa)
-test_matrices(S, Sa)
+# test_matrices(S, Sa)
 
 
 S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b)
