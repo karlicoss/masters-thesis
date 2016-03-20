@@ -101,14 +101,15 @@ def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     return SM(L=L_val).det()
 
 def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
-    rp = (a * b - 2 * k**2) * sin(2 * k) + (a + b) * k * cos(2 * k)
+    rp = (2 * a * b - 4 * k**2) * cos(k) * sin(k) + (a + b) * k * cos(2 * k)
     # view_later(rp)
-    ip = (a + b) * k * sin(2 * k) + 2 * k**2 * cos(2 * k)
+    ip = 2 * (a + b) * k * cos(k) * sin(k) + 2 * k**2 * cos(2 * k)
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
     # view_later(Sd)
 
 
+    return Sd # !!!! TODO to keep consistent with double loop
     rp = (a * b - 2 * k**2) * sin(2 * k) + (a + b) * k * cos(2 * k)
     # view_later(rp)
     ip = (a + b) * k * sin(2 * k) + 2 * k**2 * cos(2 * k)
@@ -116,12 +117,22 @@ def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
 
-    nom = i * a * b * (exp(-2 * i * k) - exp(2 * i * k)) + i * 4 * k**2 * exp( 2 * i * k) + 2 * (a + b) * k * exp(2 * i * k)
-    den = i * a * b * (exp(-2 * i * k) - exp(2 * i * k)) - i * 4 * k**2 * exp(-2 * i * k) + 2 * (a + b) * k * exp(-2 * i * k)
+    nom = i * a * b * exp(-2 * i * k) - i * a * b * exp(2 * i * k) + i * 4 * k**2 * exp( 2 * i * k) + 2 * (a + b) * k * exp(2 * i * k)
+    den = i * a * b * exp(-2 * i * k) - i * a * b * exp(2 * i * k) - i * 4 * k**2 * exp(-2 * i * k) + 2 * (a + b) * k * exp(-2 * i * k)
     Sd = nom / den
     return Sd    
 
-# TODO analytic
+
+def solve_double_loop_analytic(a=rvar('a'), b = rvar('b')):
+    L = 1 # TODO L is ignored for now
+    rp = (a * b - 5 * k**2) * cos(k) * sin(k) + (a + b) * k * cos(2 * k)
+    # view_later(rp)
+    ip = (a + b) * k * cos(k) * sin(k) + 2 * k**2 * cos(2 * k)
+    # view_later(ip)
+    Sd = (rp + i * ip) / (rp - i * ip)
+    # view_later(Sd)
+    return Sd
+
 
 def solve_loop():
     A, B = var('A B') # TODO FIXME
@@ -187,16 +198,6 @@ def alala(expr):
     view_later(expand(num) / expand(denom).simplify_trig())
     # view_later(num.simplify_rectform().simplify_trig() / denom.simplify_rectform().simplify_trig())
 
-def solve_double_loop_analytic(a=var('a', domain='real')):
-    L = 1 # TODO L is ignored for now
-    rp = (a**2 - 5 * k**2) * cos(k) * sin(k) - 4 * a * k * sin(k)**2 + 2 * a * k
-    # view_later(rp)
-    ip = 2 * k * (1/2 * a * cos(k) * sin(k) - k * sin(k)**2 + k * cos(k)**2)
-    # view_later(ip)
-    Sd = (rp + i * ip) / (rp - i * ip)
-    # view_later(Sd)
-    return Sd
-
 
 # interesting at a = 0
 # S = solve_interval()
@@ -238,8 +239,9 @@ def region_analysis(expr):
 
 
 def test_matrices(S, Sa):
-    for rp in range(0, 5):
-        for ip in range(0, 5):
+    from numpy import arange
+    for rp in arange(0, 3, 0.4):
+        for ip in arange(0, 3, 0.4):
             k = rp + i * ip
             try:
                 diff = n(S(k=k)) - n(Sa(k=k))
@@ -253,8 +255,6 @@ def test_matrices(S, Sa):
                 else:
                     raise err
 
-a_val = 3
-b_val = 5
 
 
 # contour_integral_analysis(S)
@@ -263,17 +263,18 @@ b_val = 5
 # S = solve_interval()(a=a)
 # view_later(S)
 
+a = 2
+b = 3 
 # a = var('a', domain='real')
 # b = var('b', domain='real')
 
-S = solve_interval().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val) # (a=a, b=b)
+S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b) # (a=a_val, b=b_val) #
 view_later(S)
-Sa = solve_interval_analytic()(a=a_val, b=b_val)
+Sa = solve_interval_analytic()(a=a, b=b)
 view_later(Sa)
-view_all()
 
 test_matrices(S, Sa)
-
+# view_all()
 
 
 
