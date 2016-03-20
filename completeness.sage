@@ -98,6 +98,8 @@ def solve_delta_analytic(a=rvar('a'), L_val=1):
     L = 1 # TODO L is ignored for now
     nom = -i * a * k * sin(2 * k) + 2 * k**2 * sin(2 * k)
     den =  i * a * k * sin(2 * k) + 2 * k**2 * sin(2 * k)
+    den = (-3 * i * a * k - 3 * k**2) * cos(k) * sin(k) - (2 * a * k - 4 * i * k**2) * sin(k)**2 + a * k - 2 * i * k**2
+    nom = (+3 * i * a * k - 3 * k**2) * cos(k) * sin(k) - (2 * a * k + 4 * i * k**2) * sin(k)**2 + a * k + 2 * i * k**2
     nom = a + 2 * i * k # | * i * k * sin(2 * k)
     den = a - 2 * i * k
     Sd = nom / den
@@ -153,9 +155,7 @@ def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
 def solve_double_loop_analytic(a=rvar('a'), b = rvar('b')):
     L = 1 # TODO L is ignored for now
     rp = (a * b - 5 * k**2) * sin(2 * k) + 2 * (a + b) * k * cos(2 * k)
-    # view_later(rp)
     ip = (a + b) * k * sin(2 * k) + 4 * k**2 * cos(2 * k)
-    # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
 
 
@@ -224,15 +224,56 @@ def solve_double_loop(a=var('a', domain='real'), b=var('b', domain='real'), L_va
     return SM(L=L_val).det()
 
 
-def alala(expr):
-    num = expr.numerator()
-    denom = expr.denominator()
-    Nr = num.real()
-    Ni = num.imag()
-    Dr = denom.real()
-    Di = denom.imag()
-    view_later(expand(num) / expand(denom).simplify_trig())
-    # view_later(num.simplify_rectform().simplify_trig() / denom.simplify_rectform().simplify_trig())
+
+def solve_triple_loop(a=var('a', domain='real'), b=var('b', domain='real'), L_val=1):
+    Q1, Q2, W1, W2, Z1, Z2 = var('Q1 Q2 W1 W2 Z1 Z2')
+    L = rvar('L')
+
+    # TODO: for some reason, doesn't work, solve function stucks :(
+    # f2(x) = Q1 * exp(-i * k * x) + Q2 * exp(-i * k * x)
+    # f3(x) = W1 * exp(-i * k * x) + W2 * exp(-i * k * x)
+    fQ(x) = Q1 * sin(k * x) + Q2 * cos(k * x)
+    fW(x) = W1 * sin(k * x) + W2 * cos(k * x)
+    fZ(x) = Z1 * sin(k * x) + Z2 * cos(k * x)
+    
+    fQd = fQ.derivative(x)
+    fWd = fW.derivative(x)
+    fZd = fZ.derivative(x)
+    
+    equations = [
+        f_inc(x=0) == fQ(x=-L), 
+        fQ(x=-L) == fW(x=-L),
+        fW(x=-L) == fZ(x=-L),
+        fQ(x=L) == fW(x=L),
+        fW(x=L) == fZ(x=L),
+        fZ(x=L) == f_out(x=0),
+        -f_inc_d(x=0) + fQd(x=-L) + fWd(x=-L) + fZd(x=-L) == a * f_inc(x=0), 
+        f_out_d(x=0) - fQd(x=L) - fWd(x=L) - fZd(x=L) == b * f_out(x=0)
+    ]
+
+    solutions = solve(equations, B, C, Q1, Q2, W1, W2, Z1, Z2, solution_dict=True)
+    Bs = solutions[0][B].full_simplify()
+    Cs = solutions[0][C].full_simplify()
+
+    # view_later(Bs)
+    # view_later(Cs)
+    SM = asymmetric_Smatrix(Bs, Cs)
+    # view_later(SM(L=1, a=0, b=0).eigenvalues())
+    # view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[0]))
+    # view_later(n(SM(L=1,a=0,b=0,k=i).eigenvalues()[1]))
+    return SM(L=L_val).det()
+
+
+
+def solve_triple_loop_analytic(a=rvar('a'), b = rvar('b')):
+    L = 1 # TODO L is ignored for now
+    # rp = (a * b - 5 * k**2) * sin(2 * k) + 2 * (a + b) * k * cos(2 * k)
+    # ip = (a + b) * k * sin(2 * k) + 4 * k**2 * cos(2 * k)
+
+    rp = (a * b - 10 * k**2) * sin(2 * k) + 3 * (a + b) * k * cos(2 * k)
+    ip = (a + b) * k * sin(2 * k) + 6 * k**2 * cos(2 * k)
+    Sd = (rp + i * ip) / (rp - i * ip)
+    return Sd
 
 
 # interesting at a = 0
@@ -299,10 +340,10 @@ def test_matrices(S, Sa):
 # S = solve_interval()(a=a)
 # view_later(S)
 
-# a = 2
-# b = 0
-a = var('a', domain='real')
-b = var('b', domain='real')
+a = 1
+b = 1
+# a = var('a', domain='real')
+# b = var('b', domain='real')
 
 S = solve_delta().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
@@ -322,7 +363,14 @@ view_later(S)
 Sa = solve_double_loop_analytic()(a=a, b=b)
 view_later(Sa)
 
-# test_matrices(S, Sa)
+
+S = solve_triple_loop().rational_simplify(algorithm='noexpand')(a=a, b=b)
+view_later(S)
+Sa = solve_triple_loop_analytic()(a=a, b=b)
+view_later(Sa)
+
+test_matrices(S, Sa)
+
 view_all()
 
 
