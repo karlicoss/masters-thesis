@@ -150,6 +150,70 @@ class IntervalSolver(object):
         SM = asymmetric_Smatrix(Bs, Cs)
         return SM(L=L_val).det()
 
+# TODO look at eigenvalues
+class FractalSolver(object):
+    # wires: integer
+    # a: symbolic/float
+    # b: symbolic/float
+    def __init__(self, wires, a=rvar('a')):
+        super(FractalSolver, self).__init__()
+        self.wires = wires
+        self.a = a
+
+
+    def solve_analytic(self):
+        a = self.a
+        W = self.wires
+        # to make formulas look pretty
+
+        L = 1
+        if W == 1: 
+            # coeff = 0 if W == 0 else W**2 + 1
+            # num = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) + 2 * W * i * k**2 * cos(2 * k) + i * (a + b) * k * sin(2 * k)
+            # den = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) - 2 * W * i * k**2 * cos(2 * k) - i * (a + b) * k * sin(2 * k)
+            num = 2 * a * k * cos(k) + (a**2 - 2 * k**2) * sin(k) + 2 * i * k**2 * cos(k) + 2 * i * a * k * sin(k)
+            den = 2 * a * k * cos(k) + (a**2 - 2 * k**2) * sin(k) - 2 * i * k**2 * cos(k) - 2 * i * a * k * sin(k)
+            return num / den
+        elif W == 2:
+            num = -(4 * k ** 3 - 4 * k) * cos(k) * sin(k) + (-6 * k ** 2 + 1) * sin(k)**2 + 3 * k**2 + 2 * i * k**3 + 6 * i * k**2 * cos(k) * sin(k) - (4 * i * k**3 - 2 * i * k) * sin(k)**2
+            den = -(4 * k ** 3 - 4 * k) * cos(k) * sin(k) + (-6 * k ** 2 + 1) * sin(k)**2 + 3 * k**2 - 2 * i * k**3 - 6 * i * k**2 * cos(k) * sin(k) + (4 * i * k**3 - 2 * i * k) * sin(k)**2
+            return num / den
+        else:
+            return None
+
+    def solve_symbolic(self, L_val=1):
+        L = rvar('L')
+        letters = string.uppercase[7:][:self.wires]
+        ones = [var(p + '1') for p in letters]
+        twos = [var(p + '2') for p in letters]
+
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
+
+        equations = []
+
+        all_wfs  = wavefunctions + [f_out]
+        all_wfds = wavefunctionsd + [f_out_d]
+        last = f_inc(x=0)
+        lastd = f_inc_d(x=0)
+        curL = L
+        for cur, curd in zip(all_wfs, all_wfds):
+            equations.append(last == cur(x=0))
+            equations.append(-lastd + curd(x=0) == a * cur(x=0))
+            last = cur(x=curL) # TODO adjust length
+            lastd = curd(x=curL)
+            # curL = curL / 2
+
+        solutions = solve(
+            equations,
+            B, C, *(ones + twos),
+            solution_dict=True
+        )
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM(L=L_val).det()
 
 def solve_loop():
     A, B = var('A B') # TODO FIXME
@@ -225,16 +289,16 @@ def test_matrices(S, Sa):
 
 a = var('a', domain='real')
 b = var('b', domain='real')
-a = 2
-b = -2
+# a = 2
+# b = -2
 # !!!! case 0 only works for a = b
 
 
-for wires in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
-    S = IntervalSolver(wires, a=a, b=b).solve_symbolic()
-    Sa = IntervalSolver(wires, a=a, b=b).solve_analytic()
-    # view_later(S)
-    test_matrices(S, Sa)
+# for wires in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+#     S = IntervalSolver(wires, a=a, b=b).solve_symbolic()
+#     Sa = IntervalSolver(wires, a=a, b=b).solve_analytic()
+#     # view_later(S)
+#     test_matrices(S, Sa)
 
 # view_all()
     
@@ -269,18 +333,40 @@ def plot_bound_energies():
 def check_zero(Sdet):
     t = var('t')
     for R in [1, 2, 4, 16, 32, 64, 128, 256]:
-        ig = ln(abs(Sdet)) * 1 / (k - 1) ** 2
+        ig = ln(abs(Sdet)) * 1 / (k) ** 2
         ff = ig(k = R * exp(i * t) + i * R) * R * i * exp(i * t)
         print("R = {}".format(R))
+        show(ff)
+        show(integral(ff, t, 0, pi))
         show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
         show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))    
     
-a = -1
-b = -1
-solver = IntervalSolver(1, a=a, b=b)
-Sd = solver.solve_analytic()
-
+# a = 1
+# b = 1
+# solver = IntervalSolver(1, a=a, b=b)
+# Sd = solver.solve_analytic()
 # plot_all(Sd)
+# check_zero(Sd)
+
+a = 1
+
+solver = FractalSolver(2, a=a)
+Sa = solver.solve_analytic()
+S = solver.solve_symbolic(L_val=1)
+
+# solver = FractalSolver(2, a=a)
+# S = solver.solve_symbolic(L_val=1)
+# view_later(S)
+# view_all()
+
+test_matrices(S, Sa)
+
+# for wires in range(0, 4):
+#     solver = FractalSolver(wires, a=a)
+#     Sd = solver.solve_symbolic(L_val=1)
+#     view_later(Sd)
+#     # plot_all(Sd, suffix=str(wires))
+# view_all()
 # v = SM.eigenvalues()[0]
 # t = var('t')
 # plot(ln(v(k=i*t).real()), (t, 0, 10)).save('plot.png')
