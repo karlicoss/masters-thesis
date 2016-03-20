@@ -175,8 +175,8 @@ class FractalSolver(object):
             den = 2 * a * k * cos(k) + (a**2 - 2 * k**2) * sin(k) - 2 * i * k**2 * cos(k) - 2 * i * a * k * sin(k)
             return num / den
         elif W == 2:
-            num = -(4 * k ** 3 - 4 * k) * cos(k) * sin(k) + (-6 * k ** 2 + 1) * sin(k)**2 + 3 * k**2 + 2 * i * k**3 + 6 * i * k**2 * cos(k) * sin(k) - (4 * i * k**3 - 2 * i * k) * sin(k)**2
-            den = -(4 * k ** 3 - 4 * k) * cos(k) * sin(k) + (-6 * k ** 2 + 1) * sin(k)**2 + 3 * k**2 - 2 * i * k**3 - 6 * i * k**2 * cos(k) * sin(k) + (4 * i * k**3 - 2 * i * k) * sin(k)**2
+            num = -(4 * k ** 3 - 4 * a**2 * k) * cos(k) * sin(k) + (-6 * a * k**2 + a**3) * sin(k)**2 + 3 * a * k**2 + 2 * i * k**3 + 6 * i * a * k**2 * cos(k) * sin(k) - (4 * i * k**3 - 2 * i * a**2 * k) * sin(k)**2
+            den = -(4 * k ** 3 - 4 * a**2 * k) * cos(k) * sin(k) + (-6 * a * k**2 + a**3) * sin(k)**2 + 3 * a * k**2 - 2 * i * k**3 - 6 * i * a * k**2 * cos(k) * sin(k) + (4 * i * k**3 - 2 * i * a**2 * k) * sin(k)**2
             return num / den
         else:
             return None
@@ -348,14 +348,14 @@ def check_zero(Sdet):
 # plot_all(Sd)
 # check_zero(Sd)
 
-a = 1
+a = 2
 
 solver = FractalSolver(2, a=a)
 Sa = solver.solve_analytic()
 S = solver.solve_symbolic(L_val=1)
 
 # solver = FractalSolver(2, a=a)
-# S = solver.solve_symbolic(L_val=1)
+S = solver.solve_symbolic(L_val=1)
 # view_later(S)
 # view_all()
 
