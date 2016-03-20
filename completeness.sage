@@ -116,8 +116,8 @@ def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
 
-    nom = a * b * sin(2 * k) - 2 * k**2 * sin(2 * k) + i * 2 * k**2 * cos(2 * k) + (a + b) * k * cos(2 * k) + i * (a + b) * k * sin(2 * k)
-    den = a * b * sin(2 * k) - 2 * k**2 * sin(2 * k) - i * 2 * k**2 * cos(2 * k) + (a + b) * k * cos(2 * k) - i * (a + b) * k * sin(2 * k)
+    nom = i * a * b * (exp(-2 * i * k) - exp(2 * i * k)) + i * 4 * k**2 * exp( 2 * i * k) + 2 * (a + b) * k * exp(2 * i * k)
+    den = i * a * b * (exp(-2 * i * k) - exp(2 * i * k)) - i * 4 * k**2 * exp(-2 * i * k) + 2 * (a + b) * k * exp(-2 * i * k)
     Sd = nom / den
     return Sd    
 
@@ -253,7 +253,7 @@ def test_matrices(S, Sa):
                 else:
                     raise err
 
-a_val = 2
+a_val = 3
 b_val = 5
 
 
@@ -270,10 +270,10 @@ S = solve_interval().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val) #
 view_later(S)
 Sa = solve_interval_analytic()(a=a_val, b=b_val)
 view_later(Sa)
+view_all()
 
 test_matrices(S, Sa)
 
-view_all()
 
 
 
