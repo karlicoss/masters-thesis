@@ -81,25 +81,33 @@ def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     Q1, Q2 = var('C1 C2')
     L = rvar('L')
 
-    f2(x) = Q1 * exp(i * k * x) + Q2 * exp(-i * k * x)
+    f2(x) = Q1 * sin(k * x) + Q2 * cos(k * x) # Q1 * exp(i * k * x) + Q2 * exp(-i * k * x) #  # 
     f2d = f2.derivative(x)
 
     solutions = solve(
         [
-            f_inc(x=-L) == f2(x=-L), 
-            f2(x=L) == f_out(x=L), 
-            -f_inc_d(x=-L) + f2d(x=-L) == a * f_inc(x=-L), 
-            -f2d(x=L) + f_out_d(x=L) == a * f_out(x=L) # TODO
+            f_inc(x=0) == f2(x=-L), 
+            f2(x=L) == f_out(x=0), 
+            -f_inc_d(x=0) + f2d(x=-L) == a * f_inc(x=0), 
+            -f2d(x=L) + f_out_d(x=0) == a * f_out(x=0) # TODO
         ],
         B, C, Q1, Q2, 
         solution_dict=True
     )
 
-
     Bs = solutions[0][B].full_simplify()
     Cs = solutions[0][C].full_simplify()
     SM = asymmetric_Smatrix(Bs, Cs)
     return SM(L=L_val).det()
+
+def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
+    rp = 2 * a * k * cos(k)**2  + (a**2 - 2 * k**2) * cos(k) * sin(k) - a * k
+    # view_later(rp)
+    ip = 2 * k**2 * cos(k)**2 + 2 * a * k * cos(k) * sin(k) - k**2
+    # view_later(ip)
+    Sd = (rp + i * ip) / (rp - i * ip)
+    # view_later(Sd)
+    return Sd    
 
 # TODO analytic
 
@@ -240,16 +248,15 @@ b_val = 2
 # contour_integral_analysis(S)
 # S = solve_double_loop(a_val=5)
 # a = var('a', domain='real')
-S = solve_interval()(a=a_val)
-view_later(S)
-
-# S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val)
-# alala(S)
+# S = solve_interval()(a=a)
 # view_later(S)
-# Sa = solve_double_loop_analytic()(a=a_val)
-# view_later(Sa)
 
-# test_matrices(S, Sa)
+S = solve_interval().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val)
+view_later(S)
+Sa = solve_interval_analytic()(a=a_val)
+view_later(Sa)
+
+test_matrices(S, Sa)
 
 view_all()
 
