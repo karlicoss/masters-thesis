@@ -89,7 +89,7 @@ def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
             f_inc(x=0) == f2(x=-L), 
             f2(x=L) == f_out(x=0), 
             -f_inc_d(x=0) + f2d(x=-L) == a * f_inc(x=0), 
-            -f2d(x=L) + f_out_d(x=0) == a * f_out(x=0) # TODO
+            -f2d(x=L) + f_out_d(x=0) == b * f_out(x=0)
         ],
         B, C, Q1, Q2, 
         solution_dict=True
@@ -101,9 +101,9 @@ def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     return SM(L=L_val).det()
 
 def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
-    rp = 2 * a * k * cos(k)**2  + (a**2 - 2 * k**2) * cos(k) * sin(k) - a * k
+    rp = (2 * a * b - 4 * k**2) * cos(k) * sin(k) + (a + b) * k * cos(k)**2 - (a + b) * k * sin(k)**2
     # view_later(rp)
-    ip = 2 * k**2 * cos(k)**2 + 2 * a * k * cos(k) * sin(k) - k**2
+    ip = 2 * ((a + b) * k * cos(k) * sin(k) + k**2 * cos(k)**2 - k**2 * sin(k)**2)
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
     # view_later(Sd)
@@ -242,18 +242,21 @@ def test_matrices(S, Sa):
                     raise err
 
 a_val = 2
-b_val = 2
+b_val = 5
 
 
 # contour_integral_analysis(S)
 # S = solve_double_loop(a_val=5)
-# a = var('a', domain='real')
+
 # S = solve_interval()(a=a)
 # view_later(S)
 
-S = solve_interval().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val)
+# a = var('a', domain='real')
+# b = var('b', domain='real')
+
+S = solve_interval().rational_simplify(algorithm='noexpand')(a=a_val, b=b_val) # (a=a, b=b)
 view_later(S)
-Sa = solve_interval_analytic()(a=a_val)
+Sa = solve_interval_analytic()(a=a_val, b=b_val)
 view_later(Sa)
 
 test_matrices(S, Sa)
