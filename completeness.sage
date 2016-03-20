@@ -77,6 +77,31 @@ def solve_popov(a_val=0, L_val=1):
     # view_later(SM(L=1).eigenvalues())
     return SM(a=a_val, L=L_val)
 
+
+def solve_delta(a=rvar('a'), b=rvar('b'), L_val=1):
+    L = rvar('L')
+
+    solutions = solve(
+        [
+            f_inc(x=0) == f_out(x=0),
+            -f_inc_d(x=0) + f_out_d(x=0) == a * f_inc(x=0)
+        ],
+        B, C,
+        solution_dict=True
+    )
+    Bs = solutions[0][B].full_simplify()
+    Cs = solutions[0][C].full_simplify()
+    SM = asymmetric_Smatrix(Bs, Cs)
+    return SM.det()
+
+def solve_delta_analytic(a=rvar('a'), L_val=1):
+    L = 1 # TODO L is ignored for now
+    nom = a * sin(2 * k) + 2 * i * k * sin(2 * k) # k**2 TODO DOESN'T MAKE MUCH SENSE
+    den = a * sin(2 * k) - 2 * i * k * sin(2 * k)
+    Sd = nom / den
+    return Sd
+
+
 def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     Q1, Q2 = var('C1 C2')
     L = rvar('L')
@@ -183,7 +208,6 @@ def solve_double_loop(a=var('a', domain='real'), b=var('b', domain='real'), L_va
         -f_inc_d(x=0) + fQd(x=-L) + fWd(x=-L) == a * f_inc(x=0), 
         f_out_d(x=0) - fQd(x=L) - fWd(x=L) == b * f_out(x=0)
     ]
-    show(equations)
 
     solutions = solve(equations, B, C, Q1, Q2, W1, W2, solution_dict=True)
     Bs = solutions[0][B].full_simplify()
@@ -273,10 +297,17 @@ def test_matrices(S, Sa):
 # S = solve_interval()(a=a)
 # view_later(S)
 
-a = 3
-b = -3 
+a = 1
+b = 0
 # a = var('a', domain='real')
 # b = var('b', domain='real')
+
+S = solve_delta().rational_simplify(algorithm='noexpand')(a=a, b=b)
+view_later(S)
+Sa = solve_delta_analytic()(a=a, b=b)
+view_later(Sa)
+test_matrices(S, Sa)
+
 
 S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
