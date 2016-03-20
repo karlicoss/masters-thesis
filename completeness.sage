@@ -96,12 +96,8 @@ def solve_delta(a=rvar('a'), b=rvar('b'), L_val=1):
 
 def solve_delta_analytic(a=rvar('a'), L_val=1):
     L = 1 # TODO L is ignored for now
-    nom = -i * a * k * sin(2 * k) + 2 * k**2 * sin(2 * k)
-    den =  i * a * k * sin(2 * k) + 2 * k**2 * sin(2 * k)
-    den = (-3 * i * a * k - 3 * k**2) * cos(k) * sin(k) - (2 * a * k - 4 * i * k**2) * sin(k)**2 + a * k - 2 * i * k**2
-    nom = (+3 * i * a * k - 3 * k**2) * cos(k) * sin(k) - (2 * a * k + 4 * i * k**2) * sin(k)**2 + a * k + 2 * i * k**2
-    nom = a + 2 * i * k # | * i * k * sin(2 * k)
-    den = a - 2 * i * k
+    nom = (a * a - 0 * k**2) * sin(2 * k) + i * (a + a) * k * sin(2 * k)
+    den = (a * a - 0 * k**2) * sin(2 * k) - i * (a + a) * k * sin(2 * k)
     Sd = nom / den
     return Sd
 
@@ -340,8 +336,8 @@ def test_matrices(S, Sa):
 # S = solve_interval()(a=a)
 # view_later(S)
 
-a = 1
-b = 1
+a = 2
+b = 0
 # a = var('a', domain='real')
 # b = var('b', domain='real')
 
@@ -349,7 +345,7 @@ S = solve_delta().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
 Sa = solve_delta_analytic()(a=a, b=b)
 view_later(Sa)
-# test_matrices(S, Sa)
+test_matrices(S, Sa)
 
 
 S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b)
@@ -369,7 +365,7 @@ view_later(S)
 Sa = solve_triple_loop_analytic()(a=a, b=b)
 view_later(Sa)
 
-test_matrices(S, Sa)
+# test_matrices(S, Sa)
 
 view_all()
 
