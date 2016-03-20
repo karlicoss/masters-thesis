@@ -1,5 +1,9 @@
 reset()
 
+from itertools import product
+from pprint import pprint
+import string
+
 from sage.misc.viewer import viewer
 viewer.pdf_viewer("atril")
 
@@ -119,6 +123,50 @@ class IntervalSolver(object):
         den = self.wires * (self.a + self.b) * k * cos(2 * k) - 2 * self.wires * i * k**2 * cos(2 * k) - i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - sprimes * k**2) * sin(2 * k)
         return num / den
 
+    def solve_symbolic(self, L_val=1):
+        L = rvar('L')
+        letters = string.uppercase[7:][:self.wires]
+        ones = [var(p + '1') for p in letters]
+        twos = [var(p + '2') for p in letters]
+
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
+
+        equations = []
+
+        if self.wires == 0:
+            equations.append(f_inc(x=0) == f_out(x=0))
+            equations.append(-f_inc_d(x=0) + f_out_d(x=0) == a * f_inc(x=0))
+        else:
+            last = f_inc(x=0)
+            for wf in wavefunctions:
+                cur = wf(x=-L)
+                equations.append(last == cur)
+                last = cur
+
+            last = f_out(x=0)
+            for wf in wavefunctions:
+                cur = wf(x=L)
+                equations.append(last == cur)
+                last = cur
+
+            derl = -f_inc_d(x=0) + sum(wfd(x=-L) for wfd in wavefunctionsd) == a * f_inc(x=0)
+            derr =  f_out_d(x=0) - sum(wfd(x= L) for wfd in wavefunctionsd) == b * f_out(x=0)
+
+            equations.append(derl)
+            equations.append(derr)
+
+        solutions = solve(
+            equations,
+            B, C, *(ones + twos),
+            solution_dict=True
+        )
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM(L=L_val).det()
+
 
 def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     Q1, Q2 = var('C1 C2')
@@ -127,13 +175,14 @@ def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     f2(x) = Q1 * sin(k * x) + Q2 * cos(k * x) # Q1 * exp(i * k * x) + Q2 * exp(-i * k * x) #  # 
     f2d = f2.derivative(x)
 
+    equations = [
+        f_inc(x=0) == f2(x=-L), 
+        f_out(x=0) == f2(x=L), 
+        -f_inc_d(x=0) + f2d(x=-L) == a * f_inc(x=0), 
+        -f2d(x=L) + f_out_d(x=0) == b * f_out(x=0)
+    ]
     solutions = solve(
-        [
-            f_inc(x=0) == f2(x=-L), 
-            f2(x=L) == f_out(x=0), 
-            -f_inc_d(x=0) + f2d(x=-L) == a * f_inc(x=0), 
-            -f2d(x=L) + f_out_d(x=0) == b * f_out(x=0)
-        ],
+        equations,
         B, C, Q1, Q2, 
         solution_dict=True
     )
@@ -355,36 +404,35 @@ def test_matrices(S, Sa):
 # view_later(S)
 
 a = 2
-b = -5
+b = -2
 # a = var('a', domain='real')
 # b = var('b', domain='real')
 
+
+
 S = solve_delta().rational_simplify(algorithm='noexpand')(a=a, b=b)
-view_later(S)
-Sa = IntervalSolver(0, a=a, b=b).solve_analytic() # Isolve_delta_analytic()(a=a, b=b)
-view_later(Sa)
+S2 = IntervalSolver(0, a=a, b=b).solve_symbolic()
+Sa = IntervalSolver(0, a=a, b=b).solve_analytic()
+test_matrices(S, S2)
 
 
 S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b)
-view_later(S)
+S2 = IntervalSolver(1, a=a, b=b).solve_symbolic()
 Sa = IntervalSolver(1, a=a, b=b).solve_analytic()
-view_later(Sa)
-test_matrices(S, Sa)
+test_matrices(S, S2)
 
 
 S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a, b=b)
-view_later(S)
+S2 = IntervalSolver(2, a=a, b=b).solve_symbolic()
 Sa = IntervalSolver(2, a=a, b=b).solve_analytic()
-view_later(Sa)
-test_matrices(S, Sa)
+test_matrices(S, S2)
 
 S = solve_triple_loop().rational_simplify(algorithm='noexpand')(a=a, b=b)
-view_later(S)
+S2 = IntervalSolver(3, a=a, b=b).solve_symbolic()
 Sa = IntervalSolver(3, a=a, b=b).solve_analytic()
-view_later(Sa)
-test_matrices(S, Sa)
+test_matrices(S, S2)
 
-view_all()
+# view_all()
 
 
 
