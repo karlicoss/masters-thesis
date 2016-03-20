@@ -95,10 +95,15 @@ class IntervalSolver(object):
 
 
     def solve_analytic(self):
+        a = self.a
+        b = self.b
+        W = self.wires
+        # to make formulas look pretty
+
         L = 1
-        coeff = 0 if self.wires == 0 else self.wires**2 + 1
-        num = self.wires * (self.a + self.b) * k * cos(2 * k) + 2 * self.wires * i * k**2 * cos(2 * k) + i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - coeff * k**2) * sin(2 * k)
-        den = self.wires * (self.a + self.b) * k * cos(2 * k) - 2 * self.wires * i * k**2 * cos(2 * k) - i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - coeff * k**2) * sin(2 * k)
+        coeff = 0 if W == 0 else W**2 + 1
+        num = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) + 2 * W * i * k**2 * cos(2 * k) + i * (a + b) * k * sin(2 * k)
+        den = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) - 2 * W * i * k**2 * cos(2 * k) - i * (a + b) * k * sin(2 * k)
         return num / den
 
     def solve_symbolic(self, L_val=1):
@@ -221,7 +226,7 @@ def test_matrices(S, Sa):
 a = var('a', domain='real')
 b = var('b', domain='real')
 a = 2
-b = 2
+b = -2
 # !!!! case 0 only works for a = b
 
 
