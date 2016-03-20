@@ -102,6 +102,24 @@ def solve_delta_analytic(a=rvar('a'), L_val=1):
     return Sd
 
 
+class IntervalSolver(object):
+    # wires: integer
+    # a: symbolic/float
+    # b: symbolic/float
+    def __init__(self, wires, a=rvar('a'), b=rvar('b')):
+        super(IntervalSolver, self).__init__()
+        self.wires = wires
+        self.a = a
+        self.b = b
+
+    def solve_analytic(self):
+        L = 1
+        sprimes = sum(primes_first_n(self.wires))
+        num = self.wires * (self.a + self.b) * k * cos(2 * k) + 2 * self.wires * i * k**2 * cos(2 * k) + i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - sprimes * k**2) * sin(2 * k)
+        den = self.wires * (self.a + self.b) * k * cos(2 * k) - 2 * self.wires * i * k**2 * cos(2 * k) - i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - sprimes * k**2) * sin(2 * k)
+        return num / den
+
+
 def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     Q1, Q2 = var('C1 C2')
     L = rvar('L')
@@ -337,35 +355,34 @@ def test_matrices(S, Sa):
 # view_later(S)
 
 a = 2
-b = 0
+b = -5
 # a = var('a', domain='real')
 # b = var('b', domain='real')
 
 S = solve_delta().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
-Sa = solve_delta_analytic()(a=a, b=b)
+Sa = IntervalSolver(0, a=a, b=b).solve_analytic() # Isolve_delta_analytic()(a=a, b=b)
 view_later(Sa)
-test_matrices(S, Sa)
 
 
 S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
-Sa = solve_interval_analytic()(a=a, b=b)
+Sa = IntervalSolver(1, a=a, b=b).solve_analytic()
 view_later(Sa)
+test_matrices(S, Sa)
 
 
 S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
-Sa = solve_double_loop_analytic()(a=a, b=b)
+Sa = IntervalSolver(2, a=a, b=b).solve_analytic()
 view_later(Sa)
-
+test_matrices(S, Sa)
 
 S = solve_triple_loop().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
-Sa = solve_triple_loop_analytic()(a=a, b=b)
+Sa = IntervalSolver(3, a=a, b=b).solve_analytic()
 view_later(Sa)
-
-# test_matrices(S, Sa)
+test_matrices(S, Sa)
 
 view_all()
 
