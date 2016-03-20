@@ -108,14 +108,14 @@ def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
     Sd = (rp + i * ip) / (rp - i * ip)
     # view_later(Sd)
 
-
-    return Sd # !!!! TODO to keep consistent with double loop
     rp = (a * b - 2 * k**2) * sin(2 * k) + (a + b) * k * cos(2 * k)
     # view_later(rp)
     ip = (a + b) * k * sin(2 * k) + 2 * k**2 * cos(2 * k)
 
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
+
+    return Sd # !!!! TODO to keep consistent with double loop
 
     nom = i * a * b * exp(-2 * i * k) - i * a * b * exp(2 * i * k) + i * 4 * k**2 * exp( 2 * i * k) + 2 * (a + b) * k * exp(2 * i * k)
     den = i * a * b * exp(-2 * i * k) - i * a * b * exp(2 * i * k) - i * 4 * k**2 * exp(-2 * i * k) + 2 * (a + b) * k * exp(-2 * i * k)
@@ -125,11 +125,21 @@ def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
 
 def solve_double_loop_analytic(a=rvar('a'), b = rvar('b')):
     L = 1 # TODO L is ignored for now
-    rp = (a * b - 5 * k**2) * cos(k) * sin(k) + (a + b) * k * cos(2 * k)
+    rp = (a * b - 5 * k**2) * sin(2 * k) + 2 * (a + b) * k * cos(2 * k)
     # view_later(rp)
-    ip = (a + b) * k * cos(k) * sin(k) + 2 * k**2 * cos(2 * k)
+    ip = (a + b) * k * sin(2 * k) + 4 * k**2 * cos(2 * k)
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
+
+
+    # nom = a * b * sin(2 * k) - 5 * k**2 * sin(2 * k) + 4 * 
+
+    # rp = (a * b - 5 * k**2) * sin(2 * k) + 2 * (a + b) * k * cos(2 * k)
+    # view_later(rp)
+    # ip = (a + b) * k * sin(2 * k) + 4 * k**2 * cos(2 * k)
+    # view_later(ip)
+    # Sd = (rp + i * ip) / (rp - i * ip)
+
     # view_later(Sd)
     return Sd
 
@@ -263,18 +273,24 @@ def test_matrices(S, Sa):
 # S = solve_interval()(a=a)
 # view_later(S)
 
-a = 2
-b = 3 
+a = 3
+b = -3 
 # a = var('a', domain='real')
 # b = var('b', domain='real')
 
-S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b) # (a=a_val, b=b_val) #
+S = solve_interval().rational_simplify(algorithm='noexpand')(a=a, b=b)
 view_later(S)
 Sa = solve_interval_analytic()(a=a, b=b)
 view_later(Sa)
 
-test_matrices(S, Sa)
-# view_all()
+
+S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a, b=b)
+view_later(S)
+Sa = solve_double_loop_analytic()(a=a, b=b)
+view_later(Sa)
+
+# test_matrices(S, Sa)
+view_all()
 
 
 
