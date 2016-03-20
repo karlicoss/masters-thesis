@@ -93,11 +93,12 @@ class IntervalSolver(object):
         self.a = a
         self.b = b
 
+
     def solve_analytic(self):
         L = 1
-        sprimes = sum(primes_first_n(self.wires))
-        num = self.wires * (self.a + self.b) * k * cos(2 * k) + 2 * self.wires * i * k**2 * cos(2 * k) + i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - sprimes * k**2) * sin(2 * k)
-        den = self.wires * (self.a + self.b) * k * cos(2 * k) - 2 * self.wires * i * k**2 * cos(2 * k) - i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - sprimes * k**2) * sin(2 * k)
+        coeff = 0 if self.wires == 0 else self.wires**2 + 1
+        num = self.wires * (self.a + self.b) * k * cos(2 * k) + 2 * self.wires * i * k**2 * cos(2 * k) + i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - coeff * k**2) * sin(2 * k)
+        den = self.wires * (self.a + self.b) * k * cos(2 * k) - 2 * self.wires * i * k**2 * cos(2 * k) - i * (self.a + self.b) * k * sin(2 * k) + (self.a * self.b - coeff * k**2) * sin(2 * k)
         return num / den
 
     def solve_symbolic(self, L_val=1):
@@ -163,18 +164,12 @@ def solve_loop():
     show("T = ", Ts)
     return Rs(a = 1, L = 1), Ts(a = 1, L = 1)
 
-
-rrange = (0, 1000)
-irange = (0, 10)
-points = 500
-
-
 def icayley(x):
     return i * (1 + x) / (1 - x)
 
 DPI = 200
 
-def plot_all(Sdet, suffix=""):
+def plot_all(Sdet, suffix="", rrange=(-10, 10), irange=(-10, 10), points=500):
     complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     complex_plot(abs(Sdet), rrange, irange, plot_points=points).save('plot_abs{}.png'.format(suffix), figsize=[12, 2])
     complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
@@ -222,32 +217,22 @@ def test_matrices(S, Sa):
 # S = solve_interval()(a=a)
 # view_later(S)
 
+
+a = var('a', domain='real')
+b = var('b', domain='real')
 a = 2
 b = 2
 # !!!! case 0 only works for a = b
-# a = var('a', domain='real')
-# b = var('b', domain='real')
 
 
-S = IntervalSolver(0, a=a, b=b).solve_symbolic()
-Sa = IntervalSolver(0, a=a, b=b).solve_analytic()
-test_matrices(S, Sa)
+for wires in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+    S = IntervalSolver(wires, a=a, b=b).solve_symbolic()
+    Sa = IntervalSolver(wires, a=a, b=b).solve_analytic()
+    # view_later(S)
+    test_matrices(S, Sa)
 
 # view_all()
-
-S = IntervalSolver(1, a=a, b=b).solve_symbolic()
-Sa = IntervalSolver(1, a=a, b=b).solve_analytic()
-test_matrices(S, Sa)
-
-
-# S = solve_double_loop().rational_simplify(algorithm='noexpand')(a=a, b=b)
-S = IntervalSolver(2, a=a, b=b).solve_symbolic()
-Sa = IntervalSolver(2, a=a, b=b).solve_analytic()
-test_matrices(S, Sa)
-
-S = IntervalSolver(3, a=a, b=b).solve_symbolic()
-Sa = IntervalSolver(3, a=a, b=b).solve_analytic()
-test_matrices(S, Sa)
+    
 
 # view_all()
 
@@ -285,25 +270,12 @@ def check_zero(Sdet):
         show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
         show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))    
     
-
-# S = solve_popov(a_val=0)
-
-# S = solve_double_loop(a_val=-2, b_val=-2)
-# Sd = S.det()
-# y = var('y')
-# solve_double_loop(a_val=1)
-# Sd = solve_double_loop_analytic(a_val=y)
-# check_zero(Sd)
-# plot_bound_energies()
+a = -1
+b = -1
+solver = IntervalSolver(1, a=a, b=b)
+Sd = solver.solve_analytic()
 
 # plot_all(Sd)
-
-# view_later(Sd)
-# solve_popov()
-# solve_interval()
-# view_all()
-# draw_double_loop()
-# SM = solve_popov(a_val=0, L_val=1)
 # v = SM.eigenvalues()[0]
 # t = var('t')
 # plot(ln(v(k=i*t).real()), (t, 0, 10)).save('plot.png')
