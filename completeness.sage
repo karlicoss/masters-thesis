@@ -101,12 +101,24 @@ def solve_interval(a=rvar('a'), b=rvar('b'), L_val=1):
     return SM(L=L_val).det()
 
 def solve_interval_analytic(a=rvar('a'), b=rvar('b')): # L = 1
-    rp = (2 * a * b - 4 * k**2) * cos(k) * sin(k) + (a + b) * k * cos(k)**2 - (a + b) * k * sin(k)**2
+    rp = (a * b - 2 * k**2) * sin(2 * k) + (a + b) * k * cos(2 * k)
     # view_later(rp)
-    ip = 2 * ((a + b) * k * cos(k) * sin(k) + k**2 * cos(k)**2 - k**2 * sin(k)**2)
+    ip = (a + b) * k * sin(2 * k) + 2 * k**2 * cos(2 * k)
     # view_later(ip)
     Sd = (rp + i * ip) / (rp - i * ip)
     # view_later(Sd)
+
+
+    rp = (a * b - 2 * k**2) * sin(2 * k) + (a + b) * k * cos(2 * k)
+    # view_later(rp)
+    ip = (a + b) * k * sin(2 * k) + 2 * k**2 * cos(2 * k)
+
+    # view_later(ip)
+    Sd = (rp + i * ip) / (rp - i * ip)
+
+    nom = a * b * sin(2 * k) - 2 * k**2 * sin(2 * k) + i * 2 * k**2 * cos(2 * k) + (a + b) * k * cos(2 * k) + i * (a + b) * k * sin(2 * k)
+    den = a * b * sin(2 * k) - 2 * k**2 * sin(2 * k) - i * 2 * k**2 * cos(2 * k) + (a + b) * k * cos(2 * k) - i * (a + b) * k * sin(2 * k)
+    Sd = nom / den
     return Sd    
 
 # TODO analytic
