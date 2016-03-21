@@ -108,7 +108,57 @@ class PopovSolver(object):
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
         SM = asymmetric_Smatrix(Bs, Cs)
-        return SM(L=L_val).det()    
+        return SM(L=L_val).det()
+
+
+class LoopSolver(object):
+    # wires: integer
+    # a: symbolic/float
+    def __init__(self, wires, a=rvar('a')):
+        super(LoopSolver, self).__init__()
+        self.wires = wires
+        self.a = a
+    
+
+    def solve_analytic(self):
+        a = self.a
+        W = self.wires
+        # # to make formulas look pretty
+
+        num = 2 * k * cos(k) + (a + 2 * i * k) * sin(k) - 2 * k
+        den = 2 * k * cos(k) + (a - 2 * i * k) * sin(k) - 2 * k
+        return num / den
+
+
+    def solve_symbolic(self, L_val=1):
+        L = rvar('L')
+        letters = string.uppercase[7:][:self.wires]
+        ones = [var(p + '1') for p in letters]
+        twos = [var(p + '2') for p in letters]
+
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
+
+        equations = []
+
+        for wf in wavefunctions:
+            equations.append(f_inc(x=0) == wf(x=0))
+            equations.append(wf(x=0) == wf(x=L))
+            equations.append(wf(x=L) == f_out(x=0))
+
+        for wfd in wavefunctionsd:
+            equations.append(-f_inc_d(x=0) + wfd(x=0) - wfd(x=L) + f_out_d(x=0) == a * f_inc(x=0))
+
+        solutions = solve(
+            equations,
+            B, C, *(ones + twos),
+            solution_dict=True
+        )
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM(L=L_val).det()
 
 
 # TODO look at eigenvalues
@@ -131,6 +181,7 @@ class IntervalSolver(object):
 
         L = 1
         coeff = 0 if W == 0 else W**2 + 1
+        # TODO 2 * k might be becasue the actual length is 2 * L instead of L :)
         num = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) + 2 * W * i * k**2 * cos(2 * k) + i * (a + b) * k * sin(2 * k)
         den = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) - 2 * W * i * k**2 * cos(2 * k) - i * (a + b) * k * sin(2 * k)
         return num / den
@@ -250,24 +301,6 @@ class FractalSolver(object):
         SM = asymmetric_Smatrix(Bs, Cs)
         return SM(L=L_val).det()
 
-def solve_loop():
-    A, B = var('A B') # TODO FIXME
-    a, L = var('a L')
-    assume(a, 'real')
-    assume(L, 'real')
-
-    f2(x) = A * sin(k * x) + B * cos(k * x) # exp(i * k * x) + B * exp(- i * k * x)
-    f2d = f2.derivative(x)
-
-    solutions = solve([f_inc(0) == f2(0), f2(0) == f2(L), f2(0) == f_out(0), -f_inc_d(0) + f2d(0) - f2d(L) + f_out_d(0) == a * f_inc(0)], R, T, A, B, solution_dict=True)
-    
-    Rs = solutions[0][R].full_simplify()
-    Ts = solutions[0][T].full_simplify()
-
-    show("R = ", Rs)
-    show("T = ", Ts)
-    return Rs(a = 1, L = 1), Ts(a = 1, L = 1)
-
 def icayley(x):
     return i * (1 + x) / (1 - x)
 
@@ -376,7 +409,7 @@ def check_zero(Sdet):
         show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
         show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))    
     
-a = 2
+# a = 2
 # b = 1
 # solver = IntervalSolver(1, a=a, b=b)
 # Sd = solver.solve_analytic()
@@ -386,12 +419,19 @@ a = 2
 # a = 0
 
 for w in [0, 1, 2, 3]:
-    solver = PopovSolver(w, a=a)
+    solver = LoopSolver(w, a=a)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic()
     view_later(S)
     view_later(Sa)
-    test_matrices(S, Sa)
+
+    solver = LoopSolver(w, a=a)
+    S = solver.solve_symbolic()
+    Sa = solver.solve_analytic()
+    view_later(S)
+    view_later(Sa)
+
+    # test_matrices(S, Sa)
 # view_all()
 
 # solver = FractalSolver(0, a=a)
