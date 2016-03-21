@@ -69,6 +69,8 @@ class PopovSolver(object):
         self.wires = wires
         self.a = a
 
+    def spectrum(self, L_val=1):
+        return [pi * k / L_val for k in range(1, 10)]
 
     def solve_analytic(self):
         a = self.a
@@ -97,7 +99,7 @@ class PopovSolver(object):
         for wf in wavefunctions + [f_out]:
             equations.append(f_inc(x=0) == wf(x=0))
 
-        equations.append(-f_inc_d(x=0) + sum(wfd(x=0) for wfd in wavefunctionsd + [f_out_d]) == a * f_out(x=0))
+        equations.append(-f_inc_d(x=0) + sum(wfd(x=0) for wfd in wavefunctionsd) + f_out_d(x=0) == a * f_out(x=0))
 
         solutions = solve(
             equations,
@@ -119,14 +121,16 @@ class LoopSolver(object):
         self.wires = wires
         self.a = a
     
+    def spectrum(self, L_val=1):
+        return [k / (L_val / (2 * pi)) for k in range(1, 10)]
 
     def solve_analytic(self):
         a = self.a
         W = self.wires
         # # to make formulas look pretty
 
-        num = 2 * k * cos(k) + (a + 2 * i * k) * sin(k) - 2 * k
-        den = 2 * k * cos(k) + (a - 2 * i * k) * sin(k) - 2 * k
+        num = 2 * W * k * cos(k) + (a + 2 * i * k) * sin(k) - 2 * W * k
+        den = 2 * W * k * cos(k) + (a - 2 * i * k) * sin(k) - 2 * W * k
         return num / den
 
 
@@ -141,13 +145,13 @@ class LoopSolver(object):
 
         equations = []
 
+        equations.append(f_inc(x=0) == f_out(x=0))
+
         for wf in wavefunctions:
             equations.append(f_inc(x=0) == wf(x=0))
-            equations.append(wf(x=0) == wf(x=L))
             equations.append(wf(x=L) == f_out(x=0))
 
-        for wfd in wavefunctionsd:
-            equations.append(-f_inc_d(x=0) + wfd(x=0) - wfd(x=L) + f_out_d(x=0) == a * f_inc(x=0))
+        equations.append(-f_inc_d(x=0) + sum(wfd(x=0) - wfd(x=L) for wfd in wavefunctionsd) + f_out_d(x=0) == a * f_inc(x=0))
 
         solutions = solve(
             equations,
@@ -306,7 +310,7 @@ def icayley(x):
 
 DPI = 200
 
-def plot_all(Sdet, suffix="", rrange=(-10, 10), irange=(-10, 10), points=500):
+def plot_all(Sdet, suffix="", rrange=(-15, 15), irange=(-5, 5), points=500):
     complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     complex_plot(abs(Sdet), rrange, irange, plot_points=points).save('plot_abs{}.png'.format(suffix), figsize=[12, 2])
     complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
@@ -416,20 +420,30 @@ def check_zero(Sdet):
 # plot_all(Sd)
 # check_zero(Sd)
 
-# a = 0
+a = 1
 
-for w in [0, 1, 2, 3]:
-    solver = LoopSolver(w, a=a)
-    S = solver.solve_symbolic()
-    Sa = solver.solve_analytic()
-    view_later(S)
-    view_later(Sa)
+# for w in [0, 1, 2, 3]:
+#     solver = LoopSolver(w, a=a)
+#     # Sa = solver.solve_symbolic()
+#     Sa = solver.solve_analytic()
+#     # view_later(S)
+#     view_later(Sa)
 
-    solver = LoopSolver(w, a=a)
-    S = solver.solve_symbolic()
-    Sa = solver.solve_analytic()
-    view_later(S)
-    view_later(Sa)
+#     solver = PopovSolver(w, a=a)
+#     # S = solver.solve_symbolic()
+#     Sa = solver.solve_analytic()
+#     # view_later(S)
+#     view_later(Sa)
+
+
+loop = LoopSolver(2, a=a)
+print(loop.spectrum(L_val=2))
+plot_all(loop.solve_symbolic(L_val=2), suffix='loop')
+
+popov = PopovSolver(2, a=a)
+print(popov.spectrum())
+plot_all(popov.solve_symbolic(L_val=1), suffix='popov')
+
 
     # test_matrices(S, Sa)
 # view_all()
@@ -468,7 +482,6 @@ for w in [0, 1, 2, 3]:
 # solver = FractalSolver(2, a=a)
 # S = solver.solve_symbolic(L_val=1)
 # view_later(S)
-view_all()
 
 # test_matrices(S, Sa)
 
