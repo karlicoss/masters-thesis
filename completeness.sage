@@ -27,8 +27,8 @@ k = var('k', domain='complex')
 f_inc(x) = A * exp(i * k * x) + B * exp(-i * k * x)
 f_out(x) = C * exp(i * k * x) + D * exp(-i * k * x)
 
-f_inc(x) = i * (A - B) * sin(k * x) + (A + B) * cos(k * x)
-f_out(x) = i * (C - D) * sin(k * x) + (C + D) * cos(k * x)
+# f_inc(x) = i * (A - B) * sin(k * x) + (A + B) * cos(k * x)
+# f_out(x) = i * (C - D) * sin(k * x) + (C + D) * cos(k * x)
 # f_inc(x) = A * sin(k * x) + B * cos(k * x)
 # f_out(x) = C * sin(k * x) + D * cos(k * x)
 
@@ -61,29 +61,54 @@ def sanity_checks(S): # variable: k
         show(n(S(k=v) * S(k=v.conjugate()).H))
 
 
-def solve_popov_analytic(a_val=0):
-    a = a_val
-    rp = k * cos(k) + a * sin(k)
-    ip = 2 * k * sin(k)
-    Sd = (rp + i * ip) / (rp - i * ip)
-    return Sd
+class PopovSolver(object):
+    # wires: integer
+    # a: symbolic/float
+    def __init__(self, wires, a=rvar('a')):
+        super(PopovSolver, self).__init__()
+        self.wires = wires
+        self.a = a
 
-def solve_popov(a_val=0, L_val=1):
-    P = var('P')
-    a, L = var('a L')
-    assume(a, 'real')
-    assume(L, 'real')
 
-    f2(x) = P * sin(k * x)
-    f2d = f2.derivative(x)
+    def solve_analytic(self):
+        a = self.a
+        W = self.wires
+        # to make formulas look pretty
 
-    solutions = solve([f_inc(0) == f2(L), f2(L) == f_out(0), -f_inc_d(0) - f2d(L) + f_out_d(0) == a * f_inc(0)], B, C, P, solution_dict=True)
+        num = W * k * cos(k) + (a + 2 * i * k) * sin(k)
+        den = W * k * cos(k) + (a - 2 * i * k) * sin(k)
+        return num / den
 
-    Bs = solutions[0][B].full_simplify()
-    Cs = solutions[0][C].full_simplify()
-    SM = asymmetric_Smatrix(Bs, Cs)
-    # view_later(SM(L=1).eigenvalues())
-    return SM(a=a_val, L=L_val)
+
+    def solve_symbolic(self, L_val=1):
+        L = rvar('L')
+        letters = string.uppercase[7:][:self.wires]
+        ones = [var(p + '1') for p in letters]
+        twos = [var(p + '2') for p in letters]
+
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
+
+        equations = []
+
+        for wf in wavefunctions:
+            equations.append(wf(x=L) == 0)
+
+        for wf in wavefunctions + [f_out]:
+            equations.append(f_inc(x=0) == wf(x=0))
+
+        equations.append(-f_inc_d(x=0) + sum(wfd(x=0) for wfd in wavefunctionsd + [f_out_d]) == a * f_out(x=0))
+
+        solutions = solve(
+            equations,
+            B, C, *(ones + twos),
+            solution_dict=True
+        )
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM(L=L_val).det()    
 
 
 # TODO look at eigenvalues
@@ -351,7 +376,7 @@ def check_zero(Sdet):
         show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
         show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))    
     
-# a = 1
+a = 2
 # b = 1
 # solver = IntervalSolver(1, a=a, b=b)
 # Sd = solver.solve_analytic()
@@ -360,36 +385,45 @@ def check_zero(Sdet):
 
 # a = 0
 
-solver = FractalSolver(0, a=a)
-S = solver.solve_symbolic()
-view_later(S)
-Sa = solver.solve_analytic()
-view_later(Sa)
+for w in [0, 1, 2, 3]:
+    solver = PopovSolver(w, a=a)
+    S = solver.solve_symbolic()
+    Sa = solver.solve_analytic()
+    view_later(S)
+    view_later(Sa)
+    test_matrices(S, Sa)
+# view_all()
 
-solver = FractalSolver(1, a=a)
-S = solver.solve_analytic()
-Sa = solver.solve_symbolic()
-# test_matrices(S, Sa)
-# S = solver.solve_symbolic(L_val=1)
-# test_matrices(S, Sa)
-view_later(S)
-view_later(Sa)
+# solver = FractalSolver(0, a=a)
+# S = solver.solve_symbolic()
+# view_later(S)
+# Sa = solver.solve_analytic()
+# view_later(Sa)
 
-solver = FractalSolver(2, a=a)
-Sa = solver.solve_analytic()
-Sa = solver.solve_symbolic()
-# S = solver.solve_symbolic(L_val=1)
-# test_matrices(S, Sa)
-view_later(Sa)
+# solver = FractalSolver(1, a=a)
+# S = solver.solve_analytic()
+# Sa = solver.solve_symbolic()
+# # test_matrices(S, Sa)
+# # S = solver.solve_symbolic(L_val=1)
+# # test_matrices(S, Sa)
+# view_later(S)
+# view_later(Sa)
+
+# solver = FractalSolver(2, a=a)
+# Sa = solver.solve_analytic()
+# Sa = solver.solve_symbolic()
+# # S = solver.solve_symbolic(L_val=1)
+# # test_matrices(S, Sa)
+# view_later(Sa)
 
 
-solver = FractalSolver(3, a=a)
-Sa = solver.solve_symbolic()
-view_later(Sa)
+# solver = FractalSolver(3, a=a)
+# Sa = solver.solve_symbolic()
+# view_later(Sa)
 
-solver = FractalSolver(4, a=a)
-Sa = solver.solve_symbolic()
-view_later(Sa)
+# solver = FractalSolver(4, a=a)
+# Sa = solver.solve_symbolic()
+# view_later(Sa)
 
 # solver = FractalSolver(2, a=a)
 # S = solver.solve_symbolic(L_val=1)
