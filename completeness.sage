@@ -21,12 +21,16 @@ def view_all():
 
 # B is R
 # C is T
-A, B, C, D = var('A B C D')
-k = var('k')
-assume(k, 'imaginary')
+A, B, C, D = var('A B C D', domain='complex')
+k = var('k', domain='complex')
 
 f_inc(x) = A * exp(i * k * x) + B * exp(-i * k * x)
 f_out(x) = C * exp(i * k * x) + D * exp(-i * k * x)
+
+f_inc(x) = i * (A - B) * sin(k * x) + (A + B) * cos(k * x)
+f_out(x) = i * (C - D) * sin(k * x) + (C + D) * cos(k * x)
+# f_inc(x) = A * sin(k * x) + B * cos(k * x)
+# f_out(x) = C * sin(k * x) + D * cos(k * x)
 
 f_inc_d = f_inc.derivative(x)
 f_out_d = f_out.derivative(x)
@@ -167,7 +171,11 @@ class FractalSolver(object):
         # to make formulas look pretty
 
         L = 1
-        if W == 1: 
+        if W == 0:
+            num = a + 2 * i * k
+            den = a - 2 * i * k
+            return num / den
+        elif W == 1: 
             # coeff = 0 if W == 0 else W**2 + 1
             # num = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) + 2 * W * i * k**2 * cos(2 * k) + i * (a + b) * k * sin(2 * k)
             # den = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) - 2 * W * i * k**2 * cos(2 * k) - i * (a + b) * k * sin(2 * k)
@@ -178,6 +186,8 @@ class FractalSolver(object):
             num = -(4 * k ** 3 - 4 * a**2 * k) * cos(k) * sin(k) + (-6 * a * k**2 + a**3) * sin(k)**2 + 3 * a * k**2 + 2 * i * k**3 + 6 * i * a * k**2 * cos(k) * sin(k) - (4 * i * k**3 - 2 * i * a**2 * k) * sin(k)**2
             den = -(4 * k ** 3 - 4 * a**2 * k) * cos(k) * sin(k) + (-6 * a * k**2 + a**3) * sin(k)**2 + 3 * a * k**2 - 2 * i * k**3 - 6 * i * a * k**2 * cos(k) * sin(k) + (4 * i * k**3 - 2 * i * a**2 * k) * sin(k)**2
             return num / den
+        elif W == 3:
+            return None
         else:
             return None
 
@@ -348,18 +358,45 @@ def check_zero(Sdet):
 # plot_all(Sd)
 # check_zero(Sd)
 
-a = 2
+# a = 0
+
+solver = FractalSolver(0, a=a)
+S = solver.solve_symbolic()
+view_later(S)
+Sa = solver.solve_analytic()
+view_later(Sa)
+
+solver = FractalSolver(1, a=a)
+S = solver.solve_analytic()
+Sa = solver.solve_symbolic()
+# test_matrices(S, Sa)
+# S = solver.solve_symbolic(L_val=1)
+# test_matrices(S, Sa)
+view_later(S)
+view_later(Sa)
 
 solver = FractalSolver(2, a=a)
 Sa = solver.solve_analytic()
-S = solver.solve_symbolic(L_val=1)
+Sa = solver.solve_symbolic()
+# S = solver.solve_symbolic(L_val=1)
+# test_matrices(S, Sa)
+view_later(Sa)
+
+
+solver = FractalSolver(3, a=a)
+Sa = solver.solve_symbolic()
+view_later(Sa)
+
+solver = FractalSolver(4, a=a)
+Sa = solver.solve_symbolic()
+view_later(Sa)
 
 # solver = FractalSolver(2, a=a)
-S = solver.solve_symbolic(L_val=1)
+# S = solver.solve_symbolic(L_val=1)
 # view_later(S)
-# view_all()
+view_all()
 
-test_matrices(S, Sa)
+# test_matrices(S, Sa)
 
 # for wires in range(0, 4):
 #     solver = FractalSolver(wires, a=a)
