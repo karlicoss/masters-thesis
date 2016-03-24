@@ -196,8 +196,10 @@ class IntervalSolver(object):
 
         coeff = 0 if W == 0 else W**2 + 1
         # TODO 2 * k might be becasue the actual length is 2 * L instead of L :)
-        num = W * (a + b) * k * cos(2 * L * k) + (a * b - coeff * k**2) * sin(2 * L * k) + 2 * W * i * k**2 * cos(2 * L * k) + i * (a + b) * k * sin(2 * L * k)
-        den = W * (a + b) * k * cos(2 * L * k) + (a * b - coeff * k**2) * sin(2 * L * k) - 2 * W * i * k**2 * cos(2 * L * k) - i * (a + b) * k * sin(2 * L * k)
+        # num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
+        # den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
+        num =-2 * W * i * k**2 * cos(k) * exp(-i * k) + (a * a + coeff * k**2) * exp(-i * k) * sin(k)
+        den = 2 * W * i * k**2 * cos(k) * exp( i * k) + (a * a + coeff * k**2) * exp( i * k) * sin(k)
         return num / den
 
     def solve_symbolic(self):
@@ -214,28 +216,18 @@ class IntervalSolver(object):
 
         equations = []
 
+        left = 0
+        right = L
         if self.wires == 0:
             equations.append(f_inc(x=0) == f_out(x=0))
             equations.append(-f_inc_d(x=0) + f_out_d(x=0) == a * f_inc(x=0))
         else:
-            last = f_inc(x=-L) # TODO use this
-            last = f_inc(x=0)
             for wf in wavefunctions:
-                cur = wf(x=-L)
-                equations.append(last == cur)
-                last = cur
+                equations.append(f_inc(x=left) == wf(x=left))
+                equations.append(wf(x=right) == f_out(x=right))
 
-            last = f_out(x=L) # TODO use this
-            last = f_out(x=0)
-            for wf in wavefunctions:
-                cur = wf(x=L)
-                equations.append(last == cur)
-                last = cur
-
-            derl = -f_inc_d(x=-L) + sum(wfd(x=-L) for wfd in wavefunctionsd) == a * f_inc(x=-L) # TOOD use this
-            derr =  f_out_d(x=L) - sum(wfd(x=L) for wfd in wavefunctionsd) == b * f_out(x=L) # TODO use this
-            derl = -f_inc_d(x=0) + sum(wfd(x=-L) for wfd in wavefunctionsd) == a * f_inc(x=0)
-            derr =  f_out_d(x=0) - sum(wfd(x= L) for wfd in wavefunctionsd) == b * f_out(x=0)
+            derl = -f_inc_d(x=left) + sum(wfd(x=left) for wfd in wavefunctionsd) == a * f_inc(x=left)
+            derr =  f_out_d(x=right) - sum(wfd(x=right) for wfd in wavefunctionsd) == b * f_out(x=right)
 
             equations.append(derl)
             equations.append(derr)
@@ -445,23 +437,25 @@ def check_zero(Sdet):
 
 # a = 1
 a = rvar('a')
+b = rvar('b')
 L = rvar('L')
 
-a = 0
-b = 0
+a = 2
+b = -a
 L = 1
 
 
-for w in [1]: # , 2, 3]:
+for w in [1, 2, 3]:
     # solver = FractalSolver(w, a=a, L=L)
     solver = IntervalSolver(w, a=a, b=b, L=L)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic()
-    # test_matrices(S, Sa)
-    for q in arange(0, 5, 0.3):
-        print(n(S(k=q)))
-    view_later(S)
-    view_later(Sa)
+    test_matrices(S, Sa)
+    # for q in arange(0.1, 5, 0.3):
+        # print(n(S(k=q,a=1)))
+        # print(n(Sa(k=q,a=1)))
+    # view_later(S)
+    # view_later(Sa)
 
 view_all()
 
