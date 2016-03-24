@@ -252,15 +252,17 @@ class FractalSolver(object):
     # wires: integer
     # a: symbolic/float
     # b: symbolic/float
-    def __init__(self, wires, a=rvar('a')):
+    def __init__(self, wires, a=rvar('a'), L=rvar('L')):
         super(FractalSolver, self).__init__()
         self.wires = wires
         self.a = a
+        self.L = L
 
 
     def solve_analytic(self):
-        a = self.a
         W = self.wires
+        a = self.a
+        L = self.L
         # to make formulas look pretty
 
         L = 1
@@ -284,8 +286,10 @@ class FractalSolver(object):
         else:
             return None
 
-    def solve_symbolic(self, L_val=1):
-        L = rvar('L')
+    def solve_symbolic(self):
+        a = self.a
+        L = self.L
+
         letters = string.uppercase[7:][:self.wires]
         ones = [var(p + '1') for p in letters]
         twos = [var(p + '2') for p in letters]
@@ -299,13 +303,11 @@ class FractalSolver(object):
         all_wfds = wavefunctionsd + [f_out_d]
         last = f_inc(x=0)
         lastd = f_inc_d(x=0)
-        curL = L
         for cur, curd in zip(all_wfs, all_wfds):
             equations.append(last == cur(x=0))
             equations.append(-lastd + curd(x=0) == a * cur(x=0))
-            last = cur(x=curL) # TODO adjust length
-            lastd = curd(x=curL)
-            # curL = curL / 2
+            last = cur(x=L)
+            lastd = curd(x=L)
 
         solutions = solve(
             equations,
@@ -316,7 +318,7 @@ class FractalSolver(object):
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
         SM = asymmetric_Smatrix(Bs, Cs)
-        return SM(L=L_val).det()
+        return SM.det()
 
 def icayley(x):
     return i * (1 + x) / (1 - x)
@@ -437,19 +439,19 @@ def check_zero(Sdet):
 a = rvar('a')
 L = rvar('L')
 
-a = 2
-L = 3
+# a = 2
+# L = 3
 
 
 for w in [1, 2, 3]:
-    solver = PopovSolver(w, a=a, L=L)
+    solver = FractalSolver(w, a=a, L=L)
     S = solver.solve_symbolic()
-    Sa = solver.solve_analytic()
-    test_matrices(S, Sa)
-    # view_later(S)
+    # Sa = solver.solve_analytic()
+    # test_matrices(S, Sa)
+    view_later(S)
     # view_later(Sa)
 
-# view_all()
+view_all()
 
 # for w in [1, 2, 3, 4]:
 #     solver = PopovSolver(w, a=0)
