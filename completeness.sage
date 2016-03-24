@@ -218,23 +218,29 @@ class IntervalSolver(object):
             equations.append(f_inc(x=0) == f_out(x=0))
             equations.append(-f_inc_d(x=0) + f_out_d(x=0) == a * f_inc(x=0))
         else:
+            last = f_inc(x=-L) # TODO use this
             last = f_inc(x=0)
             for wf in wavefunctions:
                 cur = wf(x=-L)
                 equations.append(last == cur)
                 last = cur
 
+            last = f_out(x=L) # TODO use this
             last = f_out(x=0)
             for wf in wavefunctions:
                 cur = wf(x=L)
                 equations.append(last == cur)
                 last = cur
 
+            derl = -f_inc_d(x=-L) + sum(wfd(x=-L) for wfd in wavefunctionsd) == a * f_inc(x=-L) # TOOD use this
+            derr =  f_out_d(x=L) - sum(wfd(x=L) for wfd in wavefunctionsd) == b * f_out(x=L) # TODO use this
             derl = -f_inc_d(x=0) + sum(wfd(x=-L) for wfd in wavefunctionsd) == a * f_inc(x=0)
             derr =  f_out_d(x=0) - sum(wfd(x= L) for wfd in wavefunctionsd) == b * f_out(x=0)
 
             equations.append(derl)
             equations.append(derr)
+
+        pprint(equations)
 
         solutions = solve(
             equations,
@@ -441,21 +447,23 @@ def check_zero(Sdet):
 a = rvar('a')
 L = rvar('L')
 
-a = 3
-b = 1
-L = 2
+a = 0
+b = 0
+L = 1
 
 
-for w in [1, 2, 3]:
+for w in [1]: # , 2, 3]:
     # solver = FractalSolver(w, a=a, L=L)
     solver = IntervalSolver(w, a=a, b=b, L=L)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic()
-    test_matrices(S, Sa)
-    # view_later(S)
-    # view_later(Sa)
+    # test_matrices(S, Sa)
+    for q in arange(0, 5, 0.3):
+        print(n(S(k=q)))
+    view_later(S)
+    view_later(Sa)
 
-# view_all()
+view_all()
 
 # for w in [1, 2, 3, 4]:
 #     solver = PopovSolver(w, a=0)
