@@ -109,8 +109,8 @@ class PopovSolver(object):
 
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
-        SM = asymmetric_Smatrix(Bs, Cs)
-        return SM(L=L_val).det()
+        SM = asymmetric_Smatrix(Bs, Cs)(L=L_val)
+        return SM.det()
 
 
 class LoopSolver(object):
@@ -191,6 +191,10 @@ class IntervalSolver(object):
         return num / den
 
     def solve_symbolic(self, L_val=1):
+        a = self.a
+        b = self.b
+
+
         L = rvar('L')
         letters = string.uppercase[7:][:self.wires]
         ones = [var(p + '1') for p in letters]
@@ -231,8 +235,8 @@ class IntervalSolver(object):
 
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
-        SM = asymmetric_Smatrix(Bs, Cs)
-        return SM(L=L_val).det()
+        SM = asymmetric_Smatrix(Bs, Cs)(L=L_val)
+        return SM.det()
 
 # TODO look at eigenvalues
 class FractalSolver(object):
@@ -422,27 +426,40 @@ def check_zero(Sdet):
 
 a = 1
 
-# for w in [0, 1, 2, 3]:
-#     solver = LoopSolver(w, a=a)
-#     # Sa = solver.solve_symbolic()
-#     Sa = solver.solve_analytic()
-#     # view_later(S)
-#     view_later(Sa)
 
-#     solver = PopovSolver(w, a=a)
+for w in [1, 2, 3]:
+    solver = LoopSolver(w, a=a)
+    S = solver.solve_symbolic()
+    Sa = solver.solve_analytic()
+    test_matrices(S, Sa)
+    # view_later(S)
+    # view_later(Sa)
+
+
+
+# for w in [1, 2, 3, 4]:
+#     solver = PopovSolver(w, a=0)
 #     # S = solver.solve_symbolic()
 #     Sa = solver.solve_analytic()
 #     # view_later(S)
 #     view_later(Sa)
+# view_all()
 
+# for w in [0, 1, 2, 3, 4]:
+#     solver = PopovSolver(w, a=a)
+#     # S = solver.solve_symbolic()
+#     Sa = solver.solve_symbolic()
+#     # view_later(S)
+#     view_later(Sa)
+# view_all()
 
-loop = LoopSolver(2, a=a)
-print(loop.spectrum(L_val=2))
-plot_all(loop.solve_symbolic(L_val=2), suffix='loop')
+# loop = LoopSolver(1, a=a)
+# print(loop.spectrum(L_val=2))
+# plot_all(loop.solve_symbolic(L_val=2), suffix='loop')
 
-popov = PopovSolver(2, a=a)
-print(popov.spectrum())
-plot_all(popov.solve_symbolic(L_val=1), suffix='popov')
+# popov = PopovSolver(1, a=a)
+# print(popov.spectrum())
+# plot_all(popov.solve_symbolic(L_val=1), suffix='popov')
 
 
     # test_matrices(S, Sa)
