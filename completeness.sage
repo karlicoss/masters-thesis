@@ -179,32 +179,32 @@ class IntervalSolver(object):
     # wires: integer
     # a: symbolic/float
     # b: symbolic/float
-    def __init__(self, wires, a=rvar('a'), b=rvar('b')):
+    def __init__(self, wires, a=rvar('a'), b=rvar('b'), L=rvar('L')):
         super(IntervalSolver, self).__init__()
         self.wires = wires
         self.a = a
         self.b = b
+        self.L = L
 
 
     def solve_analytic(self):
+        W = self.wires
         a = self.a
         b = self.b
-        W = self.wires
+        L = self.L
         # to make formulas look pretty
 
-        L = 1
         coeff = 0 if W == 0 else W**2 + 1
         # TODO 2 * k might be becasue the actual length is 2 * L instead of L :)
-        num = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) + 2 * W * i * k**2 * cos(2 * k) + i * (a + b) * k * sin(2 * k)
-        den = W * (a + b) * k * cos(2 * k) + (a * b - coeff * k**2) * sin(2 * k) - 2 * W * i * k**2 * cos(2 * k) - i * (a + b) * k * sin(2 * k)
+        num = W * (a + b) * k * cos(2 * L * k) + (a * b - coeff * k**2) * sin(2 * L * k) + 2 * W * i * k**2 * cos(2 * L * k) + i * (a + b) * k * sin(2 * L * k)
+        den = W * (a + b) * k * cos(2 * L * k) + (a * b - coeff * k**2) * sin(2 * L * k) - 2 * W * i * k**2 * cos(2 * L * k) - i * (a + b) * k * sin(2 * L * k)
         return num / den
 
-    def solve_symbolic(self, L_val=1):
+    def solve_symbolic(self):
         a = self.a
         b = self.b
+        L = self.L
 
-
-        L = rvar('L')
         letters = string.uppercase[7:][:self.wires]
         ones = [var(p + '1') for p in letters]
         twos = [var(p + '2') for p in letters]
@@ -244,7 +244,7 @@ class IntervalSolver(object):
 
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
-        SM = asymmetric_Smatrix(Bs, Cs)(L=L_val)
+        SM = asymmetric_Smatrix(Bs, Cs)
         return SM.det()
 
 # TODO look at eigenvalues
@@ -308,6 +308,8 @@ class FractalSolver(object):
             equations.append(-lastd + curd(x=0) == a * cur(x=0))
             last = cur(x=L)
             lastd = curd(x=L)
+
+        pprint(equations)
 
         solutions = solve(
             equations,
@@ -439,19 +441,21 @@ def check_zero(Sdet):
 a = rvar('a')
 L = rvar('L')
 
-# a = 2
-# L = 3
+a = 3
+b = 1
+L = 2
 
 
 for w in [1, 2, 3]:
-    solver = FractalSolver(w, a=a, L=L)
+    # solver = FractalSolver(w, a=a, L=L)
+    solver = IntervalSolver(w, a=a, b=b, L=L)
     S = solver.solve_symbolic()
-    # Sa = solver.solve_analytic()
-    # test_matrices(S, Sa)
-    view_later(S)
+    Sa = solver.solve_analytic()
+    test_matrices(S, Sa)
+    # view_later(S)
     # view_later(Sa)
 
-view_all()
+# view_all()
 
 # for w in [1, 2, 3, 4]:
 #     solver = PopovSolver(w, a=0)
