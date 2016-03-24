@@ -75,6 +75,7 @@ class PopovSolver(object):
     def solve_analytic(self):
         a = self.a
         W = self.wires
+        L = self.L
         # to make formulas look pretty
 
         num = W * k * cos(k) + (a + 2 * i * k) * sin(k)
@@ -116,10 +117,11 @@ class PopovSolver(object):
 class LoopSolver(object):
     # wires: integer
     # a: symbolic/float
-    def __init__(self, wires, a=rvar('a')):
+    def __init__(self, wires, a=rvar('a'), L=rvar('L')):
         super(LoopSolver, self).__init__()
         self.wires = wires
         self.a = a
+        self.L = L
     
     def spectrum(self, L_val=1):
         return [k / (L_val / (2 * pi)) for k in range(1, 10)]
@@ -127,15 +129,19 @@ class LoopSolver(object):
     def solve_analytic(self):
         a = self.a
         W = self.wires
+        L = self.L
         # # to make formulas look pretty
 
-        num = 2 * W * k * cos(k) + (a + 2 * i * k) * sin(k) - 2 * W * k
-        den = 2 * W * k * cos(k) + (a - 2 * i * k) * sin(k) - 2 * W * k
+        num = 2 * W * k * cos(L * k) + (a + 2 * i * k) * sin(L * k) - 2 * W * k
+        den = 2 * W * k * cos(L * k) + (a - 2 * i * k) * sin(L * k) - 2 * W * k
         return num / den
 
 
-    def solve_symbolic(self, L_val=1):
-        L = rvar('L')
+    def solve_symbolic(self):
+        a = self.a
+        L = self.L
+
+
         letters = string.uppercase[7:][:self.wires]
         ones = [var(p + '1') for p in letters]
         twos = [var(p + '2') for p in letters]
@@ -162,7 +168,7 @@ class LoopSolver(object):
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
         SM = asymmetric_Smatrix(Bs, Cs)
-        return SM(L=L_val).det()
+        return SM.det()
 
 
 # TODO look at eigenvalues
@@ -424,18 +430,24 @@ def check_zero(Sdet):
 # plot_all(Sd)
 # check_zero(Sd)
 
-a = 1
+# a = 1
+a = rvar('a')
+L = rvar('L')
+
+a = 2
+L = 3
 
 
 for w in [1, 2, 3]:
-    solver = LoopSolver(w, a=a)
+    solver = LoopSolver(w, a=a, L=L)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic()
     test_matrices(S, Sa)
     # view_later(S)
+    
     # view_later(Sa)
 
-
+# view_all()
 
 # for w in [1, 2, 3, 4]:
 #     solver = PopovSolver(w, a=0)
