@@ -64,10 +64,11 @@ def sanity_checks(S): # variable: k
 class PopovSolver(object):
     # wires: integer
     # a: symbolic/float
-    def __init__(self, wires, a=rvar('a')):
+    def __init__(self, wires, a=rvar('a'), L=rvar('L')):
         super(PopovSolver, self).__init__()
         self.wires = wires
         self.a = a
+        self.L = L
 
     def spectrum(self, L_val=1):
         return [pi * k / L_val for k in range(1, 10)]
@@ -78,13 +79,15 @@ class PopovSolver(object):
         L = self.L
         # to make formulas look pretty
 
-        num = W * k * cos(k) + (a + 2 * i * k) * sin(k)
-        den = W * k * cos(k) + (a - 2 * i * k) * sin(k)
+        num = W * k * cos(L * k) + (a + 2 * i * k) * sin(L * k)
+        den = W * k * cos(L * k) + (a - 2 * i * k) * sin(L * k)
         return num / den
 
 
-    def solve_symbolic(self, L_val=1):
-        L = rvar('L')
+    def solve_symbolic(self):
+        a = self.a
+        L = self.L
+
         letters = string.uppercase[7:][:self.wires]
         ones = [var(p + '1') for p in letters]
         twos = [var(p + '2') for p in letters]
@@ -110,7 +113,7 @@ class PopovSolver(object):
 
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
-        SM = asymmetric_Smatrix(Bs, Cs)(L=L_val)
+        SM = asymmetric_Smatrix(Bs, Cs)
         return SM.det()
 
 
@@ -439,12 +442,11 @@ L = 3
 
 
 for w in [1, 2, 3]:
-    solver = LoopSolver(w, a=a, L=L)
+    solver = PopovSolver(w, a=a, L=L)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic()
     test_matrices(S, Sa)
     # view_later(S)
-    
     # view_later(Sa)
 
 # view_all()
