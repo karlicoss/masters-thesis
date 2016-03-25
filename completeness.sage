@@ -446,19 +446,21 @@ L = rvar('L')
 # L = 1
 
 
-# for w in [1, 2, 3]:
-#     # solver = FractalSolver(w, a=a, L=L)
-#     solver = IntervalSolver(w, a=a, b=b, L=L)
-#     S = solver.solve_symbolic()
-#     Sa = solver.solve_analytic()
-#     test_matrices(S(a=2, b=-3, L=2), Sa(a=2, b=-3, L=2))
-#     # for q in arange(0.1, 5, 0.3):
-#         # print(n(S(k=q,a=1,)))
-#         # print(n(Sa(k=q,a=0, b=0)))
-#     view_later(S)
-#     view_later(Sa)
+# TODO is det=1 wrong? Looks like complete reflection :(
+for w in [1, 2, 3]:
+    # solver = FractalSolver(w, a=a, L=L)
+    # solver = IntervalSolver(w, a=a, b=b, L=L)
+    solver = LoopSolver(w, a=a, L=L)
+    S = solver.solve_symbolic()
+    Sa = solver.solve_analytic()
+    test_matrices(S(a=2, L=2), Sa(a=2, L=2))
+    # for q in arange(0.1, 5, 0.3):
+        # print(n(S(k=q,a=1,)))
+        # print(n(Sa(k=q,a=0, b=0)))
+    view_later(S)
+    view_later(Sa)
 
-# view_all()
+view_all()
 
 # for w in [1, 2, 3, 4]:
 #     solver = PopovSolver(w, a=0)
@@ -476,9 +478,9 @@ L = rvar('L')
 #     view_later(Sa)
 # view_all()
 
-solver = IntervalSolver(1, a=1, b=1, L=1)
+# solver = IntervalSolver(1, a=1, b=1, L=1)
 # print(loop.spectrum(L_val=2))
-plot_all(solver.solve_analytic())
+# plot_all(solver.solve_analytic())
 
 # popov = PopovSolver(1, a=a)
 # print(popov.spectrum())
