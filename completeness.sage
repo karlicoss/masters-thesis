@@ -199,8 +199,8 @@ class IntervalSolver(object):
         # TODO 2 * k might be becasue the actual length is 2 * L instead of L :)
         # num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
         # den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
-        num = W * k * ((a + b) + 2 * i * k) * cos(k) * exp(-i * k) + (a * b + i * (a + b) * k - coeff * k**2) * exp(-i * k) * sin(k)
-        den = W * k * ((a + b) - 2 * i * k) * cos(k) * exp( i * k) + (a * b - i * (a + b) * k - coeff * k**2) * exp( i * k) * sin(k)
+        num = W * k * ((a + b) + 2 * i * k) * cos(k * L) * exp(-i * L * k) + (a * b + i * (a + b) * k - coeff * k**2) * exp(-i * L * k) * sin(k * L)
+        den = W * k * ((a + b) - 2 * i * k) * cos(k * L) * exp( i * L * k) + (a * b - i * (a + b) * k - coeff * k**2) * exp( i * L * k) * sin(k * L)
         return num / den
 
     def solve_symbolic(self):
@@ -443,7 +443,7 @@ L = rvar('L')
 # b = -3
 # a = 0
 # b = 0
-L = 1
+# L = 1
 
 
 for w in [1, 2, 3]:
@@ -451,7 +451,7 @@ for w in [1, 2, 3]:
     solver = IntervalSolver(w, a=a, b=b, L=L)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic()
-    test_matrices(S(a=2, b=-3), Sa(a=2, b=-3))
+    test_matrices(S(a=2, b=-3, L=2), Sa(a=2, b=-3, L=2))
     # for q in arange(0.1, 5, 0.3):
         # print(n(S(k=q,a=1,)))
         # print(n(Sa(k=q,a=0, b=0)))
