@@ -36,6 +36,7 @@ f_inc_d = f_inc.derivative(x)
 f_out_d = f_out.derivative(x)
 
 
+# det = -1 means 100% transmission?
 def symmetric_Smatrix(R, T):
     return matrix([
         [R, T], 
@@ -198,8 +199,8 @@ class IntervalSolver(object):
         # TODO 2 * k might be becasue the actual length is 2 * L instead of L :)
         # num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
         # den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
-        num =-2 * W * i * k**2 * cos(k) * exp(-i * k) + (a * a + coeff * k**2) * exp(-i * k) * sin(k)
-        den = 2 * W * i * k**2 * cos(k) * exp( i * k) + (a * a + coeff * k**2) * exp( i * k) * sin(k)
+        num = W * k * ((a + b) + 2 * i * k) * cos(k) * exp(-i * k) + (a * b + i * (a + b) * k - coeff * k**2) * exp(-i * k) * sin(k)
+        den = W * k * ((a + b) - 2 * i * k) * cos(k) * exp( i * k) + (a * b - i * (a + b) * k - coeff * k**2) * exp( i * k) * sin(k)
         return num / den
 
     def solve_symbolic(self):
@@ -231,8 +232,6 @@ class IntervalSolver(object):
 
             equations.append(derl)
             equations.append(derr)
-
-        pprint(equations)
 
         solutions = solve(
             equations,
@@ -440,8 +439,10 @@ a = rvar('a')
 b = rvar('b')
 L = rvar('L')
 
-a = 2
-b = -a
+# a = 2
+# b = -3
+# a = 0
+# b = 0
 L = 1
 
 
@@ -450,12 +451,12 @@ for w in [1, 2, 3]:
     solver = IntervalSolver(w, a=a, b=b, L=L)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic()
-    test_matrices(S, Sa)
+    test_matrices(S(a=2, b=-3), Sa(a=2, b=-3))
     # for q in arange(0.1, 5, 0.3):
-        # print(n(S(k=q,a=1)))
-        # print(n(Sa(k=q,a=1)))
-    # view_later(S)
-    # view_later(Sa)
+        # print(n(S(k=q,a=1,)))
+        # print(n(Sa(k=q,a=0, b=0)))
+    view_later(S)
+    view_later(Sa)
 
 view_all()
 
