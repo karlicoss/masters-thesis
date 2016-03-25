@@ -324,7 +324,7 @@ def icayley(x):
 
 DPI = 200
 
-def plot_all(Sdet, suffix="", rrange=(-15, 15), irange=(-5, 5), points=500):
+def plot_all(Sdet, suffix="", rrange=(-350, 350), irange=(-7, 7), points=500):
     complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     complex_plot(abs(Sdet), rrange, irange, plot_points=points).save('plot_abs{}.png'.format(suffix), figsize=[12, 2])
     complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
@@ -446,19 +446,19 @@ L = rvar('L')
 # L = 1
 
 
-for w in [1, 2, 3]:
-    # solver = FractalSolver(w, a=a, L=L)
-    solver = IntervalSolver(w, a=a, b=b, L=L)
-    S = solver.solve_symbolic()
-    Sa = solver.solve_analytic()
-    test_matrices(S(a=2, b=-3, L=2), Sa(a=2, b=-3, L=2))
-    # for q in arange(0.1, 5, 0.3):
-        # print(n(S(k=q,a=1,)))
-        # print(n(Sa(k=q,a=0, b=0)))
-    view_later(S)
-    view_later(Sa)
+# for w in [1, 2, 3]:
+#     # solver = FractalSolver(w, a=a, L=L)
+#     solver = IntervalSolver(w, a=a, b=b, L=L)
+#     S = solver.solve_symbolic()
+#     Sa = solver.solve_analytic()
+#     test_matrices(S(a=2, b=-3, L=2), Sa(a=2, b=-3, L=2))
+#     # for q in arange(0.1, 5, 0.3):
+#         # print(n(S(k=q,a=1,)))
+#         # print(n(Sa(k=q,a=0, b=0)))
+#     view_later(S)
+#     view_later(Sa)
 
-view_all()
+# view_all()
 
 # for w in [1, 2, 3, 4]:
 #     solver = PopovSolver(w, a=0)
@@ -476,9 +476,9 @@ view_all()
 #     view_later(Sa)
 # view_all()
 
-# loop = LoopSolver(1, a=a)
+solver = IntervalSolver(1, a=1, b=1, L=1)
 # print(loop.spectrum(L_val=2))
-# plot_all(loop.solve_symbolic(L_val=2), suffix='loop')
+plot_all(solver.solve_analytic())
 
 # popov = PopovSolver(1, a=a)
 # print(popov.spectrum())
