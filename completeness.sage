@@ -313,7 +313,7 @@ class FractalSolver(object):
         all_wfds = wavefunctionsd # + [f_out_d]
         last = f_inc(x=left)
         lastd = f_inc_d(x=left)
-        for i, cur, curd in zip(range(1, W + 1), all_wfs, all_wfds):
+        for i, cur, curd in zip(range(1, W + 1), all_wfs, all_wfds): #TODO i is overridden !!!!!!!!
             equations.append(last == cur(x=0))
             equations.append(-lastd + curd(x=0) == i * a * cur(x=0))
             last = cur(x=L)
@@ -336,6 +336,112 @@ class FractalSolver(object):
         SM = asymmetric_Smatrix(Bs, Cs)
         return SM.det()
 
+
+class GridSolver(object):
+    # wires: integer
+    # a: symbolic/float
+    # b: symbolic/float
+    def __init__(self, wires, a=rvar('a'), L=rvar('L')):
+        super(GridSolver, self).__init__()
+        self.wires = wires
+        self.a = a
+        self.L = L
+
+    def solve_symbolic(self):
+        a = self.a
+        L = self.L
+        W = self.wires
+
+        irange = range(W + 1)
+        jrange = range(W + 1)
+
+        from itertools import product
+
+        vertices = set(product(irange, jrange))
+
+        edges = set()
+
+        for q, w in vertices:
+            neighbours = [p for p in [(q - 1, w), (q, w - 1), (q + 1, w), (q, w + 1)] if p in vertices]
+            for nb in neighbours:
+                edge = frozenset([nb, (q, w)])
+                edges.add(edge)
+
+        def encode(edge):
+            [(q, w), (e, r)] = list(edge)
+            return "e" + ''.join([str(y) for y in [q, w, e, r]])
+
+        def var1(edge):
+            return var(encode(edge) + "_1")
+
+        def var2(edge):
+            return var(encode(edge) + "_2")
+
+        variables = [var1(e) for e in edges] + [var2(e) for e in edges]
+
+        functions   = {e: var1(e) * exp(-i * k * x) + var2(e) * exp(i * k * x) for e in edges}
+        functions_d = {e: functions[e].derivative(x) for e in edges} 
+
+        equations = []
+        for q, w in vertices:
+
+            left  = (q - 1, w)
+            right = (q + 1, w)
+            up    = (q, w + 1)
+            down  = (q, w - 1)
+
+            def get_function(v):
+                edge = frozenset([v, (q, w)])
+                return functions[edge]
+
+            def get_function_d(v):
+                edge = frozenset([v, (q, w)])
+                return functions_d[edge]
+
+            values_at_vertex = []
+            sum_at_vertex = []
+            if left in vertices:
+                values_at_vertex.append(get_function(left)(x=L))
+                sum_at_vertex.append(-get_function_d(left)(x=L))
+            if right in vertices:
+                values_at_vertex.append(get_function(right)(x=0))
+                sum_at_vertex.append(get_function_d(right)(x=0))
+            if down in vertices:
+                values_at_vertex.append(get_function(down)(x=L))
+                sum_at_vertex.append(-get_function_d(down)(x=L))
+            if up in vertices:
+                values_at_vertex.append(get_function(up)(x=0))
+                sum_at_vertex.append(get_function_d(up)(x=0))
+
+            if (q, w) == (0, 0):
+                values_at_vertex.append(f_inc(x=0))
+                sum_at_vertex.append(-f_inc_d(x=0))
+
+            if (q, w) == (W, W):
+                values_at_vertex.append(f_out(x=W * L * sqrt(2)))
+                sum_at_vertex.append(f_out_d(x=W * L * sqrt(2)))
+                # TODO append right functoin
+
+            for e1, e2 in zip(values_at_vertex, values_at_vertex[1:]):
+                equations.append(e1 == e2)
+
+            equations.append(sum(sum_at_vertex) == a * values_at_vertex[0])
+
+        pprint(equations)
+        # pprint(len(equations))
+        # pprint(len(variables))
+
+        solutions = solve(
+            equations,
+            B, C, *variables,
+            solution_dict=True
+        )
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM.det()        
+
 def icayley(x):
     return i * (1 + x) / (1 - x)
 
@@ -354,17 +460,17 @@ DPI = 200
 #     # unit_circle = circle((0, 0), 1)
 #     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
-def plot_all(Sdet, suffix="", rrange=(2.0 + 100, 2 * 100), irange=(0.1, 2), points=500):
+def plot_all(Sdet, suffix="", rrange=(2.0 + 1000, 1020), irange=(0.1, 2), points=500):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     plot_abs = complex_plot(abs(Sdet), rrange, irange, plot_points=points)
     # l = line([(rrange[0], 5), (rrange[1], 5)], rgbcolor=(1, 0, 0))# complex_plot(lambda q: q.real() + 5 * i, rrange, irange, color='green')
     ll = [
-    
-        plot(lambda x: ln(x) / 4, rrange, color='red'),
-        plot(lambda x: 1.05 / 4 * ln(x), rrange, color='green'),
-        plot(lambda x: 1.065 / 4 * ln(x), rrange, color='yellow'),
-        plot(lambda x: 1.10 / 4 * ln(x), rrange, color='blue'),
+
+        # plot(lambda x: ln(x) / 4, rrange, color='red'),
+        # plot(lambda x: 1.05 / 4 * ln(x), rrange, color='green'),
+        # plot(lambda x: 1.065 / 4 * ln(x), rrange, color='yellow'),
+        # plot(lambda x: 1.10 / 4 * ln(x), rrange, color='blue'),
     ]
     t = var('t')
     # l = parametric_plot((t, 5), (t, rrange[0], rrange[1]), color='red')
@@ -521,11 +627,13 @@ L = rvar('L')
 #     view_later(Sa)
 # view_all()
 
-solver = FractalSolver(5, a=-1, L=1)
+solver = GridSolver(3, a=1, L=1)
 # solver = IntervalSolver(2, a=-1, b=-1, L=1)
 # print(loop.spectrum(L_val=2))
 # plot_all(solver.solve_analytic(), suffix='_fractal')
-plot_all(solver.solve_symbolic(), suffix='_fractal')
+# Sdet = solver.solve_symbolic()
+# pprint(Sdet)
+plot_all(solver.solve_symbolic(), suffix='_grid')
 
 # popov = PopovSolver(1, a=a)
 # print(popov.spectrum())
