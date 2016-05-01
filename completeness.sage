@@ -1,3 +1,6 @@
+from sage.all_cmdline import *
+from sympy import var
+
 reset()
 
 from itertools import product
@@ -198,7 +201,7 @@ class IntervalSolver(object):
         # to make formulas look pretty
 
         coeff = 0 if W == 0 else W**2 + 1
-        # TODO 2 * k might be becasue the actual length is 2 * L instead of L :)
+        # TODO 2 * k might be because the actual length is 2 * L instead of L :)
         # num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
         # den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
         num = W * k * ((a + b) + 2 * i * k) * cos(k * L) * exp(-i * L * k) + (a * b + i * (a + b) * k - coeff * k**2) * exp(-i * L * k) * sin(k * L)
@@ -221,6 +224,7 @@ class IntervalSolver(object):
 
         equations = []
 
+        wlen = L # * pi # TODO ????
         left = 0
         right = L
         if self.wires == 0:
@@ -228,17 +232,17 @@ class IntervalSolver(object):
             equations.append(-f_inc_d(x=0) + f_out_d(x=0) == a * f_inc(x=0))
         else:
             for wf in wavefunctions:
-                equations.append(f_inc(x=left) == wf(x=left))
-                equations.append(wf(x=right) == f_out(x=right))
+                equations.append(f_inc(x=left) == wf(x=0))
+                equations.append(wf(x=wlen) == f_out(x=right))
 
-            derl = -f_inc_d(x=left) + sum(wfd(x=left) for wfd in wavefunctionsd) == a * f_inc(x=left)
-            derr =  f_out_d(x=right) - sum(wfd(x=right) for wfd in wavefunctionsd) == b * f_out(x=right)
+            derl = -f_inc_d(x=left) + sum(wfd(x=0) for wfd in wavefunctionsd) == a * f_inc(x=left)
+            derr =  f_out_d(x=right) - sum(wfd(x=wlen) for wfd in wavefunctionsd) == b * f_out(x=right)
 
             equations.append(derl)
             equations.append(derr)
 
-        for e in equations:
-            view_later(e)
+        # for e in equations:
+        #     view_later(e)
 
         solutions = solve(
             equations,
@@ -249,14 +253,17 @@ class IntervalSolver(object):
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
 
-        view_later(Bs)
-        view_later(Cs)
+        # view_later("W = " + str(self.wires))
+        # view_later(Bs)
+        # view_later(Cs)
 
         SM = asymmetric_Smatrix(Bs, Cs)
+        # view_later(SM)
         return SM
 
-    def solve_symbolic_S(self):
+    def solve_symbolic(self):
         return self.solve_symbolic_S().det()
+
 
 # TODO look at eigenvalues
 class FractalSolver(object):
@@ -483,7 +490,7 @@ DPI = 200
 #     # unit_circle = circle((0, 0), 1)
 #     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
-def plot_all(Sdet, suffix="", rrange=(2.0 + 0, 100), irange=(-1, 1), points=1000):
+def plot_all(Sdet, suffix="", rrange=(1, 20), irange=(-3, 3), points=500):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     plot_abs = complex_plot(abs(Sdet), rrange, irange, plot_points=points)
@@ -498,7 +505,7 @@ def plot_all(Sdet, suffix="", rrange=(2.0 + 0, 100), irange=(-1, 1), points=1000
     t = var('t')
     # l = parametric_plot((t, 5), (t, rrange[0], rrange[1]), color='red')
     sum([plot_abs] + ll).save('plot_abs{}.png'.format(suffix), figsize=[12, 2])
-    # complex_plot(ln(abs(Sdet) * 10), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
+    # complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
     # unit_circle = circle((0, 0), 1)
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
@@ -634,13 +641,22 @@ L = rvar('L')
 
 # view_all()
 
-# for w in [1, 2, 3, 4]:
-#     solver = PopovSolver(w, a=0)
-#     # S = solver.solve_symbolic()
-#     Sa = solver.solve_analytic()
-#     # view_later(S)
-#     view_later(Sa)
+a = 2
+b = -3
+for w in [2, 3, 4]: #, 4, 5]:
+    solver = IntervalSolver(w, a, b, 1)
+    # S = solver.solve_symbolic_S()
+    # sanity_checks(S)
+    # S = solver.solve_symbolic()
+    Sa = solver.solve_analytic()
+    for qq in range(0, 20):
+        print(n(abs(Sa(k=qq))))
+    plot_all(Sa, suffix="_interval_" + str(w))
+    # view_later(S)
+    # view_later(Sa)
+    # test_matrices(S, Sa)
 # view_all()
+
 
 # for w in [0, 1, 2, 3, 4]:
 #     solver = PopovSolver(w, a=a)
@@ -650,13 +666,13 @@ L = rvar('L')
 #     view_later(Sa)
 # view_all()
 
-for w in [4]: # [1, 2, 3]:
-    solver = GridSolver(w, a=1, L=1)
-    S = solver.solve_symbolic()
-    # sanity_checks(S)
-    # Sa = solver.solve_analytic()
-    # test_matrices(S, Sa)
-    plot_all(S, suffix="_grid_" + str(w))
+# for w in [4]: # [1, 2, 3]:
+#     solver = GridSolver(w, a=1, L=1)
+#     S = solver.solve_symbolic()
+#     # sanity_checks(S)
+#     # Sa = solver.solve_analytic()
+#     # test_matrices(S, Sa)
+#     plot_all(S, suffix="_grid_" + str(w))
 
 # view_all()
 # solver = IntervalSolver(2, a=-1, b=-1, L=1)
