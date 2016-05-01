@@ -57,9 +57,11 @@ def sanity_checks(S): # variable: k
         show("Unitary on {}:".format(v))
         show(n(S(k=v) * S(k=v).H))
         
-    for v in [1 + i, 1 - i, -1 - i, -1 + i]:
-        show("S-matrix property on {}:".format(v))
-        show(n(S(k=v) * S(k=v.conjugate()).H))
+    for q in [1, 2, 4, 8]:
+        for v in [1 + i, 1 - i, -1 - i, -1 + i]:
+            w = q * v
+            show("S-matrix property on {}:".format(w))
+            show(n(S(k=w) * S(k=w.conjugate()).H))
 
 
 class PopovSolver(object):
@@ -203,7 +205,7 @@ class IntervalSolver(object):
         den = W * k * ((a + b) - 2 * i * k) * cos(k * L) * exp( i * L * k) + (a * b - i * (a + b) * k - coeff * k**2) * exp( i * L * k) * sin(k * L)
         return num / den
 
-    def solve_symbolic(self):
+    def solve_symbolic_S(self):
         a = self.a
         b = self.b
         L = self.L
@@ -251,7 +253,10 @@ class IntervalSolver(object):
         view_later(Cs)
 
         SM = asymmetric_Smatrix(Bs, Cs)
-        return SM.det()
+        return SM
+
+    def solve_symbolic_S(self):
+        return self.solve_symbolic_S().det()
 
 # TODO look at eigenvalues
 class FractalSolver(object):
@@ -347,7 +352,20 @@ class GridSolver(object):
         self.a = a
         self.L = L
 
-    def solve_symbolic(self):
+    def solve_analytic(self):
+        a = self.a
+        L = self.L
+        W = self.wires
+        # TODO a = 0
+        # TODO L = 1
+
+        if W == 1:
+            num = exp(4 * i * k) + 9
+            den = exp(4 * i * k) - 9
+            return num / den
+
+
+    def solve_symbolic_S(self):
         a = self.a
         L = self.L
         W = self.wires
@@ -437,10 +455,15 @@ class GridSolver(object):
             solution_dict=True
         )
 
+        pprint(solutions)
+
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
         SM = asymmetric_Smatrix(Bs, Cs)
-        return SM.det()        
+        return SM
+
+    def solve_symbolic(self):
+        return self.solve_symbolic_S().det()
 
 def icayley(x):
     return i * (1 + x) / (1 - x)
@@ -460,7 +483,7 @@ DPI = 200
 #     # unit_circle = circle((0, 0), 1)
 #     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
-def plot_all(Sdet, suffix="", rrange=(2.0 + 1000, 1020), irange=(0.1, 2), points=500):
+def plot_all(Sdet, suffix="", rrange=(2.0 + 0, 100), irange=(-1, 1), points=1000):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     plot_abs = complex_plot(abs(Sdet), rrange, irange, plot_points=points)
@@ -627,13 +650,21 @@ L = rvar('L')
 #     view_later(Sa)
 # view_all()
 
-solver = GridSolver(3, a=1, L=1)
+for w in [4]: # [1, 2, 3]:
+    solver = GridSolver(w, a=1, L=1)
+    S = solver.solve_symbolic()
+    # sanity_checks(S)
+    # Sa = solver.solve_analytic()
+    # test_matrices(S, Sa)
+    plot_all(S, suffix="_grid_" + str(w))
+
+# view_all()
 # solver = IntervalSolver(2, a=-1, b=-1, L=1)
 # print(loop.spectrum(L_val=2))
 # plot_all(solver.solve_analytic(), suffix='_fractal')
 # Sdet = solver.solve_symbolic()
 # pprint(Sdet)
-plot_all(solver.solve_symbolic(), suffix='_grid')
+# plot_all(solver.solve_symbolic(), suffix='_grid')
 
 # popov = PopovSolver(1, a=a)
 # print(popov.spectrum())
