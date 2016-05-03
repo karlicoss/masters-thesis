@@ -12,8 +12,12 @@ den = W * k * ((a + b) - 2 * i * k) * cos(k * L) * exp( i * L * k) + (a * b - i 
 # num = exp(-i * k) * (cos(k) + 2 * i * sin(k))
 # den = exp(i * k) *  (cos(k) - 2 * i * sin(k))
 
-num = num # * exp(i * L * k)
-den = den # * exp(-i * L * k)
+# num = num # * exp(i * L * k)
+# den = den # * exp(-i * L * k)
+
+num = 9 * (exp(2 * i * k) - 1) ** 2 - 64 * exp(2 * i * k)
+den = (exp(4 * i * k) - 9 * exp(2 * i * k)) * (exp(2 * i * k) - 9)
+
 
 print(num)
 print(den)
@@ -27,7 +31,7 @@ res2(k) = num(k=k) / num(k=conjugate(k))
 def plot_all(ff, suffix="", rrange=(-10, 30), irange=(-10, 10), points=1000):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
-    plot_abs = complex_plot(ln(abs(ff)), rrange, irange, plot_points=points)
+    plot_abs = complex_plot(abs(ff), rrange, irange, plot_points=points)
     # l = line([(rrange[0], 5), (rrange[1], 5)], rgbcolor=(1, 0, 0))# complex_plot(lambda q: q.real() + 5 * i, rrange, irange, color='green')
     ll = [
 
@@ -57,13 +61,18 @@ def contour_integral_analysis(expr):
 # numc(k) = num(k=conjugate(k))
 
 # print(n(ln(abs(res(k=1000 * (1 + i))))))
-contour_integral_analysis(res)
-# plot_all(num, suffix='num')
-# plot_all(res, suffix='all')
+# print(latex(res))
+# print(res)
+# f(k) = exp(-2 * I * L * k)
+# contour_integral_analysis(f)
+# contour_integral_analysis(res2)
+plot_all(num, suffix='num')
+plot_all(den, suffix='den')
+plot_all(res, suffix='all')
 # plot_all(res2, suffix='allc')
 
 # plot_all(numc, suffix='num_conj')
-# plot_all(den, suffix='den')
+
 
 # for qq in [1, 0.5, 0.2, 0.1, 0.05, 0.01, 0.001]:
 #     print(n(abs(res(k=qq + 0.01 * i))))

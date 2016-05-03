@@ -136,6 +136,64 @@ class PopovSolver(object):
         return self.solve_symbolic_S().det()
 
 
+# TODO look at eigenvalues
+class PopovSolver2(object):
+    # wires: integer
+    # a: symbolic/float
+    def __init__(self, wires, a=rvar('a'), L=rvar('L')):
+        super(PopovSolver2, self).__init__()
+        self.wires = wires
+        self.a = a
+        self.L = L
+
+
+    def solve_symbolic_S(self):
+        a = self.a
+        L = self.L
+        W = self.wires
+
+        letters = string.uppercase[7:][:3] # TODO
+        ones = [var(p + '1') for p in letters]
+        twos = [var(p + '2') for p in letters]
+
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
+
+        equations = []
+
+        wire1, wire1_d = wavefunctions[0], wavefunctionsd[0]
+        wire2, wire2_d = wavefunctions[2], wavefunctionsd[2]
+        conn, conn_d = wavefunctions[1], wavefunctionsd[1]
+
+        left = 0
+        right = L
+
+        equations.append(wire1(x=L) == 0)
+        equations.append(wire2(x=L) == 0)
+
+        equations.append(f_inc(x=left) == wire1(x=0))
+        equations.append(wire1(x=0) == conn(x=0))
+
+        equations.append(conn(x=L) == wire2(x=0))
+        equations.append(wire2(x=0) == f_out(x=right))
+
+        equations.append(-f_inc_d(x=left) + wire1_d(x=0) + conn_d(x=0) == 0) # TODO a
+        equations.append(-conn_d(x=L) - wire2_d(x=0) + f_out_d(x=right) == 0) # TODO a
+
+        solutions = solve(
+            equations,
+            B, C, *(ones + twos),
+            solution_dict=True
+        )
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM
+
+    def solve_symbolic(self):
+        return self.solve_symbolic_S().det()
+
 
 class LoopSolver(object):
     # wires: integer
@@ -218,8 +276,15 @@ class IntervalSolver(object):
         # TODO 2 * k might be because the actual length is 2 * L instead of L :)
         # num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
         # den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
-        num = W * k * ((a + b) + 2 * i * k) * cos(k * L) + (a * b + i * (a + b) * k - coeff * k**2) * sin(k * L)
-        den = W * k * ((a + b) - 2 * i * k) * cos(k * L) + (a * b - i * (a + b) * k - coeff * k**2) * sin(k * L)
+        # num = W * k * ((a + b) + 2 * i * k) * cos(k * L) + (a * b + i * (a + b) * k - coeff * k**2) * sin(k * L)
+        # den = W * k * ((a + b) - 2 * i * k) * cos(k * L) + (a * b - i * (a + b) * k - coeff * k**2) * sin(k * L)
+        # den = a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2 - exp(2 * I * k) * (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2)
+        # num = (W + 1)**2 * (exp(2 * i * k) - 1)**2 -
+        # den = ((W - 1) * exp(2 * i * k) - (W + 1)**2)**2
+        # num = (W + 1)**2 * (exp(2 * i * k) - 1)**2 - W**2 * exp(2 * i * k)
+        # den = (W + 1)**2 * (exp(2 * i * k) - 1)**2
+        num = (W + 1)**2 * exp(2 * i * k) - (W - 1)**2
+        den = (W - 1)**2 * exp(2 * i * k) - (W + 1)**2
         return num / den
 
     def solve_symbolic_S(self):
@@ -227,34 +292,35 @@ class IntervalSolver(object):
         a = self.a
         b = self.b
         L = self.L
-        L = 1
 
-        letters = string.uppercase[7:][:self.wires]
+        letters = string.uppercase[7:][:W]
         ones = [var(p + '1') for p in letters]
         twos = [var(p + '2') for p in letters]
 
         # wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
-        wavefunctions  = [o * exp(-i * k * x) + t * exp(i * k * x) for o, t in zip(ones, twos)]
+        wavefunctions  = [o * exp(i * k * x) + t * exp(-i * k * x) for o, t in zip(ones, twos)]
         wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
 
         equations = []
 
-        wlen = 2 * L # * pi # TODO ????
-        left = -L # TODO
-        right = L # TODO????
+        wlen = L # pi # TODO ????
+        left = 0 # TODO
+        right = 0 # TODO????
 
         for wf in wavefunctions:
             equations.append(f_inc(x=left) == wf(x=0))
             equations.append(wf(x=wlen) == f_out(x=right))
 
-        derl = -f_inc_d(x=left) + sum(wfd(x=0) for wfd in wavefunctionsd) == a * f_inc(x=left)
+        derl = -f_inc_d(x=left)  + sum(wfd(x=0)    for wfd in wavefunctionsd) == a * f_inc(x=left)
         derr =  f_out_d(x=right) - sum(wfd(x=wlen) for wfd in wavefunctionsd) == b * f_out(x=right)
 
         equations.append(derl)
         equations.append(derr)
 
+        # print("==================================")
         # for e in equations:
-        #     view_later(e)
+        #     print(e)
+        # print("==================================")
 
         solutions = solve(
             equations,
@@ -262,15 +328,12 @@ class IntervalSolver(object):
             solution_dict=True
         )
 
+        pprint(solutions[0])
+
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
 
-        # view_later("W = " + str(self.wires))
-        # view_later(Bs)
-        # view_later(Cs)
-
         SM = asymmetric_Smatrix(Bs, Cs)
-        # view_later(SM)
         return SM
 
     def solve_symbolic(self):
@@ -502,7 +565,7 @@ DPI = 200
 #     # unit_circle = circle((0, 0), 1)
 #     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
-def plot_all(Sdet, suffix="", rrange=(-2, 50), irange=(-7, 7), points=700):
+def plot_all(Sdet, suffix="", rrange=(-2, 50), irange=(-7, 7), points=500):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     plot_abs = complex_plot(abs(Sdet), rrange, irange, plot_points=points)
@@ -516,7 +579,7 @@ def plot_all(Sdet, suffix="", rrange=(-2, 50), irange=(-7, 7), points=700):
     ]
     t = var('t')
     # l = parametric_plot((t, 5), (t, rrange[0], rrange[1]), color='red')
-    sum([plot_abs] + ll).save('plot_abs{}.png'.format(suffix), figsize=[12, 2])
+    sum([plot_abs] + ll).save('abs{}.png'.format(suffix), figsize=[12, 2])
     # complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
     # unit_circle = circle((0, 0), 1)
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
@@ -525,14 +588,6 @@ def plot_all(Sdet, suffix="", rrange=(-2, 50), irange=(-7, 7), points=700):
 
 # S = solve_popov_analytic(a_val=10)
 # S = solve_double_loop(a_val=5, b_val=5)
-
-def contour_integral_analysis(expr):
-    ig(k) = ln(abs(expr(k=k))) / (k - 1) ** 2
-    for R in [1, 5, 10, 20, 50, 100, 200, 400, 500, 1000, 10000]:
-        pig(t) = ig(k = R * exp(i * t) + R * i) * R * i * exp(i * t)
-        show(numerical_integral(lambda q: pig(t=q).real(), 0, pi))
-        show(numerical_integral(lambda q: pig(t=q).imag(), 0, pi))    
-
 
 def region_analysis(expr):
     x, y = var('x y')
@@ -653,25 +708,37 @@ L = rvar('L')
 
 # view_all()
 
-a = 4
+def contour_integral_analysis(expr):
+    # denom(k) = cos(k) - 2 * i * sin(k)
+    # denom(k) = (cos(k) + 2 * i * sin(k)) / (cos(k) - 2 * i * sin(k))
+    ig(k) = ln(abs(expr(k=k))) / (k - 1) ** 2
+    for R in [1, 5, 10, 20, 50, 100, 200, 400, 500, 1000, 10000]:
+        pig(t) = ig(k = R * exp(i * t) + R * i) * R * i * exp(i * t)
+        rpart, _  = numerical_integral(lambda q: pig(t=q).real(), 0, pi)
+        impart, _ = numerical_integral(lambda q: pig(t=q).imag(), 0, pi)
+        print("{} {}".format(rpart, impart))
+
+
+
+a = 0
 b = 0
-for w in [1, 2, 3, 4, 5]:
-    # solver = PopovSolver(w, a=a, L=1)
-    solver = IntervalSolver(w, a=a, b=b, L=1)
-    # S = solver.solve_symbolic_S()
-    # sanity_checks(S)
+L = 1
+for w in [1, 2, 3, 4, 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
+    # solver = PopovSolver(w, a=a, L=L)
+    # solver = PopovSolver2(w, a=a, L=1)
+    solver = IntervalSolver(w, a=a, b=b, L=L)
+    Sa = solver.solve_analytic()
     S = solver.solve_symbolic_S()
-    sanity_checks(S)
-    Sm = S.det()
-    plot_all(Sm, suffix="_interval_" + str(w))
-    # Sa = solver.solve_analytic()
-    # sanity_checks(Sa)
-    # for qq in range(0, 20):
-    #     print(n(abs(Sa(k=qq))))
-    # view_later(S)
+    # sanity_checks(S)
+    Sm = S.det().full_simplify()
+    view_later("Wires = " + str(w))
+    view_later(Sm)
     # view_later(Sa)
-    # test_matrices(S, Sa)
-# view_all()
+    # plot_all(Sm, suffix="_interval_" + str(w))
+    # sanity_checks(Sa)
+    test_matrices(Sm, Sa)
+    # contour_integral_analysis(Sm) #  * exp(2 * i * k))
+view_all()
 
 
 # for w in [0, 1, 2, 3, 4]:

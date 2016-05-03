@@ -1,13 +1,148 @@
 \input{preamble.tex}
 \input{macros/macros.tex}
 
+\DeclareMathSizes{12}{19}{12}{12}
+
 \begin{document}
 
-Latex math notes demo. 
-
+Волна слева от рассеивателя:
 \[
-\bra{\vb{\psi}} \ket{\eps}
+\psi_L(x) = A e^{i k x} + B e^{-i k x}
+\]
+справа:
+\[
+\psi_R(x) = C e^{i k x} + D e^{-i k x}
+\]
+Ну и
+\[
+\begin{pmatrix}B \\ C \end{pmatrix} = \begin{pmatrix} S_{11} & S_{12} \\ S_{21} & S_{22} \end{pmatrix}\begin{pmatrix} A \\ D \end{pmatrix}
 \]
 
+
+Уравнения на рассеиватель: на непрерывность функций
+
+\[
+\psi_L(0) = \psi_1(0) = \psi_2(0)
+\]
+\[
+\psi_R(L) = \psi_1(L) = \psi_2(L)
+\]
+
+И условия на производную (для простоты, без скачка, $a=0$):
+
+\[
+-\psi'_L(0) + \psi'_1(0) + \psi'_2(0) = 0
+\]
+\[
+\psi'_R(L) - \psi'_1(L) - \psi'_2(L) = 0
+\]
+
+Для простоты дальше возьмем $L=1$; получаем систему:
+
+\[
+\begin{cases}
+A + B = Q_1 + Q_2 \\
+Q_1 e^{i k} + Q_2 e^{-i k} = C e^{i k} + D e^{-i k} \\
+A + B = W_1 + W_2 \\
+W_1 e^{i k} + W_2 e^{-i k} = C e^{i k} + D e^{-i k} \\
+-i A k + i B k + i Q_1 k - i Q_2 k + i W_1 k - i W_2 k = 0 \\
+i C k e^{i k} - i Q_1 k e^{i k} - i W_1 k e^{i k} - i D k e^{-i k} + i Q_2 k e^{-i k} + i W_2 k e^{-i k} = 0
+\end{cases}
+\]
+% A + B == Q1 + Q2
+% Q1*e^(I*k) + Q2*e^(-I*k) == C*e^(I*k) + D*e^(-I*k)
+% A + B == W1 + W2
+% W1*e^(I*k) + W2*e^(-I*k) == C*e^(I*k) + D*e^(-I*k)
+% -I*A*k + I*B*k + I*Q1*k - I*Q2*k + I*W1*k - I*W2*k == 0
+% I*C*k*e^(I*k) - I*Q1*k*e^(I*k) - I*W1*k*e^(I*k) - I*D*k*e^(-I*k) + I*Q2*k*e^(-I*k) + I*W2*k*e^(-I*k) == 0
+
+Решаем систему, получаем:
+\[
+\begin{cases}
+%  B: -(3*A*(e^(2*I*k) - 1) + 8*D)/(e^(2*I*k) - 9),
+%  C: -(3*D*(e^(2*I*k) - 1) + 8*A*e^(2*I*k))/(e^(4*I*k) - 9*e^(2*I*k))}
+B =                     & \frac{1}{e^{2 i k} - 9} ( -3 A (e^{2 i k} - 1) - 8 D ) \\ 
+C = \frac{1}{e^{2 i k}} & \frac{1}{e^{2 i k} - 9} ( -3 D (e^{2 i k} - 1) - 8 A e^{2 i k} ) 
+\end{cases}
+\]
+
+Отсюда сразу видно определитель $S$-матрицы:
+
+\[
+\det S = \frac{1}{e^{2 i k}} \left( \frac{1}{e^{2 i k} - 9} \frac{1}{e^{2 i k} - 9} \left( 9 (e^{2 i k} - 1)^2 - 64 e^{2 i k} \right) \right)
+\]
+
+\[
+\abs{\det S} = \abs{\frac{1}{e^{2 i k}} \left( \frac{1}{e^{2 i k} - 9} \frac{1}{e^{2 i k} - 9} \left( 9 (e^{2 i k} - 1)^2 - 64 e^{2 i k} \right) \right)} 
+\]
+\[
+             = \abs{\frac{1}{e^{2 i k}}}  \abs{\frac{1}{e^{2 i k} - 9} \frac{1}{e^{2 i k} - 9} \left( 9 (e^{2 i k} - 1)^2 - 64 e^{2 i k} \right)} 
+\]
+
+Логарифм :
+
+\[
+\ln \abs{\det S} = \ln \abs{\frac{1}{e^{2 i k}}} + \ln  \abs{\frac{1}{e^{2 i k} - 9} \frac{1}{e^{2 i k} - 9} \left( 9 (e^{2 i k} - 1)^2 - 64 e^{2 i k} \right)} 
+\]
+
+С правым слагаемым проблем нет, оно при интегрировании по контуру стремится к нулю. А вот с левым плохо:
+
+\[
+\ln \abs{\frac{1}{e^{2 i k}}} = 2 \Im k
+\]
+
+Эта штука при интегрировании не зануляется, получается константа, в конкретном случае вроде $\pi$, то есть критерий не выполняется, и система функций будет неполной. 
+
+
+% f_inc(x) = A * exp(i * k * x) + B * exp(-i * k * x)
+% f_out(x) = C * exp(i * k * x) + D * exp(-i * k * x)
+
+
+
+% Consider the following scattering setup: two half-infitine wires $\Omega_L$, $\Omega_R$ and a scatterer. Scatterer is a bundle composed of $W$ wires of length TODO. \\
+
+% We impose $\delta$-coupling boundary conditions on vertices.
+
+% Boundary conditions: for all $i$:
+% \[
+% \psi_L(V_L) = \psi_i(V_L)
+% \]
+% \[
+% \psi_i(V_R) = \psi_R(V_R)
+% \]
+% TODO delta coupling
+
+% For the sake of simplicity, we TODO
+
+% After solving the system, we get:
+
+% \[
+% \det S(k) = e^{-2 i L k} \frac{
+%     W k (a + b + 2 i k) \cos(k L) + (a b + i (a + b) k - (W^2 + 1) k^2) \sin(k L)
+% }{
+%     W k (a + b - 2 i k) \cos(k L) + (a b - i (a + b) k - (W^2 + 1) k^2) \sin(k L)
+% }
+% \]
+
+
+% % TODO Imag part
+% \[
+% \ln \abs{\det S(k)} = \ln \abs{e^{-2 i L k}} + \ln \abs{R} = 2 L \Im k + \ln \abs{R}
+% \]
+
+% Second part results in $0$.
+
+% First part results exactly in $\pi$.
+
+% We consider scattering from the left. 
+
+% Due to the symmetry of the system TODO
+
+
+% num = W * k * ((a + b) + 2 * i * k) * cos(k * L) * exp(-i * L * k) + (a * b + i * (a + b) * k - coeff * k**2) * exp(-i * L * k) * sin(k * L)
+% den = W * k * ((a + b) - 2 * i * k) * cos(k * L) * exp( i * L * k) + (a * b - i * (a + b) * k - coeff * k**2) * exp( i * L * k) * sin(k * L)
+% return num / den
+
+% abs(num/den) = abs(num)/abs(den).
 
 \end{document}
