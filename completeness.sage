@@ -285,8 +285,15 @@ class IntervalSolver(object):
         # den = (W + 1)**2 * (exp(2 * i * k) - 1)**2
         # num = (W + 1)**2 * exp(2 * i * k) - (W - 1)**2
         # den = (W - 1)**2 * exp(2 * i * k) - (W + 1)**2
-        num = (a**2 + (W - 1)**2 * k**2) - (a**2 + (W + 1)**2 * k**2) * exp(2 * i * k)
-        den = (a**2 + (W + 1)**2 * k**2) - (a**2 + (W - 1)**2 * k**2) * exp(2 * i * k)
+        # num = (a**2 + (W - 1)**2 * k**2) - (a**2 + (W + 1)**2 * k**2) * exp(2 * i * k)
+        # den = (a**2 + (W + 1)**2 * k**2) - (a**2 + (W - 1)**2 * k**2) * exp(2 * i * k)
+        # num = (a**2 + (W - 1)**2 * k**2) - (a**2 + (W + 1)**2 * k**2) * exp(2 * i * k)
+        # den = ((W + 1) * k + i)**2 - ((W - 1) * k - i)**2 * exp(2 * i * k)
+        num = - (W * 4)**2 * k**4 * exp(2 * i * k) \
+            + (a * b - i * ((W - 1) * a + (W + 1) * b) * k - (W - 1) * (W + 1) * k**2 - (a * b + i * ((W + 1) * a + (W - 1) * b) * k - (W - 1) * (W + 1) * k**2) * exp(2 * i * k)) \
+            * (a * b - i * ((W + 1) * a + (W - 1) * b) * k - (W + 1) * (W - 1) * k**2 - (a * b + i * ((W - 1) * a + (W + 1) * b) * k - (W + 1) * (W - 1) * k**2) * exp(2 * i * k))
+        den = ((a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k))**2
+        # num = den(k=conjugate(k))
         return num / den
 
     def solve_symbolic_S(self):
@@ -723,22 +730,27 @@ def contour_integral_analysis(expr):
 
 
 # a =
-a = 4
-b = -a
+# a = 4
+# a = 0
+a = 1
+b = -4
 L = 1
-for w in [2, 3, 4, 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
+for W in [1, 2, 3, 4, 5]:# , 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
     # solver = PopovSolver(w, a=a, L=L)
     # solver = PopovSolver2(w, a=a, L=1)
-    solver = IntervalSolver(w, a=a, b=b, L=L)
+    solver = IntervalSolver(W, a=a, b=b, L=L)
     Sa = solver.solve_analytic()
     S = solver.solve_symbolic_S()
     # sanity_checks(S)
-    Sm = S.det().full_simplify()
-    view_later("Wires = " + str(w))
+    Sm = S.det() # .full_simplify()
+    # view_later("Wires = " + str(W))
     # view_later(Sm)
     # view_later(Sa)
-    # view_later(Sa)
-    # plot_all(Sm, suffix="_interval_" + str(w))
+    # plot_all(Sm, suffix="_interval_" + str(W))
+    # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
+    # nomm = denn(k=conjugate(k))
+    # plot_all(nomm / denn, suffix="_intervam_" + str(W))
+
     # sanity_checks(Sa)
     test_matrices(Sm, Sa)
     # contour_integral_analysis(Sm) #  * exp(2 * i * k))
