@@ -283,8 +283,10 @@ class IntervalSolver(object):
         # den = ((W - 1) * exp(2 * i * k) - (W + 1)**2)**2
         # num = (W + 1)**2 * (exp(2 * i * k) - 1)**2 - W**2 * exp(2 * i * k)
         # den = (W + 1)**2 * (exp(2 * i * k) - 1)**2
-        num = (W + 1)**2 * exp(2 * i * k) - (W - 1)**2
-        den = (W - 1)**2 * exp(2 * i * k) - (W + 1)**2
+        # num = (W + 1)**2 * exp(2 * i * k) - (W - 1)**2
+        # den = (W - 1)**2 * exp(2 * i * k) - (W + 1)**2
+        num = (a**2 + (W - 1)**2 * k**2) - (a**2 + (W + 1)**2 * k**2) * exp(2 * i * k)
+        den = (a**2 + (W + 1)**2 * k**2) - (a**2 + (W - 1)**2 * k**2) * exp(2 * i * k)
         return num / den
 
     def solve_symbolic_S(self):
@@ -720,10 +722,11 @@ def contour_integral_analysis(expr):
 
 
 
-a = 0
-b = 0
+# a =
+a = 4
+b = -a
 L = 1
-for w in [1, 2, 3, 4, 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
+for w in [2, 3, 4, 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
     # solver = PopovSolver(w, a=a, L=L)
     # solver = PopovSolver2(w, a=a, L=1)
     solver = IntervalSolver(w, a=a, b=b, L=L)
@@ -732,7 +735,8 @@ for w in [1, 2, 3, 4, 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13
     # sanity_checks(S)
     Sm = S.det().full_simplify()
     view_later("Wires = " + str(w))
-    view_later(Sm)
+    # view_later(Sm)
+    # view_later(Sa)
     # view_later(Sa)
     # plot_all(Sm, suffix="_interval_" + str(w))
     # sanity_checks(Sa)
