@@ -15,7 +15,7 @@ def contour_integral_analysis(expr):
     for R in [1, 5, 10, 20, 50, 100, 200, 400, 500, 1000, 10000]:
         pig(t) = ig(k = R * exp(i * t) + R * i) * R * i * exp(i * t)
         show(numerical_integral(lambda q: pig(t=q).real(), 0, pi))
-        show(numerical_integral(lambda q: pig(t=q).imag(), 0, pi))    
+        show(numerical_integral(lambda q: pig(t=q).imag(), 0, pi))
 
 a = 5
 # contour_integral_analysis((k * cos(k) + a * sin(k) + 2 * i * k * sin(k)) / (k * cos(k) + a * sin(k) - 2 * i * k * sin(k)))

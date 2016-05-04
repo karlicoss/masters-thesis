@@ -1,9 +1,109 @@
 \input{preamble.tex}
 \input{macros/macros.tex}
 
-\DeclareMathSizes{12}{19}{12}{12}
+% \DeclareMathSizes{12}{19}{12}{12}
 
 \begin{document}
+
+Consider case $a = b = 0$ (no coupling).
+
+Then, 
+\[
+\det S = \frac{2 i \, W \cos\left(k\right) - {\left(W^{2} + 1\right)} \sin\left(k\right)}{-2 i \, W \cos\left(k\right) - {\left(W^{2} + 1\right)} \sin\left(k\right)}
+\]
+
+Define $k = u + v \iu$. 
+
+
+\[
+\frac{W {\left(a + b\right)} k \cos\left(k\right) + 2 i \, W k^{2} \cos\left(k\right) + {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}{W {\left(a + b\right)} k \cos\left(k\right) - 2 i \, W k^{2} \cos\left(k\right) - {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}
+\]
+
+Absolute value, squared:
+\[
+\frac{{\left(\sin\left(u\right)^{2} + \sinh\left(v\right)^{2}\right)} W^{4} - 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(\sin\left(u\right)^{2} - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} - 4 \, W \cosh\left(v\right) \sinh\left(v\right) + \sin\left(u\right)^{2} + \sinh\left(v\right)^{2}}{{\left(\sin\left(u\right)^{2} + \sinh\left(v\right)^{2}\right)} W^{4} + 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(\sin\left(u\right)^{2} - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} + 4 \, W \cosh\left(v\right) \sinh\left(v\right) + \sin\left(u\right)^{2} + \sinh\left(v\right)^{2}}
+\]
+
+Replace $\sin(u)$ by minimum and maximum values where appropriate: 
+
+\[
+\frac{{\left(1 + \sinh\left(v\right)^{2}\right)} W^{4} - 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(0 - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} - 4 \, W \cosh\left(v\right) \sinh\left(v\right) + 1 + \sinh\left(v\right)^{2}}{{\left(0 + \sinh\left(v\right)^{2}\right)} W^{4} + 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(1 - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} + 4 \, W \cosh\left(v\right) \sinh\left(v\right) + 0 + \sinh\left(v\right)^{2}}
+\]
+
+
+Divide everything by $\cosh^2(v)$ and use the estimate $0 \le \frac{1}{\cosh^2(v)} \le 1$: TODO ERROR tanh
+
+\[
+\frac
+{{\left(1 + 1\right)} W^{4} - 4 \, W^{3} \tanh\left(v\right) - 2 \, {\left(0 - 3 - 2\right)} W^{2} - 4 \, W \tanh\left(v\right) + 1 + \tanh\left(v\right)^{2}}
+{{\left(0 + 1\right)} W^{4} + 4 \, W^{3} \tanh\left(v\right) - 2 \, {\left(1 - 3 - 0\right)} W^{2} + 4 \, W \tanh\left(v\right) + 0 + \tanh\left(v\right)^{2}}
+\]
+
+Now, estimage $0 \le \tanh(v) \le 1$:
+
+\[
+\frac
+{{\left(1 + 1\right)} W^{4} - 4 \, W^{3} 1 - 2 \, {\left(0 - 3 - 2\right)} W^{2} - 4 \, W 0 + 1 + 1}
+{{\left(0 + 1\right)} W^{4} + 4 \, W^{3} 0 - 2 \, {\left(1 - 3 - 0\right)} W^{2} + 4 \, W 0 + 0 + 0}
+\]
+
+Since $W$ is constant for every specific instance of scattering problem, the upper bound is constant as well.
+
+
+Lower bound:
+
+Absolute value, squared:
+\[
+\frac{{\left(\sin\left(u\right)^{2} + \sinh\left(v\right)^{2}\right)} W^{4} - 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(\sin\left(u\right)^{2} - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} - 4 \, W \cosh\left(v\right) \sinh\left(v\right) + \sin\left(u\right)^{2} + \sinh\left(v\right)^{2}}{{\left(\sin\left(u\right)^{2} + \sinh\left(v\right)^{2}\right)} W^{4} + 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(\sin\left(u\right)^{2} - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} + 4 \, W \cosh\left(v\right) \sinh\left(v\right) + \sin\left(u\right)^{2} + \sinh\left(v\right)^{2}}
+\]
+
+Replace $\sin(u)$ by minimum and maximum values where appropriate: 
+
+\[
+\frac
+{{\left(0 + \sinh\left(v\right)^{2}\right)} W^{4} - 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(1 - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} - 4 \, W \cosh\left(v\right) \sinh\left(v\right) + 0 + \sinh\left(v\right)^{2}}
+{{\left(1 + \sinh\left(v\right)^{2}\right)} W^{4} + 4 \, W^{3} \cosh\left(v\right) \sinh\left(v\right) - 2 \, {\left(0 - 3 \, \sinh\left(v\right)^{2} - 2\right)} W^{2} + 4 \, W \cosh\left(v\right) \sinh\left(v\right) + 1 + \sinh\left(v\right)^{2}}
+\]
+
+Divide everything by $\sinh^2(v)$ and use the estimate TODO!!! $0 \le \frac{1}{\sinh^2(v)} \le C_1$:
+
+\[
+\frac
+{{\left(0   + 1\right)} W^{4} - 4 \, W^{3} \coth\left(v\right) - 2 \, {\left(C_1 - 3 - 2 \cdot 0  \right)} W^{2} - 4 \, W \coth\left(v\right) + 0   + 1}
+{{\left(C_1 + 1\right)} W^{4} + 4 \, W^{3} \coth\left(v\right) - 2 \, {\left(0   - 3 - 2       C_1\right)} W^{2} + 4 \, W \coth\left(v\right) + C_1 + 1}
+\]
+
+
+Now, estimage $1 \le \coth(v) \le D_1$:
+
+\[
+\frac
+{{\left(0   + 1\right)} W^{4} - 4 \, W^{3} D_1 - 2 \, {\left(C_1 - 3 - 2 \cdot 0  \right)} W^{2} - 4 \, W D_1 + 0   + 1}
+{{\left(C_1 + 1\right)} W^{4} + 4 \, W^{3} D_1 - 2 \, {\left(0   - 3 - 2       C_1\right)} W^{2} + 4 \, W D_1 + C_1 + 1}
+\]
+
+We observe two things: 1) the value of the polynomial in the denominator is always greater than zero
+2) for $W \ge 2$ we can always find $v$ big enough so that constants $C_1(v)$ and $D_1(v)$ are small enough to make the polynomial in the numerator greater than zero. Hence, we got a positive lower bound on the absolute value of $\det S$ as well. 
+
+\[
+0 < B_l \le \abs{\det S} \le B_u \implies \ln B_l \le \ln \abs{\det S} \le \ln B_u \implies \abs{\ln \abs{\det S}} \le \max(\abs{\ln B_l}, \abs{\ln B_u})
+\]
+
+Which means that the integral over the upper arc converges to zero as $R \to \infty$.
+
+
+
+\[
+\frac{{\left({\left(u^{2} \sin\left(u\right) + 2 i \, u v \sin\left(u\right) - v^{2} \sin\left(u\right)\right)} \cosh\left(v\right) - {\left(-i \, u^{2} \cos\left(u\right) + 2 \, u v \cos\left(u\right) + i \, v^{2} \cos\left(u\right)\right)} \sinh\left(v\right)\right)} W^{2} - {\left({\left({\left(i \, a + i \, b - 4 \, u\right)} v \cos\left(u\right) - 2 i \, v^{2} \cos\left(u\right) + {\left({\left(a + b\right)} u + 2 i \, u^{2}\right)} \cos\left(u\right)\right)} \cosh\left(v\right) + {\left({\left(a + b + 4 i \, u\right)} v \sin\left(u\right) - 2 \, v^{2} \sin\left(u\right) + {\left({\left(-i \, a - i \, b\right)} u + 2 \, u^{2}\right)} \sin\left(u\right)\right)} \sinh\left(v\right)\right)} W + {\left({\left(a + b + 2 i \, u\right)} v \sin\left(u\right) - v^{2} \sin\left(u\right) - {\left(a b + {\left(i \, a + i \, b\right)} u - u^{2}\right)} \sin\left(u\right)\right)} \cosh\left(v\right) - {\left({\left(-i \, a - i \, b + 2 \, u\right)} v \cos\left(u\right) + i \, v^{2} \cos\left(u\right) + {\left(i \, a b - {\left(a + b\right)} u - i \, u^{2}\right)} \cos\left(u\right)\right)} \sinh\left(v\right)}{{\left({\left(u^{2} \sin\left(u\right) + 2 i \, u v \sin\left(u\right) - v^{2} \sin\left(u\right)\right)} \cosh\left(v\right) - {\left(-i \, u^{2} \cos\left(u\right) + 2 \, u v \cos\left(u\right) + i \, v^{2} \cos\left(u\right)\right)} \sinh\left(v\right)\right)} W^{2} - {\left({\left({\left(i \, a + i \, b + 4 \, u\right)} v \cos\left(u\right) + 2 i \, v^{2} \cos\left(u\right) + {\left({\left(a + b\right)} u - 2 i \, u^{2}\right)} \cos\left(u\right)\right)} \cosh\left(v\right) + {\left({\left(a + b - 4 i \, u\right)} v \sin\left(u\right) + 2 \, v^{2} \sin\left(u\right) + {\left({\left(-i \, a - i \, b\right)} u - 2 \, u^{2}\right)} \sin\left(u\right)\right)} \sinh\left(v\right)\right)} W - {\left({\left(a + b - 2 i \, u\right)} v \sin\left(u\right) + v^{2} \sin\left(u\right) + {\left(a b + {\left(-i \, a - i \, b\right)} u - u^{2}\right)} \sin\left(u\right)\right)} \cosh\left(v\right) - {\left({\left(i \, a + i \, b + 2 \, u\right)} v \cos\left(u\right) + i \, v^{2} \cos\left(u\right) + {\left(i \, a b + {\left(a + b\right)} u - i \, u^{2}\right)} \cos\left(u\right)\right)} \sinh\left(v\right)}
+\]
+
+We compute the upper bound. First, we vary terms dependent on $u$:
+
+
+Let's take a look at the behaviour of the expression above as $v \to \infty$:
+
+Divide numerator and denominator by $\cosh(v)$ (we are allowed to do that since $v > 0$).
+
 
 Волна слева от рассеивателя:
 \[

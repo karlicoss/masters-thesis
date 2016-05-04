@@ -1,24 +1,23 @@
 W = 2
-a = 1
-b = 1
+a = 0
+b = -a
+L = 1
+
+def rvar(name):
+    return var(name, domain='real')
+
+
+W = var('W', domain='integer')
+a = rvar('a')
+b = rvar('b')
 L = 1
 
 k = var('k', domain='complex')
 
 coeff = W**2 + 1
-num = W * k * ((a + b) + 2 * i * k) * cos(k * L) * exp(-i * L * k) + (a * b + i * (a + b) * k - coeff * k**2) * exp(-i * L * k) * sin(k * L)
-den = W * k * ((a + b) - 2 * i * k) * cos(k * L) * exp( i * L * k) + (a * b - i * (a + b) * k - coeff * k**2) * exp( i * L * k) * sin(k * L)
+num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
+den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
 
-# num = exp(-i * k) * (cos(k) + 2 * i * sin(k))
-# den = exp(i * k) *  (cos(k) - 2 * i * sin(k))
-
-# num = num # * exp(i * L * k)
-# den = den # * exp(-i * L * k)
-
-# num = 9 * (exp(2 * i * k) - 1) ** 2 - 64 * exp(2 * i * k)
-# den = (exp(4 * i * k) - 9 * exp(2 * i * k)) * (exp(2 * i * k) - 9)
-den = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
-num = den(k=conjugate(k))
 
 print(num)
 print(den)
@@ -29,10 +28,10 @@ print(den)
 res = num / den
 # res2(k) = num(k=k) / num(k=conjugate(k))
 
-def plot_all(ff, suffix="", rrange=(-10, 30), irange=(-2, 2), points=1000):
+def plot_all(ff, suffix="", rrange=(0, 20), irange=(-3, 3), points=300):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
-    plot_abs = complex_plot(abs(ff), rrange, irange, plot_points=points)
+    plot_abs = complex_plot(ff, rrange, irange, plot_points=points)
     # l = line([(rrange[0], 5), (rrange[1], 5)], rgbcolor=(1, 0, 0))# complex_plot(lambda q: q.real() + 5 * i, rrange, irange, color='green')
     ll = [
 
@@ -43,7 +42,7 @@ def plot_all(ff, suffix="", rrange=(-10, 30), irange=(-2, 2), points=1000):
     ]
     # t = var('t')
     # l = parametric_plot((t, 5), (t, rrange[0], rrange[1]), color='red')
-    sum([plot_abs] + ll).save('estimation' + suffix + '.png'.format(suffix), figsize=[12, 2])
+    sum([plot_abs] + ll).save('estimation' + suffix + '.png'.format(suffix), figsize=[12, 5])
     # complex_plot(ln(abs(Sdet)), rrange, irange, plot_points=points).save('plot_ln{}.png'.format(suffix), figsize=[12, 2])
     # unit_circle = circle((0, 0), 1)
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
@@ -61,19 +60,58 @@ def contour_integral_analysis(expr):
 
 # numc(k) = num(k=conjugate(k))
 
+from sage.misc.viewer import viewer
+viewer.pdf_viewer("atril")
+
+_view_later = []
+def view_later(formula):
+    _view_later.append(formula)
+
+def view_all():
+    view(_view_later, tightpage=True, debug=False)
+
+
+def test_denom():
+    W = 2
+    v = rvar('v')
+    u = rvar('u')
+    f(u, v) = (sin(u)**2 + sinh(v)**2) * W**4 - 4 * W**3 * cosh(v) * sinh(v) - 2 * (sin(u)**2 - 3 * sinh(v)**2 - 2) * W**2 - 4 * W * cosh(v) * sinh(v) + sin(u)**2 + sinh(v)**2
+    g(u, v) = (sin(u)**2 + sinh(v)**2) * W**4 + 4 * W**3 * cosh(v) * sinh(v) - 2 * (sin(u)**2 - 3 * sinh(v)**2 - 2) * W**2 + 4 * W * cosh(v) * sinh(v) + sin(u)**2 + sinh(v)**2
+    res(u, v) = ln(f(u, v) / g(u, v))
+    resc(k) = res(k.real(), k.imag())
+    # plot_all(resc, suffix='_test_denom')
+    plot(res(u=pi + 0.0), (v, 0, 2)).save('test_denom_1.png', figsize=[12, 5])
+    plot(res(u=pi + 0.1), (v, 0, 2)).save('test_denom_2.png', figsize=[12, 5])
+    plot(res(u=pi + 0.2), (v, 0, 2)).save('test_denom_3.png', figsize=[12, 5])
+    plot(res(u=pi + 0.3), (v, 0, 2)).save('test_denom_4.png', figsize=[12, 5])
+
+
+test_denom()
+
+# u = rvar('u')
+# v = rvar('v')
+# aa = (num(W=2, a=1, b=2)(k=u + v * i) / cosh(v)).full_simplify()
+# view_later(aa)
+# view_all()
+
 # print(n(ln(abs(res(k=1000 * (1 + i))))))
 # print(latex(res))
-print(res)
-# f(k) = exp(-2 * I * L * k)
-# contour_integral_analysis(f)
-# contour_integral_analysis(res2)
+# print(res)
+# # print(n(abs(res(k=1))))
+# for rr in [1, 2, 4, 8, 16, 32, 64]:
+#     print("Radius = " + str(rr))
+#     print("Num")
+#     print(n(num(k=rr*exp(i * pi/4))))
+#     print("Denom")
+#     print(n(den(k=rr*exp(i * pi/4))))
+#     print("Res")
+#     print(n(res(k=rr*exp(i * pi/4))))
+#     print("=============")
+# # contour_integral_analysis(res)
 # plot_all(num, suffix='num')
-plot_all(den, suffix='den')
+# plot_all(den, suffix='den')
 # plot_all(res, suffix='all')
-# plot_all(res2, suffix='allc')
-
-# plot_all(numc, suffix='num_conj')
-
+#
 
 # for qq in [1, 0.5, 0.2, 0.1, 0.05, 0.01, 0.001]:
 #     print(n(abs(res(k=qq + 0.01 * i))))

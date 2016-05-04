@@ -272,10 +272,19 @@ class IntervalSolver(object):
         L = self.L
         # to make formulas look pretty
 
-        coeff = 0 if W == 0 else W**2 + 1
+        coeff = W**2 + 1
         # TODO 2 * k might be because the actual length is 2 * L instead of L :)
-        # num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
-        # den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
+        ### CORRECT VERSION!!!!
+        num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
+        den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
+        ###
+
+        ### CORRECT VERSION WITH TAN !!!!
+        # num = W * (a + b) * k  + (a * b - coeff * k**2) * tan(L * k) + 2 * W * i * k**2 + i * (a + b) * k * tan(L * k)
+        # den = W * (a + b) * k  + (a * b - coeff * k**2) * tan(L * k) - 2 * W * i * k**2 - i * (a + b) * k * tan(L * k)
+        ###
+
+
         # num = W * k * ((a + b) + 2 * i * k) * cos(k * L) + (a * b + i * (a + b) * k - coeff * k**2) * sin(k * L)
         # den = W * k * ((a + b) - 2 * i * k) * cos(k * L) + (a * b - i * (a + b) * k - coeff * k**2) * sin(k * L)
         # den = a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2 - exp(2 * I * k) * (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2)
@@ -289,10 +298,13 @@ class IntervalSolver(object):
         # den = (a**2 + (W + 1)**2 * k**2) - (a**2 + (W - 1)**2 * k**2) * exp(2 * i * k)
         # num = (a**2 + (W - 1)**2 * k**2) - (a**2 + (W + 1)**2 * k**2) * exp(2 * i * k)
         # den = ((W + 1) * k + i)**2 - ((W - 1) * k - i)**2 * exp(2 * i * k)
-        num = - (W * 4)**2 * k**4 * exp(2 * i * k) \
-            + (a * b - i * ((W - 1) * a + (W + 1) * b) * k - (W - 1) * (W + 1) * k**2 - (a * b + i * ((W + 1) * a + (W - 1) * b) * k - (W - 1) * (W + 1) * k**2) * exp(2 * i * k)) \
-            * (a * b - i * ((W + 1) * a + (W - 1) * b) * k - (W + 1) * (W - 1) * k**2 - (a * b + i * ((W - 1) * a + (W + 1) * b) * k - (W + 1) * (W - 1) * k**2) * exp(2 * i * k))
-        den = ((a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k))**2
+        # num = - (W * 4)**2 * k**4 * exp(2 * i * k) \
+        #     + (a * b - i * ((W - 1) * a + (W + 1) * b) * k - (W - 1) * (W + 1) * k**2 - (a * b + i * ((W + 1) * a + (W - 1) * b) * k - (W - 1) * (W + 1) * k**2) * exp(2 * i * k)) \
+        #     * (a * b - i * ((W + 1) * a + (W - 1) * b) * k - (W + 1) * (W - 1) * k**2 - (a * b + i * ((W - 1) * a + (W + 1) * b) * k - (W + 1) * (W - 1) * k**2) * exp(2 * i * k))
+        # num =  ((a * b - i * ((W - 1) * a + (W + 1) * b) * k - (W - 1) * (W + 1) * k**2 - (a * b + i * ((W + 1) * a + (W - 1) * b) * k - (W - 1) * (W + 1) * k**2) * exp(2 * i * k)) - 4 * W * k**2 * exp(i * k)) \
+        #      * ((a * b - i * ((W + 1) * a + (W - 1) * b) * k - (W + 1) * (W - 1) * k**2 - (a * b + i * ((W - 1) * a + (W + 1) * b) * k - (W + 1) * (W - 1) * k**2) * exp(2 * i * k)) + 4 * W * k**2 * exp(i * k))
+
+        # den = ((a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k))**2
         # num = den(k=conjugate(k))
         return num / den
 
@@ -306,22 +318,26 @@ class IntervalSolver(object):
         ones = [var(p + '1') for p in letters]
         twos = [var(p + '2') for p in letters]
 
-        # wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
-        wavefunctions  = [o * exp(i * k * x) + t * exp(-i * k * x) for o, t in zip(ones, twos)]
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        # wavefunctions  = [o * exp(i * k * x) + t * exp(-i * k * x) for o, t in zip(ones, twos)]
         wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
 
         equations = []
 
-        wlen = L # pi # TODO ????
         left = 0 # TODO
         right = 0 # TODO????
 
-        for wf in wavefunctions:
-            equations.append(f_inc(x=left) == wf(x=0))
-            equations.append(wf(x=wlen) == f_out(x=right))
+        wire_L = 0
+        wire_R = L
+        wlen = wire_R # pi # TODO ????
 
-        derl = -f_inc_d(x=left)  + sum(wfd(x=0)    for wfd in wavefunctionsd) == a * f_inc(x=left)
-        derr =  f_out_d(x=right) - sum(wfd(x=wlen) for wfd in wavefunctionsd) == b * f_out(x=right)
+
+        for wf in wavefunctions:
+            equations.append(f_inc(x=left) == wf(x=wire_L))
+            equations.append(wf(x=wire_R)  == f_out(x=right))
+
+        derl = -f_inc_d(x=left)  + sum(wfd(x=wire_L) for wfd in wavefunctionsd) == a * f_inc(x=left)
+        derr =  f_out_d(x=right) - sum(wfd(x=wire_R) for wfd in wavefunctionsd) == b * f_out(x=right)
 
         equations.append(derl)
         equations.append(derr)
@@ -341,6 +357,9 @@ class IntervalSolver(object):
 
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
+
+        # view_later(Bs)
+        # view_later(Cs)
 
         SM = asymmetric_Smatrix(Bs, Cs)
         return SM
@@ -574,7 +593,7 @@ DPI = 200
 #     # unit_circle = circle((0, 0), 1)
 #     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
-def plot_all(Sdet, suffix="", rrange=(-2, 50), irange=(-7, 7), points=500):
+def plot_all(Sdet, suffix="", rrange=(-2, 20), irange=(0, 2), points=1500):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
     plot_abs = complex_plot(abs(Sdet), rrange, irange, plot_points=points)
@@ -727,34 +746,89 @@ def contour_integral_analysis(expr):
         impart, _ = numerical_integral(lambda q: pig(t=q).imag(), 0, pi)
         print("{} {}".format(rpart, impart))
 
+def print_latex(expr):
+    print("-------------------")
+    print(latex(expr))
+    print("-------------------")
 
 
-# a =
-# a = 4
+def simple_case():
+    W = var('W', domain='integer')
+    u = rvar('u')
+    v = rvar('v')
+
+    a = 0
+    b = 0
+    L = 1
+    num = (W**2 + 1) * sin(k) - 2 * i * W * cos(k)
+    num *= num.conjugate()
+    den = (W**2 + 1) * sin(k) + 2 * i * W * cos(k)
+    den *= den.conjugate()
+    num = (num(k = u + i * v)).full_simplify()
+    den = den(k = u + i * v).full_simplify()
+    Sdet = num / den
+    print_latex(Sdet)
+    view_later(Sdet)
+
+# simple_case()
+# view_all()
+# sys.exit(0)
+
 # a = 0
-a = 1
-b = -4
+# b = 0
+def test_aaa():
+    L = 1
+    W = var('W', domain='integer')
+    solver = IntervalSolver(W, a=a, b=b, L=1)
+    Sa = solver.solve_analytic()
+    # view_later(Sa)
+    print(print_latex(Sa))
+    # Sa =
+    u = rvar('u')
+    v = rvar('v')
+    Sa = Sa(k=u + v * i).full_simplify()
+    print("Sa = " + str(Sa))
+    # qqq = Sa.derivative(v)
+    # print("Derivative = " + str())
+    # for vv in range(0, 10):
+    #     print(n(Sa(v=vv)))
+    # plot(Sa, (v, 0, 10), plot_points=10).save('plot.png')
+    view_later(Sa)
+    print_latex(Sa)
+    # view_later(solver.solve_analytic())
+
+# test_aaa()
+# view_all()
+# sys.exit(0)
+
+
+# # a = 1
+# # b = -a
+a = 0
+b = 0
 L = 1
-for W in [1, 2, 3, 4, 5]:# , 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
+for W in [2, 3, 4]:# , 5, 6]:# , 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
     # solver = PopovSolver(w, a=a, L=L)
     # solver = PopovSolver2(w, a=a, L=1)
+    view_later("Wires = " + str(W))
     solver = IntervalSolver(W, a=a, b=b, L=L)
-    Sa = solver.solve_analytic()
-    S = solver.solve_symbolic_S()
-    # sanity_checks(S)
-    Sm = S.det() # .full_simplify()
-    # view_later("Wires = " + str(W))
+
+    # S = solver.solve_symbolic_S()
+    # Sm = S.det() # .full_simplify()
     # view_later(Sm)
-    # view_later(Sa)
-    # plot_all(Sm, suffix="_interval_" + str(W))
+
+    Sa = solver.solve_analytic()
+    plot_all(Sa, suffix="_interval_" + str(W))
+
+
     # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
     # nomm = denn(k=conjugate(k))
     # plot_all(nomm / denn, suffix="_intervam_" + str(W))
 
     # sanity_checks(Sa)
-    test_matrices(Sm, Sa)
+    # test_matrices(Sm, Sa)
     # contour_integral_analysis(Sm) #  * exp(2 * i * k))
-view_all()
+# view_all()sa
 
 
 # for w in [0, 1, 2, 3, 4]:
