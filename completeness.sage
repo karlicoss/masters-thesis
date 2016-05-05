@@ -489,6 +489,8 @@ class GridSolver(object):
         def var2(edge):
             return var(encode(edge) + "_2")
 
+        print(edges)
+
         variables = [var1(e) for e in edges] + [var2(e) for e in edges]
 
         functions   = {e: var1(e) * exp(-i * k * x) + var2(e) * exp(i * k * x) for e in edges}
@@ -513,12 +515,14 @@ class GridSolver(object):
             values_at_vertex = []
             sum_at_vertex = []
             if left in vertices:
+                print("Left: " + str(left))
                 values_at_vertex.append(get_function(left)(x=L))
                 sum_at_vertex.append(-get_function_d(left)(x=L))
             if right in vertices:
                 values_at_vertex.append(get_function(right)(x=0))
                 sum_at_vertex.append(get_function_d(right)(x=0))
             if down in vertices:
+                print("Down: " + str(down))
                 values_at_vertex.append(get_function(down)(x=L))
                 sum_at_vertex.append(-get_function_d(down)(x=L))
             if up in vertices:
@@ -557,6 +561,63 @@ class GridSolver(object):
 
     def solve_symbolic(self):
         return self.solve_symbolic_S().det()
+
+
+class TriangleSolver(object):
+    # wires: integer
+    # a: symbolic/float
+    # b: symbolic/float
+    def __init__(self, a=rvar('a'), L=rvar('L')):
+        super(TriangleSolver, self).__init__()
+        self.a = a
+        self.L = L
+
+    def solve_symbolic(self):
+        a = self.a
+        L = self.L
+
+        letters = string.uppercase[7:10]
+        ones = [var(p + '1') for p in letters]
+        twos = [var(p + '2') for p in letters]
+
+
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        # wavefunctions  = [o * exp(i * k * x) + t * exp(-i * k * x) for o, t in zip(ones, twos)]
+        wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
+
+        equations = []
+
+        wf0 , wf1 , wf2  = wavefunctions
+        wf0d, wf1d, wf2d = wavefunctionsd
+
+        equations.extend([
+            f_inc(x=0) == wf0(x=0),
+            wf0(x=1)   == f_out(x=0),
+
+            f_inc(x=0) == wf1(x=0),
+            wf1(x=1)   == wf2(x=0),
+            wf2(x=L)   == f_out(x=0),
+
+            -f_inc_d(x=0) + wf0(x=0) + wf1(x=0) == 0,
+             f_out_d(x=0) - wf0(x=1) - wf2(x=L) == 0,
+            -wf1(x=1) + wf2(x=0) == 0,
+        ])
+
+        print(len(equations))
+
+        solutions = solve(
+            equations,
+            B, C, *(ones + twos),
+            solution_dict=True
+        )
+
+        pprint(solutions[0])
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM.det()
 
 def icayley(x):
     return i * (1 + x) / (1 - x)
@@ -801,15 +862,22 @@ def one_wire_loop():
 
 def try_grid():
     a = 1
-    for W in [1, 2, 3, 4]:
+    for W in [1]:# , 2, 3, 4]:
         solver = GridSolver(W, a=a, L=1)
         S = solver.solve_symbolic()
         plot_all(S, suffix="_grid_1" + str(W), rrange=(-2, 40), irange=(-1.5, 1.5), points=1500)            
 
+def try_triangle():
+    for L in [1, 0.75, 0.5, 0.25, 0.1, 0.05]:
+        solver = TriangleSolver(a=0, L=L)
+        S = solver.solve_symbolic()
+        plot_all(S, suffix="_triangle_" + "{:.2f}".format(float(L)), rrange=(-2, 60), irange=(-7, 7), points=1500)
+
 # try_same_length_fracional()
 # two_wires_convergence()
 # one_wire_loop()
-try_grid()
+# try_grid()
+try_triangle()
 
 # try_different_length_a()
     # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
