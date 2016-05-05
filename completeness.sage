@@ -312,7 +312,7 @@ class IntervalSolver(object):
         right = 0
 
         print(wires)
-        for wlen, wf in zip(wires, equations):
+        for wlen, wf in zip(wires, wavefunctions):
             equations.append(f_inc(x=left) == wf(x=0))
             equations.append(wf(x=wlen)    == f_out(x=right))
 
