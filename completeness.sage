@@ -266,7 +266,7 @@ class IntervalSolver(object):
 
 
     def solve_analytic(self):
-        W = self.wires
+        W = len(self.wires)
         a = self.a
         b = self.b
         L = self.L
@@ -284,37 +284,21 @@ class IntervalSolver(object):
         # den = W * (a + b) * k  + (a * b - coeff * k**2) * tan(L * k) - 2 * W * i * k**2 - i * (a + b) * k * tan(L * k)
         ###
 
-
-        # num = W * k * ((a + b) + 2 * i * k) * cos(k * L) + (a * b + i * (a + b) * k - coeff * k**2) * sin(k * L)
-        # den = W * k * ((a + b) - 2 * i * k) * cos(k * L) + (a * b - i * (a + b) * k - coeff * k**2) * sin(k * L)
-        # den = a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2 - exp(2 * I * k) * (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2)
-        # num = (W + 1)**2 * (exp(2 * i * k) - 1)**2 -
-        # den = ((W - 1) * exp(2 * i * k) - (W + 1)**2)**2
-        # num = (W + 1)**2 * (exp(2 * i * k) - 1)**2 - W**2 * exp(2 * i * k)
-        # den = (W + 1)**2 * (exp(2 * i * k) - 1)**2
-        # num = (W + 1)**2 * exp(2 * i * k) - (W - 1)**2
-        # den = (W - 1)**2 * exp(2 * i * k) - (W + 1)**2
-        # num = (a**2 + (W - 1)**2 * k**2) - (a**2 + (W + 1)**2 * k**2) * exp(2 * i * k)
-        # den = (a**2 + (W + 1)**2 * k**2) - (a**2 + (W - 1)**2 * k**2) * exp(2 * i * k)
-        # num = (a**2 + (W - 1)**2 * k**2) - (a**2 + (W + 1)**2 * k**2) * exp(2 * i * k)
         # den = ((W + 1) * k + i)**2 - ((W - 1) * k - i)**2 * exp(2 * i * k)
         # num = - (W * 4)**2 * k**4 * exp(2 * i * k) \
         #     + (a * b - i * ((W - 1) * a + (W + 1) * b) * k - (W - 1) * (W + 1) * k**2 - (a * b + i * ((W + 1) * a + (W - 1) * b) * k - (W - 1) * (W + 1) * k**2) * exp(2 * i * k)) \
         #     * (a * b - i * ((W + 1) * a + (W - 1) * b) * k - (W + 1) * (W - 1) * k**2 - (a * b + i * ((W - 1) * a + (W + 1) * b) * k - (W + 1) * (W - 1) * k**2) * exp(2 * i * k))
         # num =  ((a * b - i * ((W - 1) * a + (W + 1) * b) * k - (W - 1) * (W + 1) * k**2 - (a * b + i * ((W + 1) * a + (W - 1) * b) * k - (W - 1) * (W + 1) * k**2) * exp(2 * i * k)) - 4 * W * k**2 * exp(i * k)) \
         #      * ((a * b - i * ((W + 1) * a + (W - 1) * b) * k - (W + 1) * (W - 1) * k**2 - (a * b + i * ((W - 1) * a + (W + 1) * b) * k - (W + 1) * (W - 1) * k**2) * exp(2 * i * k)) + 4 * W * k**2 * exp(i * k))
-
-        # den = ((a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k))**2
-        # num = den(k=conjugate(k))
         return num / den
 
     def solve_symbolic_S(self):
-        W = self.wires
+        wires = self.wires
         a = self.a
         b = self.b
         L = self.L
 
-        letters = string.uppercase[7:][:W]
+        letters = string.uppercase[7:][:len(wires)]
         ones = [var(p + '1') for p in letters]
         twos = [var(p + '2') for p in letters]
 
@@ -324,28 +308,21 @@ class IntervalSolver(object):
 
         equations = []
 
-        left = 0 # TODO
-        right = 0 # TODO????
+        left = 0
+        right = 0
 
-        wire_L = 0
-        wire_R = L
-        wlen = wire_R # pi # TODO ????
+        print(wires)
+        for wlen, wf in zip(wires, equations):
+            equations.append(f_inc(x=left) == wf(x=0))
+            equations.append(wf(x=wlen)    == f_out(x=right))
 
-
-        for wf in wavefunctions:
-            equations.append(f_inc(x=left) == wf(x=wire_L))
-            equations.append(wf(x=wire_R)  == f_out(x=right))
-
-        derl = -f_inc_d(x=left)  + sum(wfd(x=wire_L) for wfd in wavefunctionsd) == a * f_inc(x=left)
-        derr =  f_out_d(x=right) - sum(wfd(x=wire_R) for wfd in wavefunctionsd) == b * f_out(x=right)
+        derl = -f_inc_d(x=left)  + sum(wfd(x=0)    for wfd       in wavefunctionsd)             == a * f_inc(x=left)
+        derr =  f_out_d(x=right) - sum(wfd(x=wlen) for wfd, wlen in zip(wavefunctionsd, wires)) == b * f_out(x=right)
 
         equations.append(derl)
         equations.append(derr)
 
-        # print("==================================")
-        # for e in equations:
-        #     print(e)
-        # print("==================================")
+        pprint(equations)
 
         solutions = solve(
             equations,
@@ -358,14 +335,19 @@ class IntervalSolver(object):
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
 
-        # view_later(Bs)
-        # view_later(Cs)
-
         SM = asymmetric_Smatrix(Bs, Cs)
         return SM
 
     def solve_symbolic(self):
-        return self.solve_symbolic_S().det()
+        return self.solve_symbolic_S().det()    
+
+
+def interval_solver_nonuniform(wires, a, b):
+    return IntervalSolver(wires, a=a, b=b, L=1)
+
+
+def interval_solver_uniform(count, a, b):
+    return interval_solver_nonuniform([1 for _ in range(count)], a, b)
 
 
 # TODO look at eigenvalues
@@ -450,6 +432,8 @@ class FractalSolver(object):
         Cs = solutions[0][C].full_simplify()
         SM = asymmetric_Smatrix(Bs, Cs)
         return SM.det()
+
+
 
 
 class GridSolver(object):
@@ -641,36 +625,8 @@ def test_matrices(S, Sa):
 
 
 
-# contour_integral_analysis(S)
-# S = solve_double_loop(a_val=5)
-
-# S = solve_interval()(a=a)
-# view_later(S)
-
-
 a = var('a', domain='real')
 b = var('b', domain='real')
-# a = 2
-# b = -2
-# !!!! case 0 only works for a = b
-
-
-# for wires in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
-#     S = IntervalSolver(wires, a=a, b=b).solve_symbolic()
-#     Sa = IntervalSolver(wires, a=a, b=b).solve_analytic()
-#     # view_later(S)
-#     test_matrices(S, Sa)
-
-# view_all()
-    
-
-# view_all()
-
-
-
-# region_analysis(S)
-
-
 
 
 from numpy import arange
@@ -700,41 +656,12 @@ def check_zero(Sdet):
         show(ff)
         show(integral(ff, t, 0, pi))
         show(numerical_integral(lambda q: ff(t=q).real(), 0, pi))
-        show(numerical_integral(lambda q: ff(t=q).imag(), 0, pi))    
-    
-# a = 2
-# b = 1
-# solver = IntervalSolver(1, a=a, b=b)
-# Sd = solver.solve_analytic()
-# plot_all(Sd)
-# check_zero(Sd)
 
 # a = 1
 a = rvar('a')
 b = rvar('b')
 L = rvar('L')
 
-# a = 2
-# b = -3
-# a = 0
-# b = 0
-# L = 1
-
-# TODO is det=1 wrong? Looks like complete reflection :(
-# for w in [1]: # [1, 2, 3, 4]:
-    # solver = FractalSolver(w, a=a, L=L)
-    # solver = IntervalSolver(w, a=a, b=b, L=L)
-    # solver = LoopSolver(w, a=a, L=L)
-    # S = solver.solve_symbolic()
-    # Sa = solver.solve_analytic()
-    # test_matrices(S(a=2, L=2, b=3), Sa(a=2, L=2, b=3))
-    # for q in arange(0.1, 5, 0.3):
-        # print(n(S(k=q,a=1,)))
-        # print(n(Sa(k=q,a=0, b=0)))
-    # view_later(S)
-    # view_later(Sa)
-
-# view_all()
 
 def contour_integral_analysis(expr):
     # denom(k) = cos(k) - 2 * i * sin(k)
@@ -811,14 +738,14 @@ for W in [2, 3, 4]:# , 5, 6]:# , 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7
     # solver = PopovSolver(w, a=a, L=L)
     # solver = PopovSolver2(w, a=a, L=1)
     view_later("Wires = " + str(W))
-    solver = IntervalSolver(W, a=a, b=b, L=L)
+    solver =  interval_solver_uniform(W, a, b)
 
-    # S = solver.solve_symbolic_S()
-    # Sm = S.det() # .full_simplify()
+    S = solver.solve_symbolic_S()
+    Sm = S.det() # .full_simplify()
     # view_later(Sm)
 
     Sa = solver.solve_analytic()
-    plot_all(Sa, suffix="_interval_" + str(W))
+    plot_all(Sm, suffix="_same_" + str(W))
 
 
     # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
@@ -829,83 +756,3 @@ for W in [2, 3, 4]:# , 5, 6]:# , 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7
     # test_matrices(Sm, Sa)
     # contour_integral_analysis(Sm) #  * exp(2 * i * k))
 # view_all()sa
-
-
-# for w in [0, 1, 2, 3, 4]:
-#     solver = PopovSolver(w, a=a)
-#     # S = solver.solve_symbolic()
-#     Sa = solver.solve_symbolic()
-#     # view_later(S)
-#     view_later(Sa)
-# view_all()
-
-# for w in [4]: # [1, 2, 3]:
-#     solver = GridSolver(w, a=1, L=1)
-#     S = solver.solve_symbolic()
-#     # sanity_checks(S)
-#     # Sa = solver.solve_analytic()
-#     # test_matrices(S, Sa)
-#     plot_all(S, suffix="_grid_" + str(w))
-
-# view_all()
-# solver = IntervalSolver(2, a=-1, b=-1, L=1)
-# print(loop.spectrum(L_val=2))
-# plot_all(solver.solve_analytic(), suffix='_fractal')
-# Sdet = solver.solve_symbolic()
-# pprint(Sdet)
-# plot_all(solver.solve_symbolic(), suffix='_grid')
-
-# popov = PopovSolver(1, a=a)
-# print(popov.spectrum())
-# plot_all(popov.solve_symbolic(L_val=1), suffix='popov')
-
-
-    # test_matrices(S, Sa)
-# view_all()
-
-# solver = FractalSolver(0, a=a)
-# S = solver.solve_symbolic()
-# view_later(S)
-# Sa = solver.solve_analytic()
-# view_later(Sa)
-
-# solver = FractalSolver(1, a=a)
-# S = solver.solve_analytic()
-# Sa = solver.solve_symbolic()
-# # test_matrices(S, Sa)
-# # S = solver.solve_symbolic(L_val=1)
-# # test_matrices(S, Sa)
-# view_later(S)
-# view_later(Sa)
-
-# solver = FractalSolver(2, a=a)
-# Sa = solver.solve_analytic()
-# Sa = solver.solve_symbolic()
-# # S = solver.solve_symbolic(L_val=1)
-# # test_matrices(S, Sa)
-# view_later(Sa)
-
-
-# solver = FractalSolver(3, a=a)
-# Sa = solver.solve_symbolic()
-# view_later(Sa)
-
-# solver = FractalSolver(4, a=a)
-# Sa = solver.solve_symbolic()
-# view_later(Sa)
-
-# solver = FractalSolver(2, a=a)
-# S = solver.solve_symbolic(L_val=1)
-# view_later(S)
-
-# test_matrices(S, Sa)
-
-# for wires in range(0, 4):
-#     solver = FractalSolver(wires, a=a)
-#     Sd = solver.solve_symbolic(L_val=1)
-#     view_later(Sd)
-#     # plot_all(Sd, suffix=str(wires))
-# view_all()
-# v = SM.eigenvalues()[0]
-# t = var('t')
-# plot(ln(v(k=i*t).real()), (t, 0, 10)).save('plot.png')
