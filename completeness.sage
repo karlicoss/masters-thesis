@@ -266,7 +266,7 @@ class IntervalSolver(object):
 
 
     def solve_analytic(self):
-        W = len(self.wires)
+        W = 1.5 # len(self.wires)
         a = self.a
         b = self.b
         L = self.L
@@ -530,16 +530,15 @@ class GridSolver(object):
                 sum_at_vertex.append(-f_inc_d(x=0))
 
             if (q, w) == (W, W):
-                values_at_vertex.append(f_out(x=W * L * sqrt(2)))
-                sum_at_vertex.append(f_out_d(x=W * L * sqrt(2)))
-                # TODO append right functoin
+                values_at_vertex.append(f_out(x=0))
+                sum_at_vertex.append(f_out_d(x=0))
 
             for e1, e2 in zip(values_at_vertex, values_at_vertex[1:]):
                 equations.append(e1 == e2)
 
             equations.append(sum(sum_at_vertex) == a * values_at_vertex[0])
 
-        pprint(equations)
+        # pprint(equations)
         # pprint(len(equations))
         # pprint(len(variables))
 
@@ -731,23 +730,88 @@ def test_aaa():
 
 # # a = 1
 # # b = -a
-a = 0
-b = 0
-L = 1
-for W in [2, 3, 4]:# , 5, 6]:# , 5, 6, 7, 8]: # [2, 4, 6, 8, 10, 12, 14, 3, 5, 7, 9, 11, 13, 15, 17]:
-    # solver = PopovSolver(w, a=a, L=L)
-    # solver = PopovSolver2(w, a=a, L=1)
-    view_later("Wires = " + str(W))
-    solver =  interval_solver_uniform(W, a, b)
 
-    S = solver.solve_symbolic_S()
-    Sm = S.det() # .full_simplify()
-    # view_later(Sm)
+def try_different_length():
+    a = 0
+    b = 0
+    L = 1
+    for W in [2, 3, 4]:
+        view_later("Wires = " + str(W))
+        # solver =  interval_solver_uniform(W, a, b)
+        solver = interval_solver_nonuniform([i for i in range(1, W + 1)], a, b)
 
-    Sa = solver.solve_analytic()
-    plot_all(Sm, suffix="_same_" + str(W))
+        S = solver.solve_symbolic_S()
+        Sm = S.det() # .full_simplify()
+        # view_later(Sm)
+
+        Sa = solver.solve_analytic()
+        plot_all(Sm, suffix="_nonuniform_" + str(W))
+
+def try_different_length_2():
+    a = 1
+    b = 0
+    L = 1
+    for L2 in [1, 1.1, 1.3, 1.5, 2.0]:
+        solver = interval_solver_nonuniform([L, L2], a, b)
+        S = solver.solve_symbolic()
+        plot_all(S, suffix="_two_wires_different_a1_" + "{:.1f}".format(float(L2)))
 
 
+def try_different_length_a():
+    # a = 1
+    b = 0
+    L = 1
+    for a in arange(100, 500, 100):
+        solver = interval_solver_nonuniform([1, 1], a, b)
+        S = solver.solve_symbolic()
+        plot_all(S, suffix="_two_wires__a_" + "{:.1f}".format(float(a)))
+ 
+def try_different_length_symbolic():
+    solver = interval_solver_nonuniform([1, 2], a, b)
+    S = solver.solve_symbolic()
+    view_later(S)
+    view_all()
+
+def try_same_length_fracional():
+    a = 0
+    b = 0
+    L = 1
+    for W in arange(-1, 1, 0.2):
+        coeff = W**2 + 1
+        # TODO 2 * k might be because the actual length is 2 * L instead of L :)
+        ### CORRECT VERSION!!!!
+        num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) + 2 * W * i * k**2 * cos(L * k) + i * (a + b) * k * sin(L * k)
+        den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k**2) * sin(L * k) - 2 * W * i * k**2 * cos(L * k) - i * (a + b) * k * sin(L * k)
+        plot_all(num/den, suffix="_fractional_" + "{:.1f}".format(float(W)), rrange=(-2, 30), irange=(-4, 4), points=1500)
+
+def two_wires_convergence():
+    a = 0
+    b = 0
+    for L in [1, 0.99, 0.95, 0.9, 0.75, 0.5, 0.25, 0.10, 0.05, 0.01, 0.005]:
+        solver = interval_solver_nonuniform([1, L], a, b)
+        S = solver.solve_symbolic()
+        plot_all(S, suffix="_convergence_" + "{:.3f}".format(float(L)), rrange=(-2, 60), irange=(-7, 7), points=1500)
+
+def one_wire_loop():
+    a = 0
+    # solver = LoopSolver(1, a=a, L=1)
+    solver = PopovSolver(1, a=a, L=1)
+    S = solver.solve_symbolic()
+    plot_all(S, suffix="_popov", rrange=(-2, 60), irange=(-7, 7), points=1500)    
+
+def try_grid():
+    a = 1
+    for W in [1, 2, 3, 4]:
+        solver = GridSolver(W, a=a, L=1)
+        S = solver.solve_symbolic()
+        plot_all(S, suffix="_grid_1" + str(W), rrange=(-2, 40), irange=(-1.5, 1.5), points=1500)            
+
+# try_same_length_fracional()
+# two_wires_convergence()
+# one_wire_loop()
+try_grid()
+
+# try_different_length_a()
     # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
     # nomm = denn(k=conjugate(k))
     # plot_all(nomm / denn, suffix="_intervam_" + str(W))
