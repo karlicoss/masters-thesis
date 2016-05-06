@@ -218,7 +218,7 @@ class LoopSolver(object):
         return num / den
 
 
-    def solve_symbolic(self):
+    def solve_symbolic_S(self):
         a = self.a
         L = self.L
 
@@ -240,6 +240,9 @@ class LoopSolver(object):
 
         equations.append(-f_inc_d(x=0) + sum(wfd(x=0) - wfd(x=L) for wfd in wavefunctionsd) + f_out_d(x=0) == a * f_inc(x=0))
 
+        for e in equations:
+            view_later(e)
+
         solutions = solve(
             equations,
             B, C, *(ones + twos),
@@ -249,7 +252,59 @@ class LoopSolver(object):
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
         SM = asymmetric_Smatrix(Bs, Cs)
-        return SM.det()
+        return SM
+
+    def solve_symbolic(self):
+        return self.solve_symbolic_S().det()
+
+
+class IntervalLoopSolver(object):
+    # wires: integer
+    # a: symbolic/float
+    def __init__(self, L=rvar('L')):
+        super(IntervalLoopSolver, self).__init__()
+        self.L = L
+
+
+    def solve_symbolic_S(self):
+        L = self.L
+
+
+        letters = string.uppercase[7:][:2]
+        ones = [var(p + '1') for p in letters]
+        twos = [var(p + '2') for p in letters]
+
+        wavefunctions  = [o * sin(k * x) + t * cos(k * x) for o, t in zip(ones, twos)]
+        wavefunctionsd = [wf.derivative(x) for wf in wavefunctions]
+
+        vf, vfd = wavefunctions[0], wavefunctionsd[0]
+        wf, wfd = wavefunctions[1], wavefunctionsd[1]
+        
+        equations = [
+            f_inc(x=0) == vf(x=0),
+            vf(x=0)    == f_out(x=0),
+            -f_inc_d(x=0) + vfd(x=0) + f_out_d(x=0) == 0,
+
+            vf(x=L) == wf(x=0),
+            vf(x=L) == wf(x=1),
+            -vfd(x=L) + wfd(x=0) - wfd(x=1) == 0
+        ]
+        # for e in equations:
+            # view_later(e)
+
+        solutions = solve(
+            equations,
+            B, C, *(ones + twos),
+            solution_dict=True
+        )
+
+        Bs = solutions[0][B].full_simplify()
+        Cs = solutions[0][C].full_simplify()
+        SM = asymmetric_Smatrix(Bs, Cs)
+        return SM
+
+    def solve_symbolic(self):
+        return self.solve_symbolic_S().det()
 
 
 # TODO look at eigenvalues
@@ -265,8 +320,8 @@ class IntervalSolver(object):
         self.L = L
 
 
-    def solve_analytic(self):
-        W = 1.5 # len(self.wires)
+    def solve_analytic(self, W=None):
+        W = len(self.wires) if W is None else W # TODO ???
         a = self.a
         b = self.b
         L = self.L
@@ -598,9 +653,9 @@ class TriangleSolver(object):
             wf1(x=1)   == wf2(x=0),
             wf2(x=L)   == f_out(x=0),
 
-            -f_inc_d(x=0) + wf0(x=0) + wf1(x=0) == 0,
-             f_out_d(x=0) - wf0(x=1) - wf2(x=L) == 0,
-            -wf1(x=1) + wf2(x=0) == 0,
+            -f_inc_d(x=0) + wf0d(x=0) + wf1d(x=0) == 0,
+             f_out_d(x=0) - wf0d(x=1) - wf2d(x=L) == 0,
+            -wf1d(x=1) + wf2d(x=0) == 0,
         ])
 
         print(len(equations))
@@ -788,6 +843,18 @@ def test_aaa():
 # view_all()
 # sys.exit(0)
 
+def try_same_length_analytic():
+    L = 1
+    solver = IntervalSolver([], a=a, b=b, L=L)
+    Sa = solver.solve_analytic(W=var('W'))
+    view_later(Sa)
+    for W in [2, 3, 4, 5, 6]:
+        solver = interval_solver_uniform(W, a, b)
+        # S = solver.solve_symbolic()
+        Sa = solver.solve_analytic()
+        view_later(Sa)
+
+    view_all()
 
 # # a = 1
 # # b = -a
@@ -853,12 +920,25 @@ def two_wires_convergence():
         S = solver.solve_symbolic()
         plot_all(S, suffix="_convergence_" + "{:.3f}".format(float(L)), rrange=(-2, 60), irange=(-7, 7), points=1500)
 
-def one_wire_loop():
+def one_wire_popov():
     a = 0
-    # solver = LoopSolver(1, a=a, L=1)
     solver = PopovSolver(1, a=a, L=1)
     S = solver.solve_symbolic()
-    plot_all(S, suffix="_popov", rrange=(-2, 60), irange=(-7, 7), points=1500)    
+    Sa = solver.solve_analytic()
+    test_matrices(S, Sa)
+    view_later(Sa)
+    view_all()
+
+def one_wire_loop():
+    a = 0
+    solver = LoopSolver(1, a=a, L=1)
+    S = solver.solve_symbolic_S()
+    # Sa = solver.solve_analytic()
+    sanity_checks(S)
+    # test_matrices(S, Sa)
+    # view_later(Sa)
+    view_all()
+    # plot_all(S, suffix="_popov", rrange=(-2, 60), irange=(-7, 7), points=1500)    
 
 def try_grid():
     a = 1
@@ -868,16 +948,31 @@ def try_grid():
         plot_all(S, suffix="_grid_1" + str(W), rrange=(-2, 40), irange=(-1.5, 1.5), points=1500)            
 
 def try_triangle():
-    for L in [1, 0.75, 0.5, 0.25, 0.1, 0.05]:
+    for L in [0.11, 0.13, 0.15, 0.17, 0.20]:
         solver = TriangleSolver(a=0, L=L)
         S = solver.solve_symbolic()
         plot_all(S, suffix="_triangle_" + "{:.2f}".format(float(L)), rrange=(-2, 60), irange=(-7, 7), points=1500)
+
+def try_interval_loop():
+    for L in [1.0, 0.1, 0.05, 0.01, 0.005, 0.001]:
+        solver = IntervalLoopSolver(L=L)
+        S = solver.solve_symbolic_S()
+    # Sa = solver.solve_analytic()
+    # sanity_checks(S)
+        plot_all(S.det(), suffix="_interval_loop_{:.3f}".format(float(L)), rrange=(-2, 60), irange=(-20, 20), points=500)
+    # test_matrices(S, Sa)
+    # view_later(Sa)
+    # view_all()
 
 # try_same_length_fracional()
 # two_wires_convergence()
 # one_wire_loop()
 # try_grid()
-try_triangle()
+# try_triangle()
+# try_same_length_analytic()
+# one_wire_loop()
+# one_wire_popov()
+try_interval_loop()
 
 # try_different_length_a()
     # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
