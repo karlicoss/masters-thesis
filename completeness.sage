@@ -48,7 +48,11 @@ def symmetric_Smatrix(R, T):
 
 
 def asymmetric_Smatrix(Bs, Cs):
+    R = Bs.coefficient(A)
+    T = Bs.coefficient(D)
     return matrix([
+        # [T, R],
+        # [-conjugate(R), conjugate(T)],
         [Bs.coefficient(A), Bs.coefficient(D)],
         [Cs.coefficient(A), Cs.coefficient(D)],
     ])
@@ -88,6 +92,20 @@ class PopovSolver(object):
 
     def spectrum(self, L_val=1):
         return [pi * k / L_val for k in range(1, 10)]
+
+    # CORRECT SOLUTION (FROM THE PAPER)
+    def solve_analytic_2(self):
+        a = self.a
+        W = self.wires
+        L = self.L
+        # to make formulas look pretty
+
+        T = 2 * i * k / (2 * i * k - a - k * cot(k))
+        R = (a + k * cot(k)) / (2 * i * k - a - k * cot(k))
+        # num = W * k * cos(L * k) + (a + 2 * i * k) * sin(L * k)
+        # den = W * k * cos(L * k) + (a - 2 * i * k) * sin(L * k)
+        return matrix([[R, T],[T, R]]).det()
+        # return num / den
 
     def solve_analytic(self):
         a = self.a
@@ -737,6 +755,8 @@ def test_matrices(S, Sa):
                     print("computation failed on {}".format(k))
                 else:
                     raise err
+            except RuntimeError as err:
+                print(err)
 
 
 
@@ -921,13 +941,21 @@ def two_wires_convergence():
         plot_all(S, suffix="_convergence_" + "{:.3f}".format(float(L)), rrange=(-2, 60), irange=(-7, 7), points=1500)
 
 def one_wire_popov():
-    a = 0
+    a = 2
     solver = PopovSolver(1, a=a, L=1)
     S = solver.solve_symbolic()
-    Sa = solver.solve_analytic()
+    Sa = solver.solve_analytic_2()
+    Saa = solver.solve_analytic()
+    # sanity_checks(S)
     test_matrices(S, Sa)
-    view_later(Sa)
-    view_all()
+    test_matrices(Sa, Saa)
+    # view_later(S)
+    # view_all()
+    # plot_all(S.det(), suffix="_popov_S", rrange=(-2, 60), irange=(-2, 2), points=1500)
+    # Sa = solver.solve_analytic()
+    # test_matrices(S, Sa)
+    # view_later(Sa)
+    # view_all()
 
 def one_wire_loop():
     a = 0
@@ -954,7 +982,7 @@ def try_triangle():
         plot_all(S, suffix="_triangle_" + "{:.2f}".format(float(L)), rrange=(-2, 60), irange=(-7, 7), points=1500)
 
 def try_interval_loop():
-    for L in [1.0, 0.1, 0.05, 0.01, 0.005, 0.001]:
+    for L in [1]: #.0, 0.1, 0.05, 0.01, 0.005, 0.001]:
         solver = IntervalLoopSolver(L=L)
         S = solver.solve_symbolic_S()
     # Sa = solver.solve_analytic()
@@ -972,7 +1000,7 @@ def try_interval_loop():
 # try_same_length_analytic()
 # one_wire_loop()
 # one_wire_popov()
-try_interval_loop()
+one_wire_popov()
 
 # try_different_length_a()
     # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)
