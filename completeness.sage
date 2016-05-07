@@ -50,6 +50,8 @@ def symmetric_Smatrix(R, T):
 def asymmetric_Smatrix(Bs, Cs):
     R = Bs.coefficient(A)
     T = Bs.coefficient(D)
+    view_later(R)
+    view_later(T)
     return matrix([
         # [T, R],
         # [-conjugate(R), conjugate(T)],
@@ -258,17 +260,17 @@ class LoopSolver(object):
 
         equations.append(-f_inc_d(x=0) + sum(wfd(x=0) - wfd(x=L) for wfd in wavefunctionsd) + f_out_d(x=0) == a * f_inc(x=0))
 
-        for e in equations:
-            view_later(e)
-
         solutions = solve(
             equations,
             B, C, *(ones + twos),
             solution_dict=True
         )
 
+
+
         Bs = solutions[0][B].full_simplify()
         Cs = solutions[0][C].full_simplify()
+
         SM = asymmetric_Smatrix(Bs, Cs)
         return SM
 
@@ -941,7 +943,7 @@ def two_wires_convergence():
         plot_all(S, suffix="_convergence_" + "{:.3f}".format(float(L)), rrange=(-2, 60), irange=(-7, 7), points=1500)
 
 def one_wire_popov():
-    a = 2
+    a = 0
     solver = PopovSolver(1, a=a, L=1)
     S = solver.solve_symbolic()
     Sa = solver.solve_analytic_2()
@@ -949,24 +951,28 @@ def one_wire_popov():
     # sanity_checks(S)
     test_matrices(S, Sa)
     test_matrices(Sa, Saa)
+    view_later(Saa)
+    view_all()
     # view_later(S)
     # view_all()
-    # plot_all(S.det(), suffix="_popov_S", rrange=(-2, 60), irange=(-2, 2), points=1500)
+    # plot_all(Saa, suffix="_what", rrange=(-60, 60), irange=(-2, 2), points=1500)
     # Sa = solver.solve_analytic()
     # test_matrices(S, Sa)
     # view_later(Sa)
     # view_all()
 
 def one_wire_loop():
-    a = 0
+    a = 2
     solver = LoopSolver(1, a=a, L=1)
     S = solver.solve_symbolic_S()
-    # Sa = solver.solve_analytic()
     sanity_checks(S)
-    # test_matrices(S, Sa)
-    # view_later(Sa)
+
+    Sd = S.det()
+    Sa = solver.solve_analytic()
+    test_matrices(Sd, Sa)
+    # plot_all(Sa, suffix="_loop_1", rrange=(-2, 100), irange=(-20, 20), points=1500)
+    view_later(Sa)
     view_all()
-    # plot_all(S, suffix="_popov", rrange=(-2, 60), irange=(-7, 7), points=1500)    
 
 def try_grid():
     a = 1
@@ -998,9 +1004,8 @@ def try_interval_loop():
 # try_grid()
 # try_triangle()
 # try_same_length_analytic()
-# one_wire_loop()
+one_wire_loop()
 # one_wire_popov()
-one_wire_popov()
 
 # try_different_length_a()
     # denn = (a * b - (W + 1) * i * (a + b) * k - (W + 1)**2 * k**2) - (a * b + (W - 1) * i * (a + b) * k - (W - 1)**2 * k**2) * exp(2 * i * k)

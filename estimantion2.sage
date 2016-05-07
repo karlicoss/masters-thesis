@@ -85,8 +85,12 @@ def test_denom():
     plot(res(u=pi + 0.2), (v, 0, 2)).save('test_denom_3.png', figsize=[12, 5])
     plot(res(u=pi + 0.3), (v, 0, 2)).save('test_denom_4.png', figsize=[12, 5])
 
+k = var('k')
+S(k) = (k * exp(i * k) + 0 * sin(k) - k) / (k * exp(-i * k) + 0 * sin(k) - k)
+contour_integral_analysis(S)
 
-test_denom()
+
+# test_denom()
 
 # u = rvar('u')
 # v = rvar('v')
