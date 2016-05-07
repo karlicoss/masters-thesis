@@ -1,0 +1,131 @@
+\documentclass{nsart_eng}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+% \usepackage{pscyr}
+\usepackage[russian]{babel}
+\usepackage{graphicx}
+
+\year{2016} \volume{0} \nomer{0} \firstpage{1}
+
+\let\le\leqslant
+\let\leq\leqslant
+\let\ge\geqslant
+\let\geq\geqslant
+
+\begin{document}
+
+\title[короткое название статьи]
+{НАЗВАНИЕ СТАТЬИ}
+
+\author[А.\,Б.~Иванов, C.\,C.~Claus, В.\,Г.~Петров]
+{$^1$А.\,Б.~Иванов, $^{1}$C.\,C.~Claus, $^2$В.\,Г.~Петров}
+
+\address{
+$^1$ Санкт-Петербургский Национальный Исследовательский Университет Информационных Технологий, \\
+Механики и Оптики,\\
+Кронверкский пр., 49, Санкт-Петербург, 197101, Россия\\
+$^2$ Swiss Federal University of Technology,\\
+Sonneggstrasse, 5,  Zurich, CH-8092, Switzerland }
+
+\email{ivanov@ivanov.ru, claus@claus.ch, petrov@petrov.ru }
+
+УДК ???.??, ???.???.?% insert UDK
+
+\begin{abstract}
+Аннотация. Не больше 150 слов.
+\end{abstract}
+
+\keywords{углеродные нанотрубки, квантовый граф}
+
+\maketitle
+
+\section{Введение}
+
+Текст введения
+
+\section{Название второго параграфа}
+Текст
+
+\section{Название третьего параграфа}
+
+\subsection{Название подпараграфа 1}
+
+Текст подпараграфа 1.
+
+Ссылки на литературу в тексте делаются следующим образом
+\cite{1,4}.
+
+Формула в тексте: $c^2=a^2+b^2$.
+
+Формула без нумерации:
+$$
+E=M \cdot C^2.
+$$
+
+Формула с нумерацией:
+\begin{equation} \label{eq1}
+\alpha (t) = \frac{ \beta (t)}{\gamma (t)}.
+\end{equation}
+
+Многострочные формулы можно задавать так:
+\begin{multline} \label{eq2}
+\sum\limits_{n=0}^\infty  {\frac{{f^{\left( n \right)} \left( {x_0 } \right)}}{{n!}}\left( {x - x_0 } \right)^n }  = \\
+= f\left( {x_0 } \right) + \frac{{f'\left( {x_0 }
+\right)}}{{1!}}\left( {x - x_0 } \right) +
+ \frac{{f''\left( {x_0 } \right)}}{{2!}}\left( {x - x_0 } \right)^2 + \dots +
+ \frac{{f^{\left( n \right)} \left( {x_0 } \right)}}{{n!}}\left( {x - x_0 } \right)^n  + \dots
+\end{multline}
+
+Ссылки на формулы задаются так  (\ref{eq1}).
+
+Рисунок вставляется следующим образом:
+
+
+\begin{figure}
+\includegraphics{fig1.png}
+\caption{Черно-белая картинка}
+\end{figure}
+
+
+
+
+Таблица вставляется следующим образом:
+\begin{table}[htbp]
+\caption{Заголовок таблицы}
+\begin{tabular}
+{|c||c|c|c|} \hline Название 1 & Название 2 & Название 3 & Название 4\\
+\hline \hline 1 & A & B & C \\ \hline 2 & $x_1$ & $y_1$ & $z_1$ \\
+\hline 3 & $x_2$ & $y_2$ & $z_2$ \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Название подпараграфа 2}
+Текст подпараграфа 2.
+
+\section{Заключение}
+Текст заключения
+
+\section*{Благодарности}
+Текст.
+
+\begin{thebibliography}{99}
+\bibitem{1}
+Автор~А.\,А., Автор~Б.\,Б. {\it Название книги}.  Издательство,  город, 281~с. (2000)
+
+\bibitem{2}
+Автор~В.\,В., Автор~Г.\,Г. Название статьи. {\it Название журнала}, {\bf 1} (5), С 1 -- 3. (2000)
+
+\bibitem{3}
+Автор~Д.\,Д., Автор~Е.\,Е. Название доклада. Сборник трудов конференции "Конференция", место и дата, С. 47 -- 49
+
+\bibitem{3}
+Автор~Ж.\,Ж., Автор~З.\,З. Название статьи.  2010.
+URL/arXiv: http://books.ifmo.ru/ntv.
+
+\bibitem{4}
+Название патента: патент 1111111 Россия MMM H04 B 1/36, Иванов И.И., владелец патента. OGOGO, N 2000131517/09, Bull. N 12, 3 с.
+
+
+\end{thebibliography}
+
+\end{document}
