@@ -1,13 +1,12 @@
 # Imports for IDE
 from sage.all_cmdline import reset, exp, view, matrix, i, sin, cos, solve, norm, n
+from sage.plot import complex_plot
 from sympy import var
-
 # apparently, resetting is necessary for script mode =/
 reset()
 
 from itertools import product
 from numpy import arange
-
 ### stuff for latex viewing
 
 from sage.misc.viewer import viewer
@@ -26,6 +25,18 @@ def view_all():
 
 
 ###
+
+def safe_subst(expr, v, value):
+    try:
+        res = n(expr.subs({v: value}))
+        return res
+    except ZeroDivisionError:
+        return "division by zero"
+    except ValueError as err:
+        if "division by zero" in err.message:
+            return "division by zero"
+        else:
+            raise err
 
 
 def cvar(name):
@@ -164,10 +175,31 @@ class LoopSolver(BaseSolver):
             analytic = solver.analytic_Sdet()
             check_determinants_same(symbolic.det(), analytic)
 
+    @staticmethod
+    def test_abs_convergence():
+        for a in [-1, 0, 1]:
+            print("a = " + str(a))
+            solver = LoopSolver(a=a, L=1)
+            analytic = solver.analytic_Sdet()
+            for rp in [-5, 0, 5]:
+                print("RP = " + str(rp))
+                for ip in [0, 10, 25, 50, 100]:
+                    k = rp + i * ip
+                    print(safe_subst(analytic, solver.k, k)) # ugh
+            print("===================")
 
-LoopSolver.test()
 
-# solver = LoopSolver(L=1)
+# LoopSolver.test()
+
+def plot_all(det, suffix=None, rrange=(-2, 20), irange=(-2, 2), points=1500):
+    plot_abs = complex_plot(abs(det), rrange, irange, plot_points=points)
+    plot_abs.save("abs" + ("" if suffix is None else "_" + suffix) + ".png", figsize=[12, 2])
+
+
+LoopSolver.test_abs_convergence()
+
+# solver = LoopSolver(a=10, L=1)
+# plot_all(solver.analytic_Sdet(), suffix="loop_new")
 # view_later(solver.symbolic_Sdet())
 # view_later(solver.analytic_Sdet())
 # view_all()
