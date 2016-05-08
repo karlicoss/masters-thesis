@@ -1,7 +1,8 @@
 # Imports for IDE
 from sage.all_cmdline import reset, exp, view, matrix, i, sin, cos, solve, norm, n
 from sage.plot import complex_plot
-from sympy import var, latex, pretty_print
+from sage.symbolic.assumptions import assume
+from sympy import var, latex, pretty_print, diff, pi
 
 # apparently, resetting is necessary for script mode =/
 reset()
@@ -46,6 +47,10 @@ def cvar(name):
 
 def rvar(name):
     return var(name, domain='real')
+
+
+def pvar(name):
+    return var(name, domain='positive')
 
 
 def symmetric_Smatrix(Rs, Ts):
@@ -209,6 +214,55 @@ def divide_both(expr, d):
     print(term)
 
 
+def icayley(z):
+    return i * (1 + z) / (1 - z)
+
+
+def cayley(z):
+    return (z - i) / (z + i)
+
+
+def changevar(f, eqn, newvar):
+    dx = diff(eqn.rhs(), newvar)
+    # print(f)
+    # print(f.subs(eqn))
+    # print(dx)
+    return f.subs(eqn) * dx
+
+
+def complex_integral(expr, ff, tt):
+    rpart, _ = numerical_integral(lambda q: expr(q).real(), ff, tt)
+    impart, _ = numerical_integral(lambda q: expr(q).imag(), ff, tt)
+    return rpart + i * impart
+
+
+# In Cayley space
+def loop_integral_symbolic():
+    k = cvar('k')
+    f = k.imag()
+    t = rvar('t')
+    R = pvar('R')
+    assume(abs(R) - 1 < 0)
+    pig = changevar(f(k=icayley(k)), k == R * exp(i * t), t).full_simplify()
+    # print(complex_integral(pig(R=0.99), 0, 2 * pi))
+    print(pig.integrate(t, 0, 2 * pi))
+
+
+# TODO SIGN DISCREPANCY :(
+# in ordinary space
+def loop_integral_symbolic_2():
+    k = cvar('k')
+    f = k.imag()
+    t = rvar('t')
+    R = pvar('R')
+
+    ig = f * diff(cayley(k), k)
+    pig = changevar(ig, k == R * exp(i * t) + R * i, t).full_simplify()
+    print(complex_integral(pig(R=5), 0, 2 * pi))
+    # print(pig.integrate(t, 0, 2 * pi))
+    # pig = f(k=)
+
+
 def stuff_for_paper():
     rrange = (-50, 50)
     irange = (0, 50)
@@ -231,4 +285,6 @@ def stuff_for_paper():
     view_all()
 
 
-stuff_for_paper()
+# loop_integral_symbolic()
+loop_integral_symbolic_2()
+# stuff_for_paper()
