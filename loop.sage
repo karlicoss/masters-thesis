@@ -1,7 +1,7 @@
 # Imports for IDE
 from sage.all_cmdline import reset, exp, view, matrix, i, sin, cos, solve, norm, n
 from sage.plot import complex_plot
-from sympy import var
+from sympy import var, latex, pretty_print
 
 # apparently, resetting is necessary for script mode =/
 reset()
@@ -199,19 +199,36 @@ def plot_all(det, suffix=None, rrange=(-20, 20), irange=(-2, 2), points=1500):
 
 # LoopSolver.test_abs_convergence()
 
+def divide_both(expr, d):
+    num, den = [(e / d).expand() for e in expr.numerator_denominator()]
+    print(num)
+    print(den)
+    print(num.maxima_methods().divide(den))
+    # print((den / d).expand())
+    # term = Term(1, numer=(num / d).expand(), denom=(den / d).expand())
+    print(term)
+
+
 def stuff_for_paper():
     rrange = (-50, 50)
     irange = (0, 50)
 
-    solver0 = LoopSolver(a=0, L=1)
-    solver1 = LoopSolver(a=10, L=1)
+    solver = LoopSolver(L=1)
+    Sdet = solver.analytic_Sdet()
 
-    for solver in [solver0, solver1]:
-        Sdet = solver.analytic_Sdet()
-        # TODO black labels on black plot!!
-        plot_all(Sdet, suffix="loop_%s" % solver.a, rrange=rrange, irange=irange)
-        view_later("S-matrix for a = %s" % solver.a)
-        view_later(Sdet)
+    view_later("S-matrix for a")
+    view_later(Sdet)
+    view_later(divide_both(Sdet, 2 * solver.k))
+    # solver0 = LoopSolver(a=0, L=1)
+    # solver1 = LoopSolver(a=10, L=1)
+    #
+    # for solver in [solver0, solver1]:
+    #     Sdet = solver.analytic_Sdet()
+    #     # TODO black labels on black plot!!
+    #     plot_all(Sdet, suffix="loop_%s" % solver.a, rrange=rrange, irange=irange)
+    #     view_later("S-matrix for a = %s" % solver.a)
+    #     view_later(Sdet)
     view_all()
+
 
 stuff_for_paper()
