@@ -16,6 +16,11 @@
 \let\geq\geqslant
 
 \input{macros/macros.tex}
+\usepackage{mathtools} % xmapsto, \Vector
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\newcommand{\eexp}[1]{e^{#1}}
+\newcommand{\iu}{{i\mkern1mu}}
+
 
 \begin{document}
 
@@ -47,6 +52,65 @@ Sonneggstrasse, 5,  Zurich, CH-8092, Switzerland }
 \section{Введение}
 
 Текст введения
+
+TODO
+\[
+\det S = 
+\frac
+{\cos\left(k\right) + {\left(\frac{a}{2 k} + i\right)} \sin\left(k\right) - 1}
+{\cos\left(k\right) + {\left(\frac{a}{2 k} - i\right)} \sin\left(k\right) - 1}
+\]
+
+
+$a = 0$:
+
+\[
+\det S = \frac{\eexp{\iu k} - 1}{\eexp{-\iu k} - 1} = -\eexp{i k}
+\]
+
+% TODO \Im as Im??
+\[
+\ln \abs{\det S} = \ln \eexp{- \Im k} = -\Im k
+\]
+
+Преобразование Кэли: $\zeta = \frac{k - i}{k + i}$, обратное: $k = \iu \frac{1 + \zeta}{1 - \zeta}$.
+
+Вычислим интеграл, сделаем это в пространстве единичного диска. $\Im k \to \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right) $.
+
+%  TODO вычислим интеграл под пределом в зависимости от R:
+% TODO varphi??
+\[
+\lim \int\limits_{TODO ??? } \ln \abs{\det S(\zeta)} d \zeta = \lim \int\limits_{TODO ??? } \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right)  d\zeta
+\]
+
+Перейдем в полярные координаты: $\zeta \to R \eexp{\iu \phi}, d\zeta \to R \iu \eexp{\iu \phi}$
+
+% TODO proper d
+
+Комплексный интеграл  $I$ складывается из сумм интегралов действительно части $I_R$ и мнимой $\iu I_I$. Рассчитаем мнимую часть подынтегрального выражения:
+
+\begin{align*}
+\Im \left(  \Im \left( \iu \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) R \iu \eexp{\iu \phi} \right)
+ &= R \Re \left(  \Re \left( \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) \eexp{\iu \phi} \right) \\
+ &= R \Re \left( \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) \Re \left(   \eexp{\iu \phi} \right) \\
+ &= R \Re \left( \frac{(1 + R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi}) }{(1 - R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi})} \right) \cos \phi \\
+ &= R \Re \left( \frac{1 - R^2 + 2 \iu R \sin \phi}{1 + R^2 - 2 R \cos \phi} \right) \cos \phi \\
+ &= R \frac{1 - R^2}{1 + R^2 - 2 R \cos \phi} \cos \phi \\
+ % TODO calculate the integral properly
+ &= 2 \pi R^2
+\end{align*}
+
+Можно видеть, что $\lim\limits_{R \to 1} I_I(R) = 2 \pi \ne 0$, следовательно, $S$ не является произведением Бляшке-Потапова, и, по критерию TODO как он называется?, система резонатных состояний графа $\Gamma$ не является полной на кольце $\Omega$.
+
+% \[
+% z \to R \eexp{\iu \phi}
+% \]
+% \[
+% dz \to R \iu \eexp{\iu \phi} d \phi
+% \]
+
+
+
 
 \section{Название второго параграфа}
 Текст
