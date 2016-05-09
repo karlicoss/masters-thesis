@@ -2,24 +2,22 @@ fontsize = 26
 length = 2
 radius = 0.3
 
-edge_inc = line([(-length, 0), (-radius,0)])
-edge_inc_inf = line([(-length - 0.2, 0), (-length, 0)], linestyle='dotted')
-edge_out = line([(radius, 0), (length, 0)])
-edge_out_inf = line([(length, 0), (length + 0.2, 0)], linestyle='dotted')
-edge_circle = circle((0, 0), radius)
-vertex_inc = point((-radius, 0), size=20)
-vertex_out = point((radius, 0), size=20)
-vertex_inc_label = text("$V_{inc}$", (-radius - 0.11, 0.1), fontsize=fontsize)
-vertex_out_label = text("$V_{out}$", (radius + 0.1, 0.1), fontsize=fontsize)
-edge_inc_label = text("$\Omega_{inc}$", (-(length - 0.3) - 0.2, 0.1), fontsize=fontsize)
-edge_out_label = text("$\Omega_{out}$", ((length - 0.3) + 0.2, 0.1), fontsize=fontsize)
-edge_up_label = text("$\Omega_1$", (0, radius - 0.1), fontsize=fontsize)
-edge_down_label = text("$\Omega_2$", (0, -radius + 0.1), fontsize=fontsize)
+color='black'
+
+edge_L = line([(-length, 0), (0, 0)], rgbcolor=color)
+edge_L_inf = line([(-length - 0.2, 0), (-length, 0)], linestyle='dotted', rgbcolor=color)
+edge_R = line([(0, 0), (length, 0)], rgbcolor=color)
+edge_R_inf = line([(length, 0), (length + 0.2, 0)], linestyle='dotted', rgbcolor=color)
+edge_circle = circle((0, radius), radius, rgbcolor=color)
+vertex = point((0, 0), size=20, rgbcolor=color)
+vertex_label = text("$V$", (0 - 0.11, -0.1), fontsize=fontsize, rgbcolor=color)
+edge_L_label = text("$\Omega_L$", (-(length - 0.3) - 0.2, 0.1), fontsize=fontsize, rgbcolor=color)
+edge_R_label = text("$\Omega_R$", ((length - 0.3) + 0.2, 0.1), fontsize=fontsize, rgbcolor=color)
+edge_circle_label = text("$\Omega$", (0, 2 * radius - 0.1), fontsize=fontsize, rgbcolor=color)
 objects = [
-    edge_inc, edge_inc_inf, edge_inc_label,
-    edge_circle, edge_up_label, edge_down_label,
-    edge_out, edge_out_inf, edge_out_label,
-    vertex_inc, vertex_inc_label,
-    vertex_out, vertex_out_label,
+    edge_L, edge_L_inf, edge_L_label,
+    edge_circle, edge_circle_label,
+    edge_R, edge_R_inf, edge_R_label,
+    vertex, vertex_label,
 ]
 sum(objects).save('graph.eps', axes=False, figsize=12)

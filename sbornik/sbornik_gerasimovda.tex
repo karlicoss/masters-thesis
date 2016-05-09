@@ -1,3 +1,6 @@
+% TODO varphi??
+% TODO curly brace before system?
+% TODO proper d
 \documentclass{nsart_eng}
 \usepackage{cite}
 \usepackage{amsmath,amssymb}
@@ -28,25 +31,24 @@
 
 \begin{document}
 
+% TODO ??
 \title[короткое название статьи]
 {НАЗВАНИЕ СТАТЬИ}
 
-\author[А.\,Б.~Иванов, C.\,C.~Claus, В.\,Г.~Петров]
-{$^1$А.\,Б.~Иванов, $^{1}$C.\,C.~Claus, $^2$В.\,Г.~Петров}
+\author[Д.\,А.~Герасимов]
+{$^1$Д.\,А.~Герасимов}
 
 \address{
 $^1$ Санкт-Петербургский Национальный Исследовательский Университет Информационных Технологий, \\
 Механики и Оптики,\\
-Кронверкский пр., 49, Санкт-Петербург, 197101, Россия\\
-$^2$ Swiss Federal University of Technology,\\
-Sonneggstrasse, 5,  Zurich, CH-8092, Switzerland }
+Кронверкский пр., 49, Санкт-Петербург, 197101, Россия}
 
-\email{ivanov@ivanov.ru, claus@claus.ch, petrov@petrov.ru }
+\email{karlicoss@gmail.com}
 
 УДК ???.??, ???.???.?% insert UDK
 
 \begin{abstract}
-Рассматривается задача рассеивания на квантовом графе $\Gamma$, представляющем из себя кольцо $\Omega$, связянное с каналом (TODO?) дельта-граничным условием???, параметризованным вещественной константой $a$. Изучается поведение системы при различных $a$, и полнота резонансных состояний оператора Шредингера графа $\Gamma$ в пространстве $\mcL_2(\Omega)$.
+Рассматривается задача рассеивания на квантовом графе $\Gamma$, представляющем из себя кольцо $\Omega$, связянное с волноводом $\delta$-граничным условием (TODO как оно нормально называется???), параметризованным вещественной константой $a$. Изучается поведение системы при различных $a$, и полнота резонансных состояний оператора Шредингера графа $\Gamma$ в пространстве $\mcL_2(\Omega)$.
 \end{abstract}
 
 \keywords{задача рассеяния, квантовый граф, резонансы, уравнение Шредингера}
@@ -55,13 +57,13 @@ Sonneggstrasse, 5,  Zurich, CH-8092, Switzerland }
 
 \section{Введение}
 
-Квантовый граф — широко используемая модель наносистемы. Если граф $\Gamma$ состоит только из конечного числа ребер конечной длины, его гамильтониан имеет чисто дискретный спектр, и его собственные функции образуют полную систему в $\mcL_2(\Gamma)$. Если же граф $\Gamma$ представляет из себя резонатор $\Omega$ с полубесконечными ребрами, в спектре будет присутствовать непрерывная часть и резонансы, индуцированные собственными числами гамильтониана резонатора $\mcH_\Omega$. Резонансные состояния оператора Шредингера не принадлежат пространству $\mcL_2(\Gamma)$, однако, при сужении их на конечный домен $\Omega$, становятся квадратично интегрируемыми и лежат в пространстве $\mcL_2(\Omega)$. Для многих приложений (TODO каких? ссылки?) интересно знать, формируют ли полную систему резонанстные состояния графа $\Gamma$ в пространстве $\mcL_2(\Omega)$ резонатора.
+Квантовый граф — широко используемая модель наносистемы \cite{1, 2, 3, 4}. Если граф $\Gamma$ состоит только из конечного числа ребер конечной длины, его гамильтониан имеет чисто дискретный спектр, и его собственные функции образуют полную систему в $\mcL_2(\Gamma)$. Если же граф $\Gamma$ представляет из себя резонатор $\Omega$ с полубесконечными ребрами, в спектре будет присутствовать непрерывная часть и резонансы, индуцированные собственными числами гамильтониана резонатора $\mcH_\Omega$. Резонансные состояния оператора Шредингера не принадлежат пространству $\mcL_2(\Gamma)$, однако, при сужении их на конечный домен $\Omega$, становятся квадратично интегрируемыми и лежат в пространстве $\mcL_2(\Omega)$. Для многих приложений (TODO каких? ссылки?) интересно знать, формируют ли полную систему резонанстные состояния графа $\Gamma$ в пространстве $\mcL_2(\Omega)$ резонатора.
 
 \section{Цель работы и постановка задачи}
 В статье TODO ссылка была показана полнота резонансных функций на графе с резонатором, состоящим из отрезка с $\delta$-граничным условием. Естественным предположением является что произвольный резонатор состоящий из конечного числа ребер конечной длины должен обладать похожими свойствами, однако, это не так. В этой работе исследуется резонатор, состоящий из кольца и показывается неполнота резонансных состояний на этом кольце.
 
-\section{TODO ???? }
-В общем виде волновые функции слева и справа от резонатора имеют вид:
+\section{Терминология и вспомогательные сведения}
+В общем виде волновые функции, являющиеся решениями уравнения Шредингера слева и справа от резонатора имеют вид:
 \[
 \psi_L(x) = A \eexp{\iu k x} + B \eexp{-\iu k x}
 \]
@@ -69,34 +71,24 @@ Sonneggstrasse, 5,  Zurich, CH-8092, Switzerland }
 \psi_R(x) = C \eexp{\iu k x} + D \eexp{-\iu k x}
 \]
 
-S-матрица выражает зависимость исходящей волны от входящей:
+S-матрица (матрица рассеяния) выражает зависимость исходящей волны от входящей:
 \[
 \begin{pmatrix} B \\ C \end{pmatrix} = S \begin{pmatrix} A \\ D \end{pmatrix}
 \]
 
-В случае конечной размерности вспомогательного пространства есть простой критерий отсутствия сингулярного множителя (TODO ссылку):
-
-Для скалярных внутренних функций $\phi$ существует критерий отстутствия сингулярного множителя: TODO ссылка Nikolskii, p.99
+Для скалярных внутренних функций $\phi$ существует критерий отстутствия сингулярного множителя \cite[стр. 99]{nikolskii}:
 \[
 \lim\limits_{r = 1} \int\limits_{\bbT} \log \abs{\phi(r \zeta)} d m(\zeta) = 0
 \]
 
 Так как $\det S$ является скалярной внутренней функцией, мы можем воспользоваться данным критерием для исследования полноты системы резонантных состояний.
-% @book{peetre2012treatise,
-%   title={Treatise on the Shift Operator: Spectral Function Theory},
-%   author={Peetre, J. and Nikol'skii, N.K. and Hruscev, S.V. and Peller, V.V.},
-%   isbn={9783642701511},
-%   lccn={84026869},
-%   series={Grundlehren der mathematischen Wissenschaften},
-%   url={https://books.google.ru/books?id=SlHoCAAAQBAJ},
-%   year={2012},
-%   publisher={Springer Berlin Heidelberg}
-% }
 % $\det S$ — произведение Бляшке-Потапова $\iff$ TODO ??? 
 
-
 \section{Модель исследования}
-Рисунок: квантовый граф $\Gamma$, состоящий из полубесконечных ребер $\Omega_L, \Omega_R$ и рассеивателя $\Omega$, представляющего из себя окружность длиной $1$.
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth,keepaspectratio]{graph.eps}
+\caption{квантовый граф $\Gamma$, состоящий из полубесконечных ребер $\Omega_L, \Omega_R$ и рассеивателя $\Omega$, представляющего из себя окружность длиной $1$.}
+\end{figure}
 
 Мы рассматриваем случай рассеяния волны c волновым вектором $k$, приходящей слева направо. Таким образом, волновые функции на различных частях графа принимают следующий вид:
 
@@ -106,11 +98,10 @@ S-матрица выражает зависимость исходящей во
 \psi_\Omega(x) &= P \sin(k x) + Q \cos(k x)
 \end{align*}
 , где $R$ и $T$ — коэффициенты отражения и прохождения волны. Так как система симметрична, ее матрица рассеяния принимает вид
-$S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}$
+$S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}$.
 
 В вершине $V$ мы ставим граничное условие Дирихле на волновую функцию, и $\delta$-условие со связью $a$ на ее производную:
 
-% TODO SYSTEM
 \begin{align*}
 \psi_L(0) = \psi_R(0) = \psi_\Omega(0) = \psi_\Omega(1) \\ 
 -\psi'_L(0) + \psi'_\Omega(0) - \psi'_\Omega(1) + \psi'_R(0) = a \psi_L(0)
@@ -118,8 +109,7 @@ $S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}$
 
 
 \section{Вычисление S-матрицы}
-
-Решаем систему:
+Определим коэффициенты прохождения и отражения, решив систему линейных уравнений:
 \begin{align*}
 & 1 + R &= T \\
 & 1 + R &= Q \\
@@ -127,7 +117,7 @@ $S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}$
 & -P k \cos k + Q k \sin k + P k + \iu R k + \iu T k - \iu k &= T a
 \end{align*}
 
-Решая систему, получаем:
+Решив систему, получаем:
 
 \begin{align*}
 R(k) = -\frac{2 \, k \cos\left(k\right) + a \sin\left(k\right) - 2 \, k}{2 \, k \cos\left(k\right) + {\left(a - 2 i \, k\right)} \sin\left(k\right) - 2 \, k} \\
@@ -143,6 +133,7 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
 
 
 \section{Исследование полноты при $a=0$}
+Рассмотрим случай $a=0$:
 \[
 \det S
 = \frac
@@ -160,8 +151,6 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
 
 Вычислим интеграл в пространстве единичного диска, для этого применим обратное преобразование Кэли $k \to \iu \frac{1 + \zeta}{1 - \zeta}$ к подынтегральной функции: $\Im k \to \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right) $.
 
-%  TODO вычислим интеграл под пределом в зависимости от R:
-% TODO varphi??
 \[
   \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \ln \abs{\det S(\zeta)} d \zeta
 = \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right)  d\zeta = \dots
@@ -172,8 +161,6 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
 \dots = \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \Im \left( \iu \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) R \iu \eexp{\iu \phi} d\phi
 \]
 
-% TODO proper d
-
 Комплексный интеграл складывается из сумм интегралов действительной и мнимной части подынтегрального выражения. Рассчитаем мнимую часть:
 
 \begin{align*}
@@ -183,67 +170,61 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
  &= R \Re \left( \frac{(1 + R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi}) }{(1 - R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi})} \right) \cos \phi \\
  &= R \Re \left( \frac{1 - R^2 + 2 \iu R \sin \phi}{1 + R^2 - 2 R \cos \phi} \right) \cos \phi \\
  &= R \frac{1 - R^2}{1 + R^2 - 2 R \cos \phi} \cos \phi \\
- % TODO calculate the integral properly
+ % NOTE calculate the integral properly?
  &= 2 \pi R^2
 \end{align*}
 
 Можно видеть, что предел мнимой части при $R \to 1$ равен $2 \pi$, следовательно, по критерию полноты, система резонатных состояний графа $\Gamma$ не является полной на кольце $\Omega$.
 
-Ссылки на литературу в тексте делаются следующим образом
-\cite{1,4}.
+% Формула с нумерацией:
+% \begin{equation} \label{eq1}
+% \alpha (t) = \frac{ \beta (t)}{\gamma (t)}.
+% \end{equation}
 
+% Многострочные формулы можно задавать так:
+% \begin{multline} \label{eq2}
+% \sum\limits_{n=0}^\infty  {\frac{{f^{\left( n \right)} \left( {x_0 } \right)}}{{n!}}\left( {x - x_0 } \right)^n }  = \\
+% = f\left( {x_0 } \right) + \frac{{f'\left( {x_0 }
+% \right)}}{{1!}}\left( {x - x_0 } \right) +
+%  \frac{{f''\left( {x_0 } \right)}}{{2!}}\left( {x - x_0 } \right)^2 + \dots +
+%  \frac{{f^{\left( n \right)} \left( {x_0 } \right)}}{{n!}}\left( {x - x_0 } \right)^n  + \dots
+% \end{multline}
 
-Формула с нумерацией:
-\begin{equation} \label{eq1}
-\alpha (t) = \frac{ \beta (t)}{\gamma (t)}.
-\end{equation}
+% Ссылки на формулы задаются так  (\ref{eq1}).
 
-Многострочные формулы можно задавать так:
-\begin{multline} \label{eq2}
-\sum\limits_{n=0}^\infty  {\frac{{f^{\left( n \right)} \left( {x_0 } \right)}}{{n!}}\left( {x - x_0 } \right)^n }  = \\
-= f\left( {x_0 } \right) + \frac{{f'\left( {x_0 }
-\right)}}{{1!}}\left( {x - x_0 } \right) +
- \frac{{f''\left( {x_0 } \right)}}{{2!}}\left( {x - x_0 } \right)^2 + \dots +
- \frac{{f^{\left( n \right)} \left( {x_0 } \right)}}{{n!}}\left( {x - x_0 } \right)^n  + \dots
-\end{multline}
-
-Ссылки на формулы задаются так  (\ref{eq1}).
-
-Рисунок вставляется следующим образом:
-
-
-\begin{figure}
-\includegraphics{fig1.png}
-\caption{Черно-белая картинка}
-\end{figure}
-
-
-\subsection{Название подпараграфа 2}
-Текст подпараграфа 2.
+% \subsection{Название подпараграфа 2}
+% Текст подпараграфа 2.
 
 \section{Заключение}
-Текст заключения
+TODO ????
+% Было показано, что полнота резонансных состояний в пространстве резонатора 
 
 % \section*{Благодарности}
 % Текст.
 
 \begin{thebibliography}{99}
-\bibitem{1}
-Автор~А.\,А., Автор~Б.\,Б. {\it Название книги}.  Издательство,  город, 281~с. (2000)
+\bibitem{1} P.Kuchment, \textit{Waves in Random Media}, \textbf{12}(4), R1-R24 (2002)
 
-\bibitem{2}
-Автор~В.\,В., Автор~Г.\,Г. Название статьи. {\it Название журнала}, {\bf 1} (5), С 1 -- 3. (2000)
+\bibitem{2} I.S. Lobanov, A.I. Trifanov, E.S. Trifanova, \textit{Nanosystems: Phys. Chem. Math.}, \textbf{3}(4), 512-523 (2013).
 
-\bibitem{3}
-Автор~Д.\,Д., Автор~Е.\,Е. Название доклада. Сборник трудов конференции "Конференция", место и дата, С. 47 -- 49
+\bibitem{3} P.Exter. J.P. Keating, P. Kuchment, T. Sunada, A. Teplyaev (eds.), \textit{Analysis on Graphs and Its Applications}. Proc. Symp. Pure Math., 77 (Providence, RI: Amer. Math. Soc.) (2008)
 
-\bibitem{3}
-Автор~Ж.\,Ж., Автор~З.\,З. Название статьи.  2010.
-URL/arXiv: http://books.ifmo.ru/ntv.
+\bibitem{4} I.Yu. Popov, A.N. Skorydina, I.V. Blinova, \textit{J. Math. Phys.}, \textbf{55}, 033504 (2014)
 
-\bibitem{4}
-Название патента: патент 1111111 Россия MMM H04 B 1/36, Иванов И.И., владелец патента. OGOGO, N 2000131517/09, Bull. N 12, 3 с.
+\bibitem{nikolskii} N.K. Nikol'skii. {\it Treatise on the Shift Operator: Spectral Function Theory}.  Springer Berlin Heidelberg,  491~p. (2012)
 
+% \bibitem{2}
+% Автор~В.\,В., Автор~Г.\,Г. Название статьи. {\it Название журнала}, {\bf 1} (5), С 1 -- 3. (2000)
+
+% \bibitem{3}
+% Автор~Д.\,Д., Автор~Е.\,Е. Название доклада. Сборник трудов конференции "Конференция", место и дата, С. 47 -- 49
+
+% \bibitem{3}
+% Автор~Ж.\,Ж., Автор~З.\,З. Название статьи.  2010.
+% URL/arXiv: http://books.ifmo.ru/ntv.
+
+% \bibitem{4}
+% Название патента: патент 1111111 Россия MMM H04 B 1/36, Иванов И.И., владелец патента. OGOGO, N 2000131517/09, Bull. N 12, 3 с.
 
 \end{thebibliography}
 
