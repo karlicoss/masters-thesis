@@ -2,7 +2,8 @@
 from sage.all_cmdline import reset, exp, view, matrix, i, sin, cos, solve, norm, n
 from sage.plot import complex_plot
 from sage.symbolic.assumptions import assume
-from sympy import var, latex, pretty_print, diff, pi
+from sage.symbolic.expression_conversions import fast_callable
+from sympy import var, latex, pretty_print, diff, pi, CC, RR, ln
 
 # apparently, resetting is necessary for script mode =/
 reset()
@@ -42,11 +43,11 @@ def safe_subst(expr, v, value):
 
 
 def cvar(name):
-    return var(name, domain='complex')
+    return var(name, domain=CC)
 
 
 def rvar(name):
-    return var(name, domain='real')
+    return var(name, domain=RR)
 
 
 def pvar(name):
@@ -230,9 +231,12 @@ def changevar(f, eqn, newvar):
     return f.subs(eqn) * dx
 
 
-def complex_integral(expr, ff, tt):
-    rpart, _ = numerical_integral(lambda q: expr(q).real(), ff, tt)
-    impart, _ = numerical_integral(lambda q: expr(q).imag(), ff, tt)
+def complex_integral(expr, x, ff, tt):
+    rp = fast_callable(expr.real(), vars=[x], domain=CC)
+    ip = fast_callable(expr.imag(), vars=[x], domain=CC)
+    eps = 1e-02
+    rpart, _ = numerical_integral(rp, ff, tt, eps_rel=eps, rule=1)
+    impart, _ = numerical_integral(ip, ff, tt, eps_rel=eps, rule=1)
     return rpart + i * impart
 
 
@@ -285,6 +289,39 @@ def stuff_for_paper():
     view_all()
 
 
+# In Cayley space
+def calculate_integral_symbolic_cayley():
+    t = rvar('t')
+    R = pvar('R')
+    solver = LoopSolver(L=1, a=1.0)
+    k = solver.k
+    f = ln(abs(solver.analytic_Sdet()))
+    # k = cvar('k')
+    # f = k.imag()
+    assume(abs(R) - 1 < 0)
+    pig = changevar(f(k=icayley(k)), k == R * exp(i * t), t).full_simplify()
+    # print(complex_integral(pig(R=0.99), 0, 2 * pi))
+    # print(pig.integrate(t, 0, 2 * pi))
+    print(complex_integral(pig(R=0.9999999), t, 0, 2 * pi))
+
+
+def calculate_integral_symbolic():
+    t = rvar('t')
+    R = pvar('R')
+    solver = LoopSolver(L=1, a=0.0)
+    k = solver.k
+    f = ln(abs(solver.analytic_Sdet()))
+    # k = cvar('k')
+    # f = k.imag()
+    print(f)
+    ig = f * diff(cayley(k), k)
+    pig = changevar(ig, k == R * exp(i * t) + R * i, t).full_simplify()
+    for rr in [1, 2, 5, 10, 15, 20, 25]:
+        print(complex_integral(pig(R=rr), t, 0, 2 * pi))
+    # print(pig.integrate(t, 0, 2 * pi))
+    # pig = f(k=)
+
+
+calculate_integral_symbolic_cayley()
 # loop_integral_symbolic()
-loop_integral_symbolic_2()
 # stuff_for_paper()

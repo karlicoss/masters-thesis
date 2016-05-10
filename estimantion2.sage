@@ -48,6 +48,44 @@ def plot_all(ff, suffix="", rrange=(0, 20), irange=(-3, 3), points=300):
     # (complex_plot(ln(abs(Sdet(k=cayley(k)))), (-1, 1), (-1, 1), plot_points=points) + unit_circle).save('plot_circle.png', dpi=DPI)
 
 
+def loop_integral_symbolic():
+    def cayley(z):
+        return (z - i) / (z + i)
+
+    f(k) = k.imag()
+    t = rvar('t')
+    R = rvar('R')
+    assume(abs(R) - 1 < 0)
+    pig(k) = f(k=cayley(k))(k=R * exp(i * t)) * R * i * exp(i * t)
+    print(pig.integrate(t, 0, 2 * pi))
+
+def symbolic_integral():
+    # def icayley(z):
+    #     return i * (1 + z) / (1 - z)
+
+    def cayley(z):
+        return (z - i) / (z + i)
+
+    f(k) = k.imag()
+    t = rvar('t')
+    R = rvar('R')
+    assume(abs(R) - 1 < 0)
+    pig(k) = f(k=cayley(k))(k=R * exp(i * t)) * R * i * exp(i * t)
+    print(pig.integrate(t, 0, 2 * pi))
+    #
+    #
+    # f(k) = k.imag()
+    # ig(k) = f(k=k) / (k - 1) ** 2
+    # ig(k) = 1 / (k - 1) ** 2
+    # t = rvar('t')
+    # R = rvar('R')
+    # pig = ig(k = R * exp(i * t) + R * i) * R * i * exp(i * t)
+    # # pig = R * R * i * exp(i * t) / ((R * exp(i * t) - 1)**2)
+    # # print(pig.integral(t, 0, pi).limit(R=oo))
+    # for rr in [1, 2, 5, 10, 25, 50, 100, 200]:
+    #     print(pig(R=rr).integral(t, 0, pi * 1.9).n())
+
+
 def contour_integral_analysis(expr):
     # denom(k) = cos(k) - 2 * i * sin(k)
     # denom(k) = (cos(k) + 2 * i * sin(k)) / (cos(k) - 2 * i * sin(k))
@@ -85,9 +123,12 @@ def test_denom():
     plot(res(u=pi + 0.2), (v, 0, 2)).save('test_denom_3.png', figsize=[12, 5])
     plot(res(u=pi + 0.3), (v, 0, 2)).save('test_denom_4.png', figsize=[12, 5])
 
-k = var('k')
-S(k) = (k * exp(i * k) + 0 * sin(k) - k) / (k * exp(-i * k) + 0 * sin(k) - k)
-contour_integral_analysis(S)
+# k = var('k')
+# S(k) = (k * exp(i * k) + 0 * sin(k) - k) / (k * exp(-i * k) + 0 * sin(k) - k)
+# contour_integral_analysis(S)
+symbolic_integral()
+# t = rvar('t')
+# plot(la)
 
 
 # test_denom()
