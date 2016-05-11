@@ -3,7 +3,7 @@ from sage.all_cmdline import reset, exp, view, matrix, i, sin, cos, solve, norm,
 from sage.plot import complex_plot
 from sage.symbolic.assumptions import assume
 from sage.symbolic.expression_conversions import fast_callable
-from sympy import var, latex, pretty_print, diff, pi, CC, RR, ln
+from sympy import var, latex, pretty_print, diff, pi, CC, RR, ln, oo
 
 # apparently, resetting is necessary for script mode =/
 reset()
@@ -121,15 +121,6 @@ class LoopSolver(BaseSolver):
         self.a = a
         self.L = L
 
-    # def solve_analytic(self):
-    #     a = self.a
-    #     W = self.wires
-    #     L = self.L
-    #     # # to make formulas look pretty
-    #
-    #     num = 2 * W * k * cos(L * k) + (a + 2 * i * k) * sin(L * k) - 2 * W * k
-    #     den = 2 * W * k * cos(L * k) + (a - 2 * i * k) * sin(L * k) - 2 * W * k
-    #     return num / den
     def analytic_Sdet(self):
         a = self.a
         L = self.L
@@ -194,6 +185,70 @@ class LoopSolver(BaseSolver):
                     k = rp + i * ip
                     print(safe_subst(analytic, solver.k, k))  # ugh
             print("===================")
+
+
+class IntervalLoopSolver(BaseSolver):
+    # wires: integer
+    # a: symbolic/float
+    def __init__(self, L=rvar('L')):
+        super(IntervalLoopSolver, self).__init__()
+        self.L = L
+
+    def analytic_Sdet(self):
+        L = self.L
+        k = self.k
+        num = (2 * cos(k) + 2 * i * sin(k)) * cos(L * k) + (+2 * i * cos(k) - 3 * sin(k)) * sin(L * k) - 2
+        den = (2 * cos(k) - 2 * i * sin(k)) * cos(L * k) + (-2 * i * cos(k) - 3 * sin(k)) * sin(L * k) - 2
+        return num / den
+
+    def symbolic_S(self):
+        R, T = self.R, self.T
+        f_inc, f_out = self.f_inc, self.f_out
+        f_inc_d, f_out_d = self.f_inc_d, self.f_out_d
+        x = self.x
+        k = self.k
+        L = self.L
+
+        P, Q = cvar('P'), cvar('Q')
+        wf = P * sin(k * x) + Q * cos(k * x)
+        wfd = wf.derivative(x)
+
+        PL, QL = cvar('PL'), cvar('QL')
+        wfl = PL * sin(k * x) + QL * cos(k * x)
+        wfld = wfl.derivative(x)
+
+        equations = [
+            f_inc(x=0) == wf(x=0),
+            wf(x=1) == f_out(x=0),
+            f_inc(x=0) == wfl(x=0),
+            wfl(x=L) == f_out(x=0),
+
+            -f_inc_d(x=0) + wfd(x=0) + wfld(x=0) == 0,
+            f_out_d(x=0) - wfd(x=1) - wfld(x=L) == 0,
+        ]
+
+        solution = solve(
+            equations,
+            R, T, P, Q, PL, QL,
+            solution_dict=True,
+        )[0]
+
+        Rs = solution[R].full_simplify()
+        Ts = solution[T].full_simplify()
+        return symmetric_Smatrix(Rs, Ts)
+
+    def symbolic_Sdet(self):
+        return self.symbolic_S().det()
+
+    @staticmethod
+    def test():
+        for L in [1, 0.5, 2]:
+            print("L = " + str(L))
+            solver = IntervalLoopSolver(L=L)
+            symbolic = solver.symbolic_S()
+            check_Smatrix_properties(symbolic)
+            analytic = solver.analytic_Sdet()
+            check_determinants_same(symbolic.det(), analytic)
 
 
 # LoopSolver.test()
@@ -293,22 +348,26 @@ def stuff_for_paper():
 def calculate_integral_symbolic_cayley():
     t = rvar('t')
     R = pvar('R')
-    solver = LoopSolver(L=1, a=1.0)
+    solver = LoopSolver(L=1, a=1)
     k = solver.k
     f = ln(abs(solver.analytic_Sdet()))
     # k = cvar('k')
-    # f = k.imag()
+    # f = ln(abs((cos(k) + (1/k + i) * sin(k) - 1) / (cos(k) + (1/k - i) * sin(k) - 1)))
     assume(abs(R) - 1 < 0)
-    pig = changevar(f(k=icayley(k)), k == R * exp(i * t), t).full_simplify()
+    pig = changevar(f(k=icayley(k)), k == R * exp(i * t), t)  # .full_simplify()
+    # print(pig.limit(R=1))
     # print(complex_integral(pig(R=0.99), 0, 2 * pi))
     # print(pig.integrate(t, 0, 2 * pi))
-    print(complex_integral(pig(R=0.9999999), t, 0, 2 * pi))
+    print(pig)
+    for tt in arange(0.0001, 0.0001 * 2 * pi, 0.0001 * pi / 20):
+        print(pig(R=1)(t=tt).n())
+        # print(complex_integral(pig(R=1), t, 0, 2 * pi))
 
 
 def calculate_integral_symbolic():
     t = rvar('t')
     R = pvar('R')
-    solver = LoopSolver(L=1, a=0.0)
+    solver = LoopSolver(L=1, a=1)
     k = solver.k
     f = ln(abs(solver.analytic_Sdet()))
     # k = cvar('k')
@@ -316,12 +375,21 @@ def calculate_integral_symbolic():
     print(f)
     ig = f * diff(cayley(k), k)
     pig = changevar(ig, k == R * exp(i * t) + R * i, t).full_simplify()
-    for rr in [1, 2, 5, 10, 15, 20, 25]:
-        print(complex_integral(pig(R=rr), t, 0, 2 * pi))
+    print(pig(t=0.4999 * pi).simplify()(R=1000).n())  # .limit(R=oo))
+    # for rr in [1, 2, 5, 10, 15, 20, 25]:
+    #     print(complex_integral(pig(R=rr), t, 0, 2 * pi))
     # print(pig.integrate(t, 0, 2 * pi))
     # pig = f(k=)
 
 
-calculate_integral_symbolic_cayley()
+# calculate_integral_symbolic()
+# calculate_integral_symbolic_cayley()
 # loop_integral_symbolic()
 # stuff_for_paper()
+solver = IntervalLoopSolver(L=cvar('L'))
+view_later(solver.analytic_Sdet())
+view_all()
+# S = solver.solve_symbolic()
+# complex_plot(abs(S), (-10, 10), (0, 10)).show()
+# print(S)
+# IntervalLoopSolver.test()
