@@ -1,4 +1,4 @@
-NAME      := demo.tex
+NAME      := paper_gerasimovda.tex
 BUILD_DIR := build
 
 
@@ -26,4 +26,4 @@ wipe:
 
 .PHONY: export
 export: build
-	zip demo.zip $(NAME) build/demo.pdf
+	zip paper_gerasimovda.zip $(NAME) build/paper_gerasimovda.pdf
