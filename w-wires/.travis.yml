@@ -1,0 +1,7 @@
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install --no-install-recommends latexmk texlive-latex-base
+
+script:
+  - make wipe
+  - make build
