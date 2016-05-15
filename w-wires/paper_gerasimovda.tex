@@ -25,9 +25,126 @@
 \renewcommand{\phi}{\varphi}
 \newcommand{\todo}[1]{{\large \textcolor{red}{TODO: #1}}}
 
+\DeclareMathOperator\atanh{atanh}
+
 \begin{document}
 
-Latex math notes demo. 
+Scatterer consists of $W$ wires of length $1$, on the left joint vertex $\delta$-well with depth $a$, on the right: $\delta$-well with depth $b$. 
 
+\todo{Picture}
+
+\todo{System of equations}
+
+\todo{Solutions for transmission/refletion?}
+
+Simplifying, we get:
+
+\[
+\det S(k) = \frac{W {\left(a + b\right)} k \cos\left(k\right) + 2 i \, W k^{2} \cos\left(k\right) + {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}{W {\left(a + b\right)} k \cos\left(k\right) - 2 i \, W k^{2} \cos\left(k\right) - {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}
+\]
+
+
+
+\section*{Proof of completeness for $a = b = 0$}
+Under the substitituion $a = 0, b = 0$, $\det S$ simplifies to:
+
+\[
+\det S(k) = - \frac{2 i \, W \cos\left(k\right) - {\left(W^{2} + 1\right)} \sin\left(k\right)}{2 i \, W \cos\left(k\right) + {\left(W^{2} + 1\right)} \sin\left(k\right)}
+\]
+
+Also, for the sake of brevity, we define 
+
+\[
+s(k) = \abs{\det S(k)}
+\]
+
+, so we seek the proof of convergence of integral \todo{blah blah $s(k)$}
+
+\subsection{Upper bound for integral}
+
+We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$. \todo{we might have to do something about the singularity at $k=1$}
+
+Outline of the following steps: we compute a lower bound $l(k)$ for $s(k)$, such that $0 \le l(k) \le s(k)$, and we prove that $\int \ln l(k)$ converges. Since $\ln l(k) \le \ln s(k)$, that will prove convergence of the original integral.
+
+\subsection{Notice that $s(k)$ is periodic w.r.t. real axis}
+\todo{Plot of $\abs{\det S}$ ?}
+
+% Since $\sin k$ and $\cos k$ are periodic w.r.t the real axis, with the period of $2 \pi$, 
+\todo{is this step really necessary?}
+
+Notice that all zeroes have $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define $Z = \atanh \frac{2 W}{W^2 + 1}$.
+
+\subsection{Notice that for any $x$, $s(x + \iu y) \le s(\iu y)$}
+\todo{How to prove? We could probably take a look at numerator and denominator in separate?}
+
+Now, we are free to replace $s(x + \iu y)$ with:
+
+\[
+s_1(x + \iu y)
+ = \abs{\frac{(W^2 + 1) \sinh y - 2 W \cosh y}{(W^2 + 1) \sinh y + 2 W \cosh y}}
+\]
+, now that $\cosh y \ge 1$, we are free to divide by $\cosh y$:
+
+\[
+s_1(x + \iu y)
+ = \abs{\frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}}
+\]
+
+Note that now $s_1(k)$ has zeroes along the line $\Im k = Z = \atanh \frac{2 W}{W^2 + 1}$, which means $\ln s_1(k)$ will have continuous number of singularities along this line, whereas the original function $\ln\abs{\det S(k)}$ only had countable number of singularities. However, we'll show that the function is still integrable.
+
+\todo{Plot?}
+
+Next, since $\tanh y \ge 0$ for $y \ge 0$ and is strictly increasing, we can get rid of the absolute value:
+
+\todo{make the formula bigger}
+\[
+s_1(x + \iu y)
+ = \begin{cases}
+ \frac{\frac{2 W}{W^2 + 1} - \tanh y}{\tanh y + \frac{2 W}{W^2 + 1}}, & 0 \le y \le Z \\
+ \frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}, & y > Z 
+ \end{cases}
+\]
+
+Now, the estimation splits in two cases:
+
+\subsection*{Case 1: $0 \le y \le Z$}
+Since denominator $\tanh y + \frac{2 W}{W^2 + 1}$ only increases as $0 \le y \le Z$, we can replace it with its maximum value $\tanh Z + \frac{2 W}{W^2 + 1} = \frac{4 W}{W^2 + 1}$, thus getting estimate $s_2$:
+
+\[
+s_2(x + \iu y) = \frac{\frac{2 W}{W^2 + 1} - \tanh y}{\frac{4 W}{W^2 + 1}} = \frac{1}{2} - \frac{W^2 + 1}{4 W} \tanh y \le s_1(x + \iu y)
+\]
+
+Since $\tanh(y)$ is concave, $s_2$ is convex \todo{proof} on $0 \le y \le Z$, we can approximate it from below using its first derivative at $Z$:
+
+\[
+s_3(x + \iu y) = s_2'(Z)(y - Z) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W} (Z - y)
+\]
+% \[
+% h'(Z) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W}
+% \]
+% h'(W=2) = 9/40; h'(W=3) = 8/15
+
+Since $s_3$ is stricly decreasing, $s(0) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W} Z$ is strictly positive and $s(Z) = 0$, $s_3(k)$ is non-negative and $\ln s_3(k)$ is well defined on $0 \le y \le Z$.
+
+
+\subsection*{Case 2: $y > Z$}
+For $y > Z$, 
+\[
+s_1(x + \iu y) 
+ = \frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}
+ = 1 - 2 \frac{\frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}
+\]
+
+% TODO
+% https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
+Since $s_1$ is concave \todo{proof? just take a look at second derivative?}, and strictly increasing, we can take any $Z_0 > Z$ and approximate the function by a piecewise linear function $s_4$:
+
+\[
+s_4(x + \iu y) = 
+\begin{cases}
+\frac{s_1(Z_0)}{Z_0 - Z} (x - Z) &, Z < y \le Z_0 \\
+s_1(Z_0) &, y > Z_0
+\end{cases}
+\]
 
 \end{document}
