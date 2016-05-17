@@ -1,3 +1,5 @@
+from numpy import arange
+
 
 def cvar(name):
     return var(name, domain=CC)
@@ -48,19 +50,6 @@ num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) + 2 *
 den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) - 2 * W * i * k ** 2 * cos(L * k) - i * (a + b) * k * sin(L * k)
 S = abs(num / den)
 
-def compute_integral(f):
-    ig = f * diff(cayley(k), k)
-    return ig
-    # print(ig)
-    # pig = changevar(ig, k == R * exp(i * t) + R * i, t).full_simplify()
-    # print(pig(t=0.4999 * pi).simplify()(R=1000).n())  # .limit(R=oo))
-    # for rr in [1, 2, 5, 10, 15, 20, 25]:
-    #     print(complex_integral(pig(R=rr), t, 0, 2 * pi))
-    # print(pig.integrate(t, 0, 2 * pi))
-    # pig = f(k=)
-
-    # for R in [2, 4, 8, 16, 32, 64]:
-
 
 # f(z): Cayley domain,   z in D
 # F(k): standard domain, k in C_+
@@ -100,4 +89,39 @@ def from_cayley_to_standard():
     i2 = complex_integral(F, k, Left, Right)
     print(i2)
 
-from_standard_to_cayley()
+# given F(k), f(z) = F(icayley(z))
+# intagral in Cayley space is   f(z) dz
+# integral in standard space is f(z=cayley(k)) * cayley'(k) = F(k) * cayley'(k) dk = F(k) * (2 * i / (k + i)^2)
+
+
+C(r) = (icayley(r) + icayley(-r)) / 2
+R(r) = ((icayley(r) - icayley(-r)) / (2 * i)).real() # TODO divide by i
+
+# line([(icayley(R * exp(i * q)) - C(r=R))(R=0.1).n() for q in arange(0, 2 * pi, 0.01 * pi)]).show(aspect_ratio='equal')
+
+# F(k) = ln(S(k=k)) # sin(k) / (k - i)
+
+# Left = -10
+# Right = 10
+
+# i1 = complex_integral(F(k=x), x, Left, Right)
+# print(i1)
+
+# f(z) = changevar(F, k == icayley(z), z)
+# ff(t) = changevar(f, z == exp(i * t), t)
+
+
+# left = arg(cayley(Left))
+# right = arg(cayley(Right))
+# if right < left:
+#     right += 2 * pi
+# i2 = complex_integral(ff, t, left, right)
+# print(i2)
+
+ig(k) = ln(S(k=k)) * cayley(k).diff()
+
+
+for rr in [1, 5, 10, 20, 40, 100, 200, 400, 1000]:
+    tig(t) = changevar(ig, k == rr * exp(i * t) + rr * i, t)
+    print(complex_integral(tig, t, 0, 2 * pi))
+# integrate it now!
