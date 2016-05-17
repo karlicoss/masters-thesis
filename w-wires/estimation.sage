@@ -61,16 +61,43 @@ def compute_integral(f):
 
     # for R in [2, 4, 8, 16, 32, 64]:
 
-# compute_integral(S)
-g(k) = sin(k) / (k - i)
 
-left = -10
-right = 10
+# f(z): Cayley domain,   z in D
+# F(k): standard domain, k in C_+
 
-i1 = complex_integral(g(k=x), x, left, right)
-print(i1)
+def from_standard_to_cayley():
+    F(k) = sin(k) / (k - i)
 
-gg(z) = changevar(g, k == icayley(z), z) # TODO differential?
-ggg(t) = changevar(gg, z == exp(i * t), t)
-i2 = complex_integral(ggg, t, arg(cayley(left)), 2 * pi + arg(cayley(right)))
-print(i2)
+    Left = -10
+    Right = 10
+
+    i1 = complex_integral(F(k=x), x, Left, Right)
+    print(i1)
+
+    f(z) = changevar(F, k == icayley(z), z)
+    ff(t) = changevar(f, z == exp(i * t), t)
+
+
+    left = arg(cayley(Left))
+    right = arg(cayley(Right))
+    if right < left:
+        right += 2 * pi
+    i2 = complex_integral(ff, t, left, right)
+    print(i2)
+
+
+def from_cayley_to_standard():
+    f(z) = sin(z) * z
+    left = pi/2
+    right = 3 * pi/2
+    ff(z) = changevar(f, z == exp(i * t), t)
+    i1 = complex_integral(ff, t, left, right)
+    print(i1)
+
+    F(k) = changevar(f, z == cayley(k), k)
+    Left = icayley(exp(i * left))
+    Right = icayley(exp(i * right))
+    i2 = complex_integral(F, k, Left, Right)
+    print(i2)
+
+from_standard_to_cayley()
