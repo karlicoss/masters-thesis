@@ -60,9 +60,24 @@ s(k) = \abs{\det S(k)}
 
 , so we seek the proof of convergence of integral \todo{blah blah $s(k)$}
 
+We'll use the inequality:
+
+\[
+\frac{x}{1 + x} \le \ln(1 + x)
+\]
+, which holds for $-1 < x \le 0$. % As $x$ goes to $-1$, 
+
+We'll rewrite it in a more convenient form by a substitution $x \to s(k) - 1$:
+
+\[
+1 - \frac{1}{s(k)} \le \ln s(k)
+\]
+
+Since $s(k)$ 
+
 \subsection{Upper bound for integral}
 
-We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$. \todo{we might have to do something about the singularity at $k=1$}
+We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$.
 
 Outline of the following steps: we compute a lower bound $l(k)$ for $s(k)$, such that $0 \le l(k) \le s(k)$, and we prove that $\int \ln l(k)$ converges. Since $\ln l(k) \le \ln s(k)$, that will prove convergence of the original integral.
 
@@ -126,6 +141,8 @@ s_3(x + \iu y) = s_2'(Z)(y - Z) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\lef
 
 Since $s_3$ is stricly decreasing, $s(0) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W} Z$ is strictly positive and $s(Z) = 0$, $s_3(k)$ is non-negative and $\ln s_3(k)$ is well defined on $0 \le y \le Z$.
 
+$s_3(k)$ helps us to deal 
+
 
 \subsection*{Case 2: $y > Z$}
 For $y > Z$, 
@@ -142,9 +159,27 @@ Since $s_1$ is concave \todo{proof? just take a look at second derivative?}, and
 \[
 s_4(x + \iu y) = 
 \begin{cases}
-\frac{s_1(Z_0)}{Z_0 - Z} (x - Z) &, Z < y \le Z_0 \\
+\frac{s_1(Z_0)}{Z_0 - Z} (y - Z) &, Z < y \le Z_0 \\
 s_1(Z_0) &, y > Z_0
 \end{cases}
 \]
+
+
+\subsection*{Proof of convergence for constant part}
+\todo{Might be easier in Cayley space}
+
+\subsection*{Proofs of convergence for logarithmic parts}
+\todo{DO NOT FORGET ABOUT shifted circle!!! $k = R \eexp{\iu t} + \iu C(R)$}
+
+\todo{For second, we could probably get rid of $\frac{1}{(k-1)^2}$ via the minimum estimation}
+
+\todo{For first, things are slightly harder. Prove about generic function with zero at $Z$, then first implies second???}
+Peak induced by $k=1$ is quite nasty. Ensure it converges, implement a checker. Although, it might not, it probably gets smoothed by $\abs{\det S} = 1$ for the original function....
+
+
+\todo{Use some inequalities involving logarithms???}
+% http://dlmf.nist.gov/4.5
+
+\todo{Unit cicle in Cayley space maps to $R$, and $\ln\abs{\det S}$ on $R$ is zero everywhere}
 
 \end{document}

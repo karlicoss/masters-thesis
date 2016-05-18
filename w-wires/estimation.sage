@@ -118,10 +118,53 @@ R(r) = ((icayley(r) - icayley(-r)) / (2 * i)).real() # TODO divide by i
 # i2 = complex_integral(ff, t, left, right)
 # print(i2)
 
-ig(k) = ln(S(k=k)) * cayley(k).diff()
+def test_integral():
+    ig(k) = ln(S(k=k)) * cayley(k).diff()
+
+    for rr in [1, 5, 10, 20, 40, 100, 200, 400, 1000]:
+        tig(t) = changevar(ig, k == rr * exp(i * t) + rr * i, t)
+        print(complex_integral(tig, t, 0, 2 * pi))
+    # integrate it now!
+
+def test_first_segment(f):
+    Z = atanh(4/5)
+    for rr in [1, 5, 10, 20, 50, 100, 1000, 2000, 5000]:
+        phi = acos((rr - Z) / rr)
+        cv(t) = changevar(f * 1 / (k + i)^2, k == rr * exp(i * t) + rr * i, t)
+        print(cv)
+        print(complex_integral(cv, t, -pi/2 - phi, -pi/2 + phi))
+
+def test_second_segment(f):
+    Z = atanh(4/5)
+    for rr in [1, 5, 10, 20, 50, 100, 1000, 2000, 5000]:
+        phi = acos((rr - Z) / rr)
+        cv(t) = changevar(f * 1 / (k + i)^2, k == rr * exp(i * t) + rr * i, t)
+        print(complex_integral(cv, t, -pi/2 + phi, -pi/2 - phi + 2 * pi))
+
+# integrate 1/(k + i)^2 for k from 0 to oo, apparently converges. 
+# estimate by integrate 1/(k^2 + 1) for k from 0 to oo ?
+
+def test_all(S):
+    # upper bound
+    # test_first_segment(S - 1)
+    test_first_segment(ln(S))
+    # lower bound 
+    test_first_segment(1 - 1 / S)
+
+    # test_second_segment(S - 1)
+    test_second_segment(ln(S))
+    test_second_segment(1 - 1 / S) # 1 - 1/S ? TODO 1 converges, so sufficient condition is convergence of 1/S ?
 
 
-for rr in [1, 5, 10, 20, 40, 100, 200, 400, 1000]:
-    tig(t) = changevar(ig, k == rr * exp(i * t) + rr * i, t)
-    print(complex_integral(tig, t, 0, 2 * pi))
-# integrate it now!
+
+# cosh(atanh(x)) - 2 * sinh(atanh(x)) TODO????
+
+# tanh doesn't help, still divergent....
+
+# C = 0.5
+# sage: f(x) = 1 - 1/(C - tanh(x))
+# sage: f.integrate(x, 0, atanh(C))
+# -1.3333333333333333*log(2) - 46.95090622996493
+# sage: f.integrate(x)
+# x |--> 3*x + 4/3*log(3*e^(-2*x) - 1)
+# clearly divergent!
