@@ -131,7 +131,6 @@ def test_first_segment(f):
     for rr in [1, 5, 10, 20, 50, 100, 1000, 2000, 5000]:
         phi = acos((rr - Z) / rr)
         cv(t) = changevar(f * 1 / (k + i)^2, k == rr * exp(i * t) + rr * i, t)
-        print(cv)
         print(complex_integral(cv, t, -pi/2 - phi, -pi/2 + phi))
 
 def test_second_segment(f):
@@ -168,3 +167,39 @@ def test_all(S):
 # sage: f.integrate(x)
 # x |--> 3*x + 4/3*log(3*e^(-2*x) - 1)
 # clearly divergent!
+
+def test_first_segment_2(f):
+    Z = atanh(4/5)
+    for rr in [1, 5, 10, 20, 50, 100, 1000, 2000, 5000]:
+        phi = acos((rr - Z) / rr)
+        cv(t) = f(k=rr * exp(i * t) + rr * i) / (rr * exp(i * t) + rr * i + i)^2 * i * rr * exp(i * t)
+        print(complex_integral(cv, t, -pi/2 - phi, -pi/2 + phi))
+
+
+def test_schwarz(f):
+    Z = atanh(4/5)
+    for rr in [2 ** q for q in range(1, 30)]:
+        phi = n(acos((rr - Z) / rr))
+        f1 = f(k=rr * exp(i * t) + rr * i)
+        f2 = 1 / (rr * exp(i * t) + rr * i + i)^2 * i * rr * exp(i * t)
+        p  = f1 * f2
+        p1 = fast_callable(norm(f1)     , vars=[t], domain=CC)
+        p2 = fast_callable(norm(f2)     , vars=[t], domain=CC)
+        print("Phi: " + str(phi))
+        for tl, tr in [(-pi/2 - phi, -pi/2 + phi), (-pi/2 + phi, -pi/2 + 2 * pi - phi), (0, 2 * pi)]:
+            res = norm(complex_integral(p, t, tl, tr))
+            res1, _ = numerical_integral(p1, tl, tr)
+            res2, _ = numerical_integral(p2, tl, tr)
+            print("Complex: " + str(res))    
+            print("Logarithmic: " + str(res1))
+            print("Jacobian: " + str(res2))
+            print("Upper bound: " + str(res1 * res2))
+            print("---------------")            
+        print("================================")
+
+
+Z = atanh(4/5)
+# test_schwarz(ln(abs(Z - k.imag())))
+test_schwarz(ln(S))
+
+# test_schwarz(k / k)
