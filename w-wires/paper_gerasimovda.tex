@@ -10,7 +10,10 @@
 \usepackage{mathtools} % \DeclarePairedDelimiter
 \usepackage{xcolor} % \textcolor
 
-\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+% \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+% \DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
 
 \newcommand{\mcL}{\mathcal{L}}
 \newcommand{\mcH}{\mathcal{H}}
@@ -60,26 +63,24 @@ s(k) = \abs{\det S(k)}
 
 , so we seek the proof of convergence of integral \todo{blah blah $s(k)$}
 
-We'll use the inequality:
+% We'll use the inequality:
 
-\[
-\frac{x}{1 + x} \le \ln(1 + x)
-\]
-, which holds for $-1 < x \le 0$. % As $x$ goes to $-1$, 
+% \[
+% \frac{x}{1 + x} \le \ln(1 + x)
+% \]
+% , which holds for $-1 < x \le 0$. % As $x$ goes to $-1$, 
 
-We'll rewrite it in a more convenient form by a substitution $x \to s(k) - 1$:
+% We'll rewrite it in a more convenient form by a substitution $x \to s(k) - 1$:
 
-\[
-1 - \frac{1}{s(k)} \le \ln s(k)
-\]
+% \[
+% 1 - \frac{1}{s(k)} \le \ln s(k)
+% \]
 
-Since $s(k)$ 
+% Since $s(k)$ 
 
 \subsection{Upper bound for integral}
 
-We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$.
-
-Outline of the following steps: we compute a lower bound $l(k)$ for $s(k)$, such that $0 \le l(k) \le s(k)$, and we prove that $\int \ln l(k)$ converges. Since $\ln l(k) \le \ln s(k)$, that will prove convergence of the original integral.
+We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$ and the desired integral is bounded from above by $0$. However, we have to show that the integral is bounded from below as well. So, next, we will compute a lower bound $l(k)$ for $s(k)$, such that $0 \le l(k) \le s(k)$, and will prove that $\int \ln l(k)$ converges to $0$. Since $\ln l(k) \le \ln s(k)$, that will prove convergence of the original integral.
 
 \subsection{Notice that $s(k)$ is periodic w.r.t. real axis}
 \todo{Plot of $\abs{\det S}$ ?}
@@ -141,7 +142,7 @@ s_3(x + \iu y) = s_2'(Z)(y - Z) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\lef
 
 Since $s_3$ is stricly decreasing, $s(0) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W} Z$ is strictly positive and $s(Z) = 0$, $s_3(k)$ is non-negative and $\ln s_3(k)$ is well defined on $0 \le y \le Z$.
 
-$s_3(k)$ helps us to deal 
+\todo{We might need one more estimate to ensure $l(x + 0 \iu) = 1$}
 
 
 \subsection*{Case 2: $y > Z$}
@@ -181,5 +182,66 @@ Peak induced by $k=1$ is quite nasty. Ensure it converges, implement a checker. 
 % http://dlmf.nist.gov/4.5
 
 \todo{Unit cicle in Cayley space maps to $R$, and $\ln\abs{\det S}$ on $R$ is zero everywhere}
+
+\todo{Use Schwartz inequality????}
+
+\subsection*{Proof of convergence}
+
+\[
+l(k) =
+\begin{cases}
+1 \\
+2 \\
+3 
+\end{cases}
+\]
+
+Not than we have an estimate for $s(k)$ on the whole upper complex plane, we can compute the lower bound for the original integral. For fixed $r$ (radius of the contour in Cayley space), the integral looks like:
+
+\[
+\int\limits_{C_r} \ln l(k) \frac{1}{(k + i)^2} dk
+\]
+
+, where $C_r$ is the image of the curve $\abs{\zeta} = r$ under the inverse Cayley transform.
+
+\todo{Calculate C(r) and R(r)}
+
+Substituting $k \to R \eexp{\iu t} + \iu C$, we get:
+
+\todo{multiply by $2 \iu$ due to derivative of Cayley transform}
+
+\[
+\int\limits_{0}^{2 \pi} \ln l(R \eexp{\iu t} + \iu C) \frac{1}{(R \eexp{\iu t} + \iu C + i)^2} R \iu dt
+\]
+
+To estimate this integral, we'll use Cauchy-Schwartz inequality:
+
+\[
+\big| \langle u,v \rangle \big| \leq \left\|u\right\| \left\|v\right\|
+\]
+
+, or, to be more specific, its $\mcL^2[a, b]$ version:
+
+\[
+\abs{
+\int\limits_{t=a}^{b} f(t) g^*(t) dt
+}^2
+\le
+\int\limits_{t=a}^b \abs{f(t)}^2 dt 
+\int\limits_{t=a}^b \abs{g(t)}^2 dt 
+\]
+
+To make use of the inequality, we take 
+
+\todo{CONJUGATE!!!}
+\begin{align*}
+a    &= 0 \\
+b    &= 2 \pi \\
+f(t) &= \ln l(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
+g(t) &= \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
+\end{align*}
+
+\todo{Integral of $g(t)$ is estimated by $\pi$}
+
 
 \end{document}

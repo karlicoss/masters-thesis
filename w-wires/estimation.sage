@@ -118,48 +118,8 @@ R(r) = ((icayley(r) - icayley(-r)) / (2 * i)).real() # TODO divide by i
 # i2 = complex_integral(ff, t, left, right)
 # print(i2)
 
-def test_integral():
-    ig(k) = ln(S(k=k)) * cayley(k).diff()
 
-    for rr in [1, 5, 10, 20, 40, 100, 200, 400, 1000]:
-        tig(t) = changevar(ig, k == rr * exp(i * t) + rr * i, t)
-        print(complex_integral(tig, t, 0, 2 * pi))
-    # integrate it now!
-
-def test_first_segment(f):
-    Z = atanh(4/5)
-    for rr in [1, 5, 10, 20, 50, 100, 1000, 2000, 5000]:
-        phi = acos((rr - Z) / rr)
-        cv(t) = changevar(f * 1 / (k + i)^2, k == rr * exp(i * t) + rr * i, t)
-        print(complex_integral(cv, t, -pi/2 - phi, -pi/2 + phi))
-
-def test_second_segment(f):
-    Z = atanh(4/5)
-    for rr in [1, 5, 10, 20, 50, 100, 1000, 2000, 5000]:
-        phi = acos((rr - Z) / rr)
-        cv(t) = changevar(f * 1 / (k + i)^2, k == rr * exp(i * t) + rr * i, t)
-        print(complex_integral(cv, t, -pi/2 + phi, -pi/2 - phi + 2 * pi))
-
-# cosh(atanh(x)) - 2 * sinh(atanh(x)) TODO????
-
-# tanh doesn't help, still divergent....
-
-# C = 0.5
-# sage: f(x) = 1 - 1/(C - tanh(x))
-# sage: f.integrate(x, 0, atanh(C))
-# -1.3333333333333333*log(2) - 46.95090622996493
-# sage: f.integrate(x)
-# x |--> 3*x + 4/3*log(3*e^(-2*x) - 1)
-# clearly divergent!
-
-def test_first_segment_2(f):
-    Z = atanh(4/5)
-    for rr in [1, 5, 10, 20, 50, 100, 1000, 2000, 5000]:
-        phi = acos((rr - Z) / rr)
-        cv(t) = f(k=rr * exp(i * t) + rr * i) / (rr * exp(i * t) + rr * i + i)^2 * i * rr * exp(i * t)
-        print(complex_integral(cv, t, -pi/2 - phi, -pi/2 + phi))
-
-
+# cv(t) = changevar(f * 1 / (k + i)^2, k == rr * exp(i * t) + rr * i, t)
 def test_schwarz(f):
     Z = atanh(4/5)
     for rr in [2 ** q for q in range(1, 30)]:
@@ -192,6 +152,83 @@ def test_schwarz(f):
 
 Z = atanh(4/5)
 # test_schwarz(ln(abs(1/Z * (Z - k.imag()))))
-test_schwarz(ln(S))
+# test_schwarz(ln(S))
 
 # test_schwarz(k / k)
+
+
+def test_schwarz_paper():
+    W = 3
+    coeff = W ** 2 + 1
+    a = 0
+    b = 0
+    L = 1
+    num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) + 2 * W * i * k ** 2 * cos(L * k) + i * (a + b) * k * sin(L * k)
+    den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) - 2 * W * i * k ** 2 * cos(L * k) - i * (a + b) * k * sin(L * k)
+    S = abs(num / den)
+
+
+
+    V = 2 * W / (W^2 + 1)
+    Z = atanh(V)
+    Z0 = Z + 1 # arbitrary number greater than Z0
+    for q in range(1, 10):
+        rr = 5 ** q
+        print("R = " + str(rr))
+
+        phi(y) = acos((rr - y) / rr)
+
+        # TODO one more estimate?
+        s1(y) = 1 - 2 * V / (tanh(y) + V)
+        functions = [
+            2/V * (0.5 * V - k.imag()),
+            (W^2 - 1)^2 / (4 * (W^2 + 1) * W) * (Z - k.imag()),
+            s1(y=Z0) / (Z0 - Z) * (k.imag() - Z),
+            s1(y=Z0),
+        ]
+
+        ZZ = solve(functions[0] == functions[1], k)[0].rhs()
+
+        # lol intervals depend on the estimations
+        intervalsY = [
+            (0, ZZ),
+            (ZZ, Z),
+            (Z, Z0),
+            (Z0, 2 * rr), # TODO oo?
+        ]
+
+        intervalsT = [(-pi/2 + phi(y=yf), -pi/2 + phi(y=yt)) for yf, yt in intervalsY]
+
+
+        w = var('w', domain=RR)
+        # plots = sum([plot(ff(k=rr * exp(i * t) + rr * i), w, tl, tr) for (tl, tr), ff, color in zip(intervals2, functions, rainbow(4))])
+        plots = [plot(ff(k=w * i), w, tl, tr, color=color) for (tl, tr), ff, color in zip(intervalsY, functions, rainbow(4))]
+        plots.append(plot(S(k=1 + w * i), w, intervalsY[0][0], intervalsY[-1][1], color='black'))
+        sum(plots).save('plots_{}.png'.format(q))
+
+        sup = 0.0
+        for (tl, tr), ff in zip(intervalsT, functions):
+            print("Interval: {:.2f}-{:.2f}".format(float(tl), float(tr)))
+            f1 = ln(ff(k=rr * exp(i * t) + rr * i)) * sqrt(rr) / (rr * exp(i * t) + rr * i + i) # TODO rr -> C(R)
+            f2 = 1 / (rr * exp(i * t) + rr * i + i) * i * sqrt(rr) * exp(i * t) # looks like it converges to pi
+            p  = f1 * f2
+            p1 = fast_callable(norm(f1)     , vars=[t], domain=CC)
+            p2 = fast_callable(norm(f2)     , vars=[t], domain=CC)
+        
+            res = norm(complex_integral(p, t, tl, tr))
+            print("Complex: " + str(res))
+
+            res1, _ = numerical_integral(p1, tl, tr)
+            print("Logarithmic: " + str(res1))
+
+            res2, _ = numerical_integral(p2, tl, tr)
+            print("Jacobian: " + str(res2))
+
+            up = res1 * res2
+            sup += up
+            print("Upper bound: " + str(up))
+            print("---------------")            
+        print("Total upper bound: " + str(sup))
+        print("================================")
+
+test_schwarz_paper()
