@@ -13,6 +13,7 @@
 % \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
 \newcommand{\abs}[1]{\left| #1 \right|}
 \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
 % \DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
 
 \newcommand{\mcL}{\mathcal{L}}
@@ -29,6 +30,7 @@
 \newcommand{\todo}[1]{{\large \textcolor{red}{TODO: #1}}}
 
 \DeclareMathOperator\atanh{atanh}
+\DeclareMathOperator\atan{atan}
 
 \begin{document}
 
@@ -155,7 +157,7 @@ s_1(x + \iu y)
 
 % TODO
 % https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
-Since $s_1$ is concave \todo{proof? just take a look at second derivative?}, and strictly increasing, we can take any $Z_0 > Z$ and approximate the function by a piecewise linear function $s_4$:
+Since $s_1$ is concave \todo{proof? just take a look at second derivative?}, and strictly increasing, we can take any $Z_0 > Z$ and approximate the function by a piecewise linear function $s_4$.
 
 \[
 s_4(x + \iu y) = 
@@ -165,12 +167,21 @@ s_1(Z_0) &, y > Z_0
 \end{cases}
 \]
 
+For simplicity, take $Z_0 = Z + 1$, then:
+
+\[
+s_4(x + \iu y) = 
+\begin{cases}
+s_1(Z + 1) (y - Z) &, Z < y \le Z + 1 \\
+s_1(Z + 1) &, y > Z + 1
+\end{cases}
+\]
+
 
 \subsection*{Proof of convergence for constant part}
 \todo{Might be easier in Cayley space}
 
 \subsection*{Proofs of convergence for logarithmic parts}
-\todo{DO NOT FORGET ABOUT shifted circle!!! $k = R \eexp{\iu t} + \iu C(R)$}
 
 \todo{For second, we could probably get rid of $\frac{1}{(k-1)^2}$ via the minimum estimation}
 
@@ -178,12 +189,7 @@ s_1(Z_0) &, y > Z_0
 Peak induced by $k=1$ is quite nasty. Ensure it converges, implement a checker. Although, it might not, it probably gets smoothed by $\abs{\det S} = 1$ for the original function....
 
 
-\todo{Use some inequalities involving logarithms???}
-% http://dlmf.nist.gov/4.5
-
 \todo{Unit cicle in Cayley space maps to $R$, and $\ln\abs{\det S}$ on $R$ is zero everywhere}
-
-\todo{Use Schwartz inequality????}
 
 \subsection*{Proof of convergence}
 
@@ -204,7 +210,9 @@ Not than we have an estimate for $s(k)$ on the whole upper complex plane, we can
 
 , where $C_r$ is the image of the curve $\abs{\zeta} = r$ under the inverse Cayley transform.
 
-\todo{Calculate C(r) and R(r)}
+Cayley transform: $W(z) = \frac{z - \iu}{z + \iu}$, inverse: $w(\zeta) = \iu \frac{1 + \zeta}{1 - \zeta}$.
+
+$C_r$ is the circle with radius $R(r) = \Im \frac{w(r) - w(-r)}{2}$ and center $C(r) = \Im \frac{w(r) + w(-r)}{2}$.
 
 Substituting $k \to R \eexp{\iu t} + \iu C$, we get:
 
@@ -231,17 +239,44 @@ To estimate this integral, we'll use Cauchy-Schwartz inequality:
 \int\limits_{t=a}^b \abs{g(t)}^2 dt 
 \]
 
-To make use of the inequality, we take 
-
-\todo{CONJUGATE!!!}
+To make use of the inequality, we take
 \begin{align*}
-a    &= 0 \\
-b    &= 2 \pi \\
-f(t) &= \ln l(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
-g(t) &= \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
+a      &= 0 \\
+b      &= 2 \pi \\
+f(t)   &= \ln l(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
+g^*(t) &= \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
 \end{align*}
 
-\todo{Integral of $g(t)$ is estimated by $\pi$}
+\subsection*{Estimate of $\int \abs{g(t)}^2$}
+
+\begin{align*}
+\abs{g(t)}^2 = \abs{g^*(t)}^2
+&=   \frac{\sqrt{R}^2}{\abs{R \cos t + \iu R \sin t + \iu C + i}^2} \\
+&=   \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} \\
+&= \frac{R}{R^2 \cos^2 t + R^2 \sin^2 t + (C + 1)^2  + 2 R (C + 1) \sin t} \\
+&=   \frac{1}{R + (C + 1) \frac{C + 1}{R} + 2 (C + 1) \sin t} \\ 
+\end{align*}
+
+If we take $a = R + (C + 1) \frac{C + 1}{R}$, $b = 2 (C + 1)$, and notice $a > b$ \todo{Prove}, the integral is well known \todo{reference}:
+\[
+\int \frac{dx}{a + b \sin x} = \frac{2}{\sqrt{a^2 - b^2}} \atan \frac{a \tan \frac{x}{2} + b}{\sqrt{a^2 - b^2}}
+\]
+
+% Notice that since 
+
+\begin{align*}
+a^2 - b^2
+& =  (R + (C + 1) \frac{C + 1}{R})^2 - (2 (C + 1))^2\\
+& =  R^2 + \frac{(C+1)^4}{R^2} + 2 (C+1)^2 - 4 (C + 1)^2 \\
+& =  (R - (C + 1) \frac{C + 1}{R})^2 && \text{,and, since $C \ge R$} \\
+&\ge (R - (R + 1) \frac{R + 1}{R})^2 \\
+&\ge (2 + \frac{1}{R})^2 \\
+&\ge 4
+\end{align*}
+
+We can choose the branch cut of the antiderivative in such a way that integration from $0$ to $2 \pi$ only affects a single Riemann sheet, therefore, we can use the fact that $\abs{\int\limits_a^b f(x) dx} \le \abs{F(b) - F(a)} \le \abs{F(a)} + \abs{F(b)}$.
+
+Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bounded by $\frac{\pi}{2}$, by direct application of the fact above, we conclude that than $\pi$.
 
 
 \end{document}
