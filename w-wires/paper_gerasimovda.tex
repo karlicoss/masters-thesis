@@ -34,6 +34,29 @@
 
 \begin{document}
 
+\section{Convergence criterion}
+
+In the Cayley space, the \todo{name} criterion is:
+\[
+\lim\limits_{r \to 1} \int\limits_{\abs{\zeta} = r} \ln \abs{\det S(\zeta)} d\zeta = 0
+\]
+
+Since $S$-matrix is naturally defined on the complex plane, it is easier work in the upper complex plane. To do that, we apply the Cayley transorm $W(z) = \frac{z - \iu}{z + \iu}$, which maps upper complex plane to the unit disk, and its inverse $w(\zeta) = \iu \frac{1 + \zeta}{1 - \zeta}$, which yields:
+
+\begin{equation}\label{crit}
+\lim\limits_{r \to 1} \int\limits_{C_r} \ln \abs{\det S(k)} \frac{2 \iu}{(k + i)^2} dk = 0
+\end{equation}
+
+, where $C_r$ is the image of the curve $\abs{\zeta} = r$ under the inverse Cayley transform. Since Cayley transform is a Mobius transformation and preserves circles, $C_r$ will actually be a circle with radius $R(r) = \Im \frac{w(r) - w(-r)}{2}$ and center $C(r) = \Im \frac{w(r) + w(-r)}{2}$.
+
+Fox the computational convenience, it $C_r$ is parameterized via $k = R(r) \eexp{\iu t} + \iu C(r)$, which yields us the final form of the criterion, which we will use further:
+
+\begin{equation}\label{critp}
+\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(R(r) \eexp{\iu t} + \iu C(r))} \frac{2 \iu}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} R \iu dt = 0
+\end{equation}
+
+\section{Model}
+
 Scatterer consists of $W$ wires of length $1$, on the left joint vertex $\delta$-well with depth $a$, on the right: $\delta$-well with depth $b$. 
 
 \todo{Picture}
@@ -49,8 +72,7 @@ Simplifying, we get:
 \]
 
 
-
-\section*{Proof of completeness for $a = b = 0$}
+\section{Proof of completeness for $a = b = 0$}
 Under the substitituion $a = 0, b = 0$, $\det S$ simplifies to:
 
 \[
@@ -65,50 +87,92 @@ s(k) = \abs{\det S(k)}
 
 , so we seek the proof of convergence of integral \todo{blah blah $s(k)$}
 
-% We'll use the inequality:
+We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$ and the desired integral is bounded from above by $0$. However, we have to show that the integral is bounded from below as well. To do that, for each $r$ we will compute a lower bound $L_r(k)$ for the integral under the limit, and will prove that $\lim\limits_{r \to 1} L_r(k) = 0$.
 
-% \[
-% \frac{x}{1 + x} \le \ln(1 + x)
-% \]
-% , which holds for $-1 < x \le 0$. % As $x$ goes to $-1$, 
+\section{Estimation of integral for fixed $r$}
 
-% We'll rewrite it in a more convenient form by a substitution $x \to s(k) - 1$:
 
-% \[
-% 1 - \frac{1}{s(k)} \le \ln s(k)
-% \]
+To compute the estimate, we will use the Cauchy-Schwartz inequality:
 
-% Since $s(k)$ 
+\[
+\big| \langle u,v \rangle \big| \leq \left\|u\right\| \left\|v\right\|
+\]
 
-\subsection{Upper bound for integral}
+, or, to be more specific, its $\mcL^2[a, b]$ version:
 
-We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$ and the desired integral is bounded from above by $0$. However, we have to show that the integral is bounded from below as well. So, next, we will compute a lower bound $l(k)$ for $s(k)$, such that $0 \le l(k) \le s(k)$, and will prove that $\int \ln l(k)$ converges to $0$. Since $\ln l(k) \le \ln s(k)$, that will prove convergence of the original integral.
+\[
+\abs{
+\int\limits_{t=a}^{b} f(t) g^*(t) dt
+}^2
+\le
+\int\limits_{t=a}^b \abs{f(t)}^2 dt 
+\int\limits_{t=a}^b \abs{g(t)}^2 dt 
+\]
 
-\subsection{Notice that $s(k)$ is periodic w.r.t. real axis}
+To make use of the inequality, we split the integrand of (\ref{critp}) into $f(t) g^*(t)$:
+\begin{align*}
+a      &= 0 \\
+b      &= 2 \pi \\
+f(t)   &= \ln s(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
+g^*(t) &= \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
+\end{align*}
+\todo{Multiply $g^*(t)$ by 2 $\iu$}. Next, we will show that $\int \abs{g(t)}^2$ has an upper bound independent of $r$, and $\int \abs{f(t)}^2$ converges to $0$ as $r$ goes to $1$, which immediately proves the convergence to zero.
+
+\subsection{Estimate of $\int \abs{g(t)}^2$}
+
+\begin{align*}
+\abs{g(t)}^2 = \abs{g^*(t)}^2
+&=   \frac{\sqrt{R}^2}{\abs{R \cos t + \iu R \sin t + \iu C + i}^2} \\
+&=   \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} \\
+&= \frac{R}{R^2 \cos^2 t + R^2 \sin^2 t + (C + 1)^2  + 2 R (C + 1) \sin t} \\
+&=   \frac{1}{R + (C + 1) \frac{C + 1}{R} + 2 (C + 1) \sin t} \\ 
+\end{align*}
+
+If we take $a = R + (C + 1) \frac{C + 1}{R}$, $b = 2 (C + 1)$, and notice $a > b$ \todo{Prove}, the antiderivative is well known \todo{reference}:
+\[
+\int \frac{dx}{a + b \sin x} = \frac{2}{\sqrt{a^2 - b^2}} \atan \frac{a \tan \frac{x}{2} + b}{\sqrt{a^2 - b^2}}
+\]
+
+% Notice that since 
+
+\begin{align*}
+a^2 - b^2
+& =  (R + (C + 1) \frac{C + 1}{R})^2 - (2 (C + 1))^2\\
+& =  R^2 + \frac{(C+1)^4}{R^2} + 2 (C+1)^2 - 4 (C + 1)^2 \\
+& =  (R - (C + 1) \frac{C + 1}{R})^2 && \text{,and, since $C \ge R$} \\
+&\ge (R - (R + 1) \frac{R + 1}{R})^2 \\
+&\ge (2 + \frac{1}{R})^2 \\
+&\ge 4
+\end{align*}
+
+We can choose the branch cut of the antiderivative in such a way that integration from $0$ to $2 \pi$ only affects a single Riemann sheet, therefore, we can use the fact that $\abs{\int\limits_a^b f(x) dx} \le \abs{F(b) - F(a)} \le \abs{F(a)} + \abs{F(b)}$.
+
+Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bounded by $\frac{\pi}{2}$, by direct application of the fact above, we conclude that the integral is less than $\pi$.
+
+\subsection{Estimate of $\int \abs{f(t)}^2$}
+
+First, we will compute a lower bound $l(k)$ for $s(k)$, such that $0 \le l(k) \le s(k)$. Then, we replace $s(k)$ with its lower bound under the integral sign and will prove convergence of this integral to $0$. This reasoning is valid since for $s(k) \le 1$, $\ln l(k) \le \ln s(k)$.
+
+\subsubsection{Computing $s(k)$}
+First, notice that $s(k)$ is periodic w.r.t. real axis.
 \todo{Plot of $\abs{\det S}$ ?}
-
 % Since $\sin k$ and $\cos k$ are periodic w.r.t the real axis, with the period of $2 \pi$, 
 \todo{is this step really necessary?}
 
-Notice that all zeroes have $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define $Z = \atanh \frac{2 W}{W^2 + 1}$.
+$s(k)$ has countable number of zeros, all with $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define $Z = \atanh \frac{2 W}{W^2 + 1}$.
 
-\subsection{Notice that for any $x$, $s(x + \iu y) \le s(\iu y)$}
+Notice that for any $x$, $s(x + \iu y) \le s(\iu y)$
 \todo{How to prove? We could probably take a look at numerator and denominator in separate?}
 
 Now, we are free to replace $s(x + \iu y)$ with:
 
-\[
+\begin{align*}
 s_1(x + \iu y)
- = \abs{\frac{(W^2 + 1) \sinh y - 2 W \cosh y}{(W^2 + 1) \sinh y + 2 W \cosh y}}
-\]
-, now that $\cosh y \ge 1$, we are free to divide by $\cosh y$:
+ &= \abs{\frac{(W^2 + 1) \sinh y - 2 W \cosh y}{(W^2 + 1) \sinh y + 2 W \cosh y}} && \text{(since $\cosh y \ge 1$)}\\
+ &= \abs{\frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}}
+\end{align*}
 
-\[
-s_1(x + \iu y)
- = \abs{\frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}}
-\]
-
-Note that now $s_1(k)$ has zeroes along the line $\Im k = Z = \atanh \frac{2 W}{W^2 + 1}$, which means $\ln s_1(k)$ will have continuous number of singularities along this line, whereas the original function $\ln\abs{\det S(k)}$ only had countable number of singularities. However, we'll show that the function is still integrable.
+Note that now $s_1(k)$ has zeroes along the line $\Im k = Z = \atanh \frac{2 W}{W^2 + 1}$, which means $\ln s_1(k)$ will have continuous number of singularities along this line. However, we'll show that the function is still integrable.
 
 \todo{Plot?}
 
@@ -125,7 +189,7 @@ s_1(x + \iu y)
 
 Now, the estimation splits in two cases:
 
-\subsection*{Case 1: $0 \le y \le Z$}
+\subsubsection*{Case 1: $0 \le y \le Z$}
 Since denominator $\tanh y + \frac{2 W}{W^2 + 1}$ only increases as $0 \le y \le Z$, we can replace it with its maximum value $\tanh Z + \frac{2 W}{W^2 + 1} = \frac{4 W}{W^2 + 1}$, thus getting estimate $s_2$:
 
 \[
@@ -147,7 +211,7 @@ Since $s_3$ is stricly decreasing, $s(0) = \frac{{\left(W^{2} - 1\right)}^{2}}{4
 \todo{We might need one more estimate to ensure $l(x + 0 \iu) = 1$}
 
 
-\subsection*{Case 2: $y > Z$}
+\subsubsection*{Case 2: $y > Z$}
 For $y > Z$, 
 \[
 s_1(x + \iu y) 
@@ -157,29 +221,12 @@ s_1(x + \iu y)
 
 % TODO
 % https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
-Since $s_1$ is concave \todo{proof? just take a look at second derivative?}, and strictly increasing, we can take any $Z_0 > Z$ and approximate the function by a piecewise linear function $s_4$.
+Since $s_1$ is concave \todo{proof? just take a look at second derivative?}, strictly increasing and for fixed $r$, our domain of interest is only $\Im k \le C + R$, we can approximate the function by a linear function $s_4$.
 
 \[
 s_4(x + \iu y) = 
-\begin{cases}
-\frac{s_1(Z_0)}{Z_0 - Z} (y - Z) &, Z < y \le Z_0 \\
-s_1(Z_0) &, y > Z_0
-\end{cases}
+\frac{s_1(C + R)}{C + R - Z} (y - Z)
 \]
-
-For simplicity, take $Z_0 = Z + 1$, then:
-
-\[
-s_4(x + \iu y) = 
-\begin{cases}
-s_1(Z + 1) (y - Z) &, Z < y \le Z + 1 \\
-s_1(Z + 1) &, y > Z + 1
-\end{cases}
-\]
-
-
-\subsection*{Proof of convergence for constant part}
-\todo{Might be easier in Cayley space}
 
 \subsection*{Proofs of convergence for logarithmic parts}
 
@@ -202,81 +249,6 @@ l(k) =
 \end{cases}
 \]
 
-Not than we have an estimate for $s(k)$ on the whole upper complex plane, we can compute the lower bound for the original integral. For fixed $r$ (radius of the contour in Cayley space), the integral looks like:
-
-\[
-\int\limits_{C_r} \ln l(k) \frac{1}{(k + i)^2} dk
-\]
-
-, where $C_r$ is the image of the curve $\abs{\zeta} = r$ under the inverse Cayley transform.
-
-Cayley transform: $W(z) = \frac{z - \iu}{z + \iu}$, inverse: $w(\zeta) = \iu \frac{1 + \zeta}{1 - \zeta}$.
-
-$C_r$ is the circle with radius $R(r) = \Im \frac{w(r) - w(-r)}{2}$ and center $C(r) = \Im \frac{w(r) + w(-r)}{2}$.
-
-Substituting $k \to R \eexp{\iu t} + \iu C$, we get:
-
-\todo{multiply by $2 \iu$ due to derivative of Cayley transform}
-
-\[
-\int\limits_{0}^{2 \pi} \ln l(R \eexp{\iu t} + \iu C) \frac{1}{(R \eexp{\iu t} + \iu C + i)^2} R \iu dt
-\]
-
-To estimate this integral, we'll use Cauchy-Schwartz inequality:
-
-\[
-\big| \langle u,v \rangle \big| \leq \left\|u\right\| \left\|v\right\|
-\]
-
-, or, to be more specific, its $\mcL^2[a, b]$ version:
-
-\[
-\abs{
-\int\limits_{t=a}^{b} f(t) g^*(t) dt
-}^2
-\le
-\int\limits_{t=a}^b \abs{f(t)}^2 dt 
-\int\limits_{t=a}^b \abs{g(t)}^2 dt 
-\]
-
-To make use of the inequality, we take
-\begin{align*}
-a      &= 0 \\
-b      &= 2 \pi \\
-f(t)   &= \ln l(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
-g^*(t) &= \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
-\end{align*}
-
-\subsection*{Estimate of $\int \abs{g(t)}^2$}
-
-\begin{align*}
-\abs{g(t)}^2 = \abs{g^*(t)}^2
-&=   \frac{\sqrt{R}^2}{\abs{R \cos t + \iu R \sin t + \iu C + i}^2} \\
-&=   \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} \\
-&= \frac{R}{R^2 \cos^2 t + R^2 \sin^2 t + (C + 1)^2  + 2 R (C + 1) \sin t} \\
-&=   \frac{1}{R + (C + 1) \frac{C + 1}{R} + 2 (C + 1) \sin t} \\ 
-\end{align*}
-
-If we take $a = R + (C + 1) \frac{C + 1}{R}$, $b = 2 (C + 1)$, and notice $a > b$ \todo{Prove}, the integral is well known \todo{reference}:
-\[
-\int \frac{dx}{a + b \sin x} = \frac{2}{\sqrt{a^2 - b^2}} \atan \frac{a \tan \frac{x}{2} + b}{\sqrt{a^2 - b^2}}
-\]
-
-% Notice that since 
-
-\begin{align*}
-a^2 - b^2
-& =  (R + (C + 1) \frac{C + 1}{R})^2 - (2 (C + 1))^2\\
-& =  R^2 + \frac{(C+1)^4}{R^2} + 2 (C+1)^2 - 4 (C + 1)^2 \\
-& =  (R - (C + 1) \frac{C + 1}{R})^2 && \text{,and, since $C \ge R$} \\
-&\ge (R - (R + 1) \frac{R + 1}{R})^2 \\
-&\ge (2 + \frac{1}{R})^2 \\
-&\ge 4
-\end{align*}
-
-We can choose the branch cut of the antiderivative in such a way that integration from $0$ to $2 \pi$ only affects a single Riemann sheet, therefore, we can use the fact that $\abs{\int\limits_a^b f(x) dx} \le \abs{F(b) - F(a)} \le \abs{F(a)} + \abs{F(b)}$.
-
-Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bounded by $\frac{\pi}{2}$, by direct application of the fact above, we conclude that than $\pi$.
 
 
 \end{document}
