@@ -171,13 +171,14 @@ def test_schwarz_paper():
 
     V = 2 * W / (W^2 + 1)
     Z = atanh(V)
-    Z0 = Z + 1 # arbitrary number greater than Z0
     for q in [3, 4, 5, 6, 7, 8, 9, 10, 11]:
         # r_cayley = 1 - 2 ** (-q)
         # rr = R(r=r_cayley).n()
         # cc = C(r=r_cayley).imag().n()
         rr = 2 ** q
         cc = rr
+
+        Z0 = cc + rr
 
         # rr = 5 ** q
         print("R = " + str(rr))
@@ -199,7 +200,7 @@ def test_schwarz_paper():
             (cc - rr, ZZ),
             (ZZ, Z),
             (Z, Z0),
-            (Z0, cc + rr),
+            # (Z0, cc + rr),
         ]
 
         intervalsT = [(-pi/2 + phi(y=yf), -pi/2 + phi(y=yt)) for yf, yt in intervalsY]
