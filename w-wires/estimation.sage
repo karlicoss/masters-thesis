@@ -158,7 +158,7 @@ Z = atanh(4/5)
 
 
 def test_schwarz_paper():
-    W = 3
+    W = 2
     coeff = W ** 2 + 1
     a = 0
     b = 0
@@ -172,11 +172,16 @@ def test_schwarz_paper():
     V = 2 * W / (W^2 + 1)
     Z = atanh(V)
     Z0 = Z + 1 # arbitrary number greater than Z0
-    for q in range(1, 10):
-        rr = 5 ** q
-        print("R = " + str(rr))
+    for q in [3, 4, 5, 6, 7, 8, 9, 10, 11]:
+        # r_cayley = 1 - 2 ** (-q)
+        # rr = R(r=r_cayley).n()
+        # cc = C(r=r_cayley).imag().n()
+        rr = 2 ** q
+        cc = rr
 
-        phi(y) = acos((rr - y) / rr)
+        # rr = 5 ** q
+        print("R = " + str(rr))
+        phi(y) = acos((cc - y) / rr)
 
         # TODO one more estimate?
         s1(y) = 1 - 2 * V / (tanh(y) + V)
@@ -191,14 +196,13 @@ def test_schwarz_paper():
 
         # lol intervals depend on the estimations
         intervalsY = [
-            (0, ZZ),
+            (cc - rr, ZZ),
             (ZZ, Z),
             (Z, Z0),
-            (Z0, 2 * rr), # TODO oo?
+            (Z0, cc + rr),
         ]
 
         intervalsT = [(-pi/2 + phi(y=yf), -pi/2 + phi(y=yt)) for yf, yt in intervalsY]
-
 
         w = var('w', domain=RR)
         # plots = sum([plot(ff(k=rr * exp(i * t) + rr * i), w, tl, tr) for (tl, tr), ff, color in zip(intervals2, functions, rainbow(4))])
@@ -206,11 +210,15 @@ def test_schwarz_paper():
         plots.append(plot(S(k=1 + w * i), w, intervalsY[0][0], intervalsY[-1][1], color='black'))
         sum(plots).save('plots_{}.png'.format(q))
 
-        sup = 0.0
+
+
+        sum_logarithmic = 0.0
+        sum_jacobian = 0.0
+        sum_sup = 0.0
         for (tl, tr), ff in zip(intervalsT, functions):
-            print("Interval: {:.2f}-{:.2f}".format(float(tl), float(tr)))
-            f1 = ln(ff(k=rr * exp(i * t) + rr * i)) * sqrt(rr) / (rr * exp(i * t) + rr * i + i) # TODO rr -> C(R)
-            f2 = 1 / (rr * exp(i * t) + rr * i + i) * i * sqrt(rr) * exp(i * t) # looks like it converges to pi
+            print("Interval: {:.2f}-{:.2f}".format(float(tl.real()), float(tr.real())))
+            f1 = ln(ff(k=rr * exp(i * t) + cc * i)) * sqrt(rr) / (rr * exp(i * t) + cc * i)
+            f2 = 1 / (rr * exp(i * t) + cc * i + i) * i * sqrt(rr) * exp(i * t) # looks like it converges to pi
             p  = f1 * f2
             p1 = fast_callable(norm(f1)     , vars=[t], domain=CC)
             p2 = fast_callable(norm(f2)     , vars=[t], domain=CC)
@@ -219,16 +227,20 @@ def test_schwarz_paper():
             print("Complex: " + str(res))
 
             res1, _ = numerical_integral(p1, tl, tr)
+            sum_logarithmic += res1
             print("Logarithmic: " + str(res1))
 
             res2, _ = numerical_integral(p2, tl, tr)
+            sum_jacobian += res2
             print("Jacobian: " + str(res2))
 
             up = res1 * res2
-            sup += up
+            sum_sup += up
             print("Upper bound: " + str(up))
             print("---------------")            
-        print("Total upper bound: " + str(sup))
+        print("Total logarithmic: " + str(sum_logarithmic))
+        print("Total Jacobian   : " + str(sum_jacobian))
+        print("Total upper bound: " + str(sum_sup))
         print("================================")
 
 test_schwarz_paper()
