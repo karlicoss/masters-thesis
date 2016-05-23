@@ -1,0 +1,36 @@
+\newcommand{\Wglen}{10.0}; % waveguide length
+
+\coordinate (LLL) at (-\Wglen - 1, 0);
+\coordinate (RRR) at ( \Wglen + 1, 0);
+\coordinate (LL)  at (-\Wglen, 0);
+\coordinate (RR)  at ( \Wglen, 0);
+% change these to take resonator length into account
+\coordinate (L)   at (-4, 0);
+\coordinate (R)   at (4, 0);
+%
+
+\coordinate (U) at (0, 3); % upper point of resonator
+
+% waveguide
+\draw[ultra thick, dotted] (LLL) -- (LL);
+\draw[ultra thick] (LL)--(L);
+\draw[ultra thick] (R)--(RR);
+\draw[ultra thick, dotted] (RR) -- (RRR);
+%
+
+\draw[<-] (-\Wglen + 1, 2) -- (-\Wglen + 5, 2) node [midway, above] {$R e^{-\iu k x}$};
+\draw[->] (-\Wglen + 1, 0.5) -- (-\Wglen + 5, 0.5) node [midway, above] {$e^{\iu k x}$};
+\draw[->] (\Wglen - 5, 0.5) -- (\Wglen - 1, 0.5) node [midway, above] {$T e^{\iu k x}$};
+
+% \draw[ultra thick] node [below] {$V$} (0, 2) circle[radius=2] 
+\draw[thick] (4,0)  arc[x radius = 4cm, y radius = 2cm, start angle= 0, end angle=180];
+\draw[thick] (4,0)  arc[x radius = 4cm, y radius = 1cm, start angle= 0, end angle=180];
+\draw[thick] (4,0)  arc[x radius = 4cm, y radius = 0.5cm, start angle= 0, end angle=180];
+\draw[thick] (-4,0)  arc[x radius = 4cm, y radius = 2cm, start angle= 180, end angle=360];
+\draw[thick] (-4,0)  arc[x radius = 4cm, y radius = 1cm, start angle= 180, end angle=360];
+\draw[thick] (-4,0)  arc[x radius = 4cm, y radius = 0.5cm, start angle= 180, end angle=360];
+
+\draw (-4.3, 0) node [below] {$V_a$};
+\draw (4.3, 0) node [below] {$V_b$};
+\draw (0, 2) node [above] {$\Omega$};
+\draw (0, 0) node {$\dots$};
