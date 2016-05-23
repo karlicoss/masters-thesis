@@ -136,10 +136,17 @@ S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}
 \begin{frame}{Резонатор типа «кольцо»}
 \begin{itemize}
 \item $a \ne 0$: полнота присутствует
-\item $a = 0$: полноты нет, $\det S$ уходит в 0 на бесконечности! \todo{График!}
+\item $a = 0$: полноты нет, $\det S$ слишком быстро уходит в 0 на бесконечности!
 \end{itemize}
-
 \end{frame}
+
+\begin{frame}[plain]
+\begin{figure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pic/detSa1.png}
+\caption{$\abs{\det S(k)}$, $a = 1$}
+\end{figure}
+\end{frame}
+
 
 % TODO meh. Просто упомянуть?
 % \begin{frame}{Резонатор типа «кольцо с петлей»}
@@ -193,6 +200,16 @@ $k \to \iu C(r) + R(r) \eexp{\iu t}$
 \]
 \end{frame}
 
+
+
+\begin{frame}[plain]
+\begin{figure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pic/contour.png}
+\caption{$\abs{\det S(k)}$, $W = 2$, $a = b = 0$}
+% (complex_plot(abs(S), (-15, 15), (0, 20)) + circle((0, 7), 6.5)).show(figsize=[12, 6], aspect_ratio='equal')
+\end{figure}
+\end{frame}
+% Проблема в том, что контур интегрирования может пересекать особенности
 
 
 \begin{frame}{Схема доказательства полноты (продолжение)}
