@@ -94,8 +94,8 @@ def from_cayley_to_standard():
 # integral in standard space is f(z=cayley(k)) * cayley'(k) = F(k) * cayley'(k) dk = F(k) * (2 * i / (k + i)^2)
 
 
-C(r) = (icayley(r) + icayley(-r)) / 2
-R(r) = ((icayley(r) - icayley(-r)) / (2 * i)).real() # TODO divide by i
+C(r) = ((icayley(r) + icayley(-r)) / 2).imag()
+R(r) = ((icayley(r) - icayley(-r)) / 2).imag()
 
 # line([(icayley(R * exp(i * q)) - C(r=R))(R=0.1).n() for q in arange(0, 2 * pi, 0.01 * pi)]).show(aspect_ratio='equal')
 
@@ -172,11 +172,11 @@ def test_schwarz_paper():
     V = 2 * W / (W^2 + 1)
     Z = atanh(V)
     for q in [3, 4, 5, 6, 7, 8, 9, 10, 11]:
-        # r_cayley = 1 - 2 ** (-q)
-        # rr = R(r=r_cayley).n()
-        # cc = C(r=r_cayley).imag().n()
-        rr = 2 ** q
-        cc = rr
+        r_cayley = 1 - 2 ** (-q)
+        rr = R(r=r_cayley).n()
+        cc = C(r=r_cayley).n()
+        # rr = 2 ** q
+        # cc = rr
 
         Z0 = cc + rr
 
