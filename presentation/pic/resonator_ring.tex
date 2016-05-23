@@ -1,0 +1,25 @@
+\newcommand{\Wglen}{10.0}; % waveguide length
+
+\coordinate (LLL) at (-\Wglen - 1, 0);
+\coordinate (RRR) at ( \Wglen + 1, 0);
+\coordinate (LL)  at (-\Wglen, 0);
+\coordinate (RR)  at ( \Wglen, 0);
+% change these to take resonator length into account
+\coordinate (L)   at (0, 0);
+\coordinate (R)   at (0, 0);
+%
+
+\coordinate (U) at (0, 3); % upper point of resonator
+
+% waveguide
+\draw[ultra thick, dotted] (LLL) -- (LL);
+\draw[ultra thick] (LL)--(L);
+\draw[ultra thick] (R)--(RR);
+\draw[ultra thick, dotted] (RR) -- (RRR);
+%
+
+\draw[<-] (-\Wglen + 1, 2) -- (-\Wglen + 5, 2) node [midway, above] {$R e^{-\iu k x}$};
+\draw[->] (-\Wglen + 1, 0.5) -- (-\Wglen + 5, 0.5) node [midway, above] {$e^{\iu k x}$};
+\draw[->] (\Wglen - 5, 0.5) -- (\Wglen - 1, 0.5) node [midway, above] {$T e^{\iu k x}$};
+
+\draw[ultra thick] node [below] {$V$} (0, 2) circle[radius=2] node {$\Omega$};

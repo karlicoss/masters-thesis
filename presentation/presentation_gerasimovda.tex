@@ -91,14 +91,28 @@
 \end{frame}
 
 
-\begin{frame}{Решение задачи на произвольном графе}
-\todo{Индукция по количеству ребер?}
+\begin{frame}{Критерий полноты}
+Используется матрица рассеивания:
 
-\todo{«Стягивание» вершин?}
+\[
+S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}
+\]
+
+Критерий полноты диссипативного оператора:
+\[
+\lim\limits_{r = 1} \int\limits_{\abs{\zeta} = r} \ln \abs{\det S(\zeta)} d \zeta = 0
+\]
+
 \end{frame}
 
+
 \begin{frame}{Резонатор типа «кольцо»}
-\todo{картиночка}
+
+\begin{figure}
+\begin{tikzpicture}[scale=0.5]
+\input{pic/resonator_ring.tex}
+\end{tikzpicture}
+\end{figure}
 
 \[
 \det S = 
@@ -107,31 +121,34 @@
 {\cos\left(k\right) + {\left(\frac{a}{2 k} - i\right)} \sin\left(k\right) - 1}
 \]
 
-$a = 0$
-
-\todo{формула}
-
-\todo{Отрицательный результат! Полноты нет, $\det S$ уходит в 0 на бесконечности}
-
 \end{frame}
 
-\begin{frame}{Резонатор типа «кольцо»}
+\begin{frame}{Резонатор типа «кольцо», $a \ne 0$}
 $a \ne 0$: полнота присутствует
 
 \todo{формула для $S$-матрицы}
 
 \end{frame}
 
-\begin{frame}{Резонатор типа «кольцо с петлей»}
-
-\todo{fwefwe}
-
+\begin{frame}{Резонатор типа «кольцо», $a = 0$}
+\todo{Отрицательный результат! Полноты нет, $\det S$ уходит в 0 на бесконечности}
 \end{frame}
+
+% TODO meh. Просто упомянуть?
+% \begin{frame}{Резонатор типа «кольцо с петлей»}
+
+% \todo{fwefwe}
+
+% \end{frame}
 
 
 \begin{frame}{Резонатор из $W$ одинаковых ребер}
 
-\todo{картиночка?}
+\begin{figure}
+\begin{tikzpicture}[scale=0.5]
+\input{pic/resonator_bundle.tex}
+\end{tikzpicture}
+\end{figure}
 
 {
 \scriptsize
@@ -146,7 +163,10 @@ $a \ne 0$: полнота присутствует
 \todo{Скорее всего, можно обобщить на более широкий класс $S$-матриц}
 \end{frame}
 
+
 \begin{frame}{Доказательство для произвольного графа}
+Хотелось бы использовать индукцию по количеству ребер.
+
 Не так просто, при «стягивании» ребер можно потерять полноту. \todo{$S$-матрица в пределе?}
 % интересный результат: непрерывное изменение параметров приводит к внезапному разрыву 
 \end{frame}
