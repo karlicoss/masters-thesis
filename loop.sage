@@ -251,7 +251,29 @@ class IntervalLoopSolver(BaseSolver):
             check_determinants_same(symbolic.det(), analytic)
 
 
-# LoopSolver.test()
+class IntervalsSolver(BaseSolver):
+    # wires: integer
+    # a: symbolic/float
+    def __init__(self, W=rvar('W'), a=rvar('a'), b=rvar('b'), L=rvar('L')):
+        super(IntervalsSolver, self).__init__()
+        self.W = W
+        self.a = a
+        self.b = b
+        self.L = L
+
+    def analytic_Sdet(self):
+        W = self.W
+        k = self.k
+        a = self.a
+        b = self.b
+        L = self.L
+
+        coeff = W ** 2 + 1
+        num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) + 2 * W * i * k ** 2 * cos(L * k) + i * (a + b) * k * sin(L * k)
+        den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) - 2 * W * i * k ** 2 * cos(L * k) - i * (a + b) * k * sin(L * k)
+        return num / den
+
+
 
 def plot_all(det, suffix=None, rrange=(-20, 20), irange=(-2, 2), points=1500):
     plot_abs = complex_plot(abs(det), rrange, irange, plot_points=points)  # , aspect_ratio=)
@@ -382,14 +404,3 @@ def calculate_integral_symbolic():
     # pig = f(k=)
 
 
-# calculate_integral_symbolic()
-# calculate_integral_symbolic_cayley()
-# loop_integral_symbolic()
-# stuff_for_paper()
-solver = IntervalLoopSolver(L=cvar('L'))
-view_later(solver.analytic_Sdet())
-view_all()
-# S = solver.solve_symbolic()
-# complex_plot(abs(S), (-10, 10), (0, 10)).show()
-# print(S)
-# IntervalLoopSolver.test()

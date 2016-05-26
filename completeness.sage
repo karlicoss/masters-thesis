@@ -715,7 +715,7 @@ DPI = 200
 def plot_all(Sdet, suffix="", rrange=(-2, 20), irange=(0, 2), points=1500):
     # print(n(abs(Sdet(rrange[0] + irange[0] * i)) ** 0.02))
     # complex_plot(Sdet, rrange, irange, plot_points=points).save('plot{}.png'.format(suffix), figsize=[12, 2])
-    plot_abs = complex_plot(abs(Sdet), rrange, irange, plot_points=points)
+    plot_abs = complex_plot(Sdet, rrange, irange, plot_points=points)
     # l = line([(rrange[0], 5), (rrange[1], 5)], rgbcolor=(1, 0, 0))# complex_plot(lambda q: q.real() + 5 * i, rrange, irange, color='green')
     ll = [
 
@@ -1004,7 +1004,7 @@ def try_interval_loop():
 # try_grid()
 # try_triangle()
 # try_same_length_analytic()
-one_wire_loop()
+# one_wire_loop()
 # one_wire_popov()
 
 # try_different_length_a()
@@ -1016,3 +1016,13 @@ one_wire_loop()
     # test_matrices(Sm, Sa)
     # contour_integral_analysis(Sm) #  * exp(2 * i * k))
 # view_all()sa
+
+
+a = 0
+b = 0
+L = 1
+for W in [2]:# , 3, 4, 5, 6]:
+    solver = interval_solver_uniform(W, a, b)
+    # S = solver.solve_symbolic()
+    Sa = solver.solve_analytic()
+    plot_all(Sa, suffix="wires")
