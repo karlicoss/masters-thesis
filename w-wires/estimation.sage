@@ -383,15 +383,15 @@ def test_schwarz_paper_3():
     f  = ln(e(y=R * sin(t) + C))^2 * 1 / (R + C^2/R + 2 * C * sin(t))
     g  = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
     # min at x = C!
-    qq = 1 / sqrt(R + C - x)
-    g1 = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * qq(x = C) # * 1 / sqrt(R - C + x) # denominator is > 1, we are safe to throw it away, overestimation
+    g1 = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - C) * 1 / sqrt(R - C + Z) # denominator is > 1, we are safe to throw it away, overestimation
     # print((ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x)).integrate(x))
     # g1: x < C
     # Ok, integrate ln^2(a x + b) / (c x + d), and then estimate?
-    g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(-C^2 + R^2 + 2 * C * x - x^2)
+    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - x) # sqrt((R + C - x) * (R - C + x))
+    g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * C) * 1 / sqrt(R + C - x) * 1  / sqrt((R - C + C))
     
 
-    for q in range(3, 20, 2):
+    for q in range(3, 30, 3):
         print("=======")
         r_cayley = 1 - 2 ** (-q)
         rr = RRR(r=r_cayley).n()

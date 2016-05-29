@@ -31,6 +31,7 @@
 
 \DeclareMathOperator\atanh{atanh}
 \DeclareMathOperator\atan{atan}
+\DeclareMathOperator\asin{asin}
 
 \begin{document}
 
@@ -49,7 +50,7 @@ Since $S$-matrix is naturally defined on the complex plane, it is easier work in
 
 , where $C_r$ is the image of the curve $\abs{\zeta} = r$ under the inverse Cayley transform. Since Cayley transform is a Mobius transformation and preserves circles, $C_r$ will actually be a circle with radius $R(r) = \Im \frac{w(r) - w(-r)}{2}$ and center $C(r) = \Im \frac{w(r) + w(-r)}{2}$.
 
-Fox the computational convenience, it $C_r$ is parameterized via $k = R(r) \eexp{\iu t} + \iu C(r)$, which yields us the final form of the criterion, which we will use further:
+For the computational convenience, $C_r$ is parameterized via $k = R(r) \eexp{\iu t} + \iu C(r)$, which yields us the final form of the criterion, which we will use further:
 
 \begin{equation}\label{critp}
 \lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(R(r) \eexp{\iu t} + \iu C(r))} \frac{2 \iu}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} R \iu dt = 0
@@ -221,7 +222,8 @@ s_1(x + \iu y)
 
 % TODO
 % https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
-Since $s_1$ is concave \todo{proof? just take a look at second derivative?}, strictly increasing and for fixed $r$, our domain of interest is only $\Im k \le C + R$, we can approximate the function by a linear function $s_4$.
+ % \todo{proof? just take a look at second derivative?}
+Since $s_1$ is concave, strictly increasing and for fixed $r$, our domain of interest is only $\Im k \le C + R$, we estimate the function from below by a linear function $s_4$:
 
 \[
 s_4(x + \iu y) = 
@@ -244,5 +246,50 @@ l(k) =
 \]
 
 
+\todo{full circle; explain what is $\phi$}
+\begin{align*}
+    & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 s(R \eexp{\iu t} + \iu C) \frac{R}{\norm{R \eexp{\iu t} + \iu C + i}^2} dt\\
+=   & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 f(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dt\\
+\le & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 f(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C)^2} dt\\
+\end{align*}
+
+
+Change of variables:
+
+\begin{align*}
+y &= R \sin t + C \\
+t &= \asin \frac{y - C}{R} \\
+dt &= \frac{1}{\sqrt{R^2 - (C - y)^2}} dy \\
+\cos t &= \frac{\sqrt{R^2 - (C - y)^2}}{R}
+\end{align*}
+
+
+\begin{align*}
+    & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 \cos^2 t + (R \sin t + C)^2} dy \\
+=   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - (C - y)^2 + y^2} \frac{1}{\sqrt{R^2 - (C - y)^2}} dy\\
+=   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + y)}} \frac{1}{\sqrt{(R + C - y)}} dy\\
+\end{align*}
+
+To estimate, we will split the integration in two parts: from $Z$ to $C$ and from $C$ to $R + C$.
+
+\todo{first part}
+
+Second part:
+
+\begin{align*}
+    & \int\limits_{y = C}^{R + C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + y)}} \frac{1}{\sqrt{(R + C - y)}} dy\\
+\le & \int\limits_{y = C}^{R + C} \ln^2 f(C) \frac{R}{R^2 - C^2 + 2 C C} \frac{1}{\sqrt{(R - C + C)}} \frac{1}{\sqrt{(R + C - y)}} dy\\
+=   & \ln^2 f(C) \frac{R}{R^2 + C^2} \frac{1}{\sqrt{R}} \int\limits_{y = C}^{R + C} \frac{1}{\sqrt{R + C - y}} dy\\
+=   & \ln^2 f(C) \frac{R}{R^2 + C^2} \frac{1}{\sqrt{R}} 2 \sqrt{R}\\
+\end{align*}
+\todo{show that logarithmic part is constant, that finishes the proof}
+
+\begin{align*} 
+    & \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + y)}} \frac{1}{\sqrt{(R + C - y)}} dy\\
+\le & \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + Z)}} \frac{1}{\sqrt{(R + C - C)}} dy\\
+=   & \frac{1}{\sqrt{R - C + Z}} \frac{R}{\sqrt{R}}  \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{1}{R^2 - C^2 + 2 C y} dy\\
+\end{align*}
+
+\todo{ugh, estimate via $\int \ln^2(a x + b) \frac{1}{c x + d}$? }
 
 \end{document}
