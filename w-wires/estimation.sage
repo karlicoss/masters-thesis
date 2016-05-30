@@ -176,7 +176,7 @@ def test_schwarz_paper():
     V = 2 * W / (W^2 + 1)
     Z = atanh(V)
     for q in [3, 4, 5, 6, 7, 8, 9, 10, 11]:
-        r_cayley = 1 - 2 ** (-q)
+        r_cayley = 1 - 3 ** (-q)
         rr = R(r=r_cayley).n()
         cc = C(r=r_cayley).n()
         # rr = 2 ** q
@@ -186,6 +186,7 @@ def test_schwarz_paper():
 
         # rr = 5 ** q
         print("R = " + str(rr))
+        print("C = " + str(cc))
         phi(y) = acos((cc - y) / rr)
 
         # TODO one more estimate?
@@ -194,7 +195,6 @@ def test_schwarz_paper():
             2/V * (0.5 * V - k.imag()),
             (W^2 - 1)^2 / (4 * (W^2 + 1) * W) * (Z - k.imag()),
             s1(y=Z0) / (Z0 - Z) * (k.imag() - Z),
-            s1(y=Z0),
         ]
 
         ZZ = solve(functions[0] == functions[1], k)[0].rhs()
@@ -204,7 +204,6 @@ def test_schwarz_paper():
             (cc - rr, ZZ),
             (ZZ, Z),
             (Z, Z0),
-            # (Z0, cc + rr),
         ]
 
         intervalsT = [(-pi/2 + phi(y=yf), -pi/2 + phi(y=yt)) for yf, yt in intervalsY]
@@ -222,7 +221,7 @@ def test_schwarz_paper():
         sum_sup = 0.0
         for (tl, tr), ff in zip(intervalsT, functions):
             print("Interval: {:.2f}-{:.2f}".format(float(tl.real()), float(tr.real())))
-            f1 = ln(ff(k=rr * exp(i * t) + cc * i)) * sqrt(rr) / (rr * exp(i * t) + cc * i)
+            f1 = ln(ff(k=rr * exp(i * t) + cc * i)) * sqrt(rr) / (rr * exp(i * t) + cc * i) # TODO apparently adding i here doesn't help a lot?
             f2 = 1 / (rr * exp(i * t) + cc * i + i) * i * sqrt(rr) * exp(i * t) # looks like it converges to pi
             p  = f1 * f2
             p1 = fast_callable(norm(f1)     , vars=[t], domain=CC)
@@ -305,72 +304,6 @@ def test_schwarz_paper_x():
         # print("Est: " + str(res1 * res2))
 
 
-def test_schwarz_paper_w():
-    Z = 1
-    R = var('R', domain='positive')
-    # assume(R > 1)
-    # assume(-4*R^2/(4*R^2-4*R+1)+4*R/(4*R^2-4*R+1)+3/(4*R^2-4*R+1)-4*R^2/(2*R-1)+6*R/(2*R-1)+4/(2*R-1)+2*R+1 > 0)
-    # assume(-4*R^2/(4*R^2-4*R+1)<0)
-
-    f1 = ln(0.1 / (2 * R - Z) * (x - Z)) ** 2 
-    f2 = 1 / (x * sqrt(x * (2 * R - x)))
-    f = f1 * f2
-
-    Rv = 100
-    plot(f(R=Rv) , Z, 2 * Rv).save('plot.png')
-    plot(f1(R=Rv), Z, 2 * Rv).save('plot1.png')
-    plot(f2(R=Rv), Z, 2 * Rv).save('plot2.png')
-    it = lambda rr: numerical_integral(f1(R=rr), Z, 2 * rr)
-    for q in range(1, 5):
-        print(it(10**q))
-
-    
-    # print(f1.diff(x))
-    # print(f2.integrate(x))
-
-    # print(f)
-
-
-    # for q in range(3, 30, 2):
-    #     r_cayley = 1 - 2 ** (-q)
-    #     rr = R(r=r_cayley).n()
-    #     cc = C(r=r_cayley).n()
-    #     # rr = 2 ** q
-    #     # cc = rr
-
-    #     print("R = " + str(rr))
-
-
-    #     f1 = ln(1/(2 * rr - Z) * (x - Z)) ** 2
-    #     f2 = 1 / (x * sqrt(x * (2 * rr - x)))
-    #     f = f1 * f2
-
-    #     g1 = f1.diff(x)
-    #     g2 = f2.integrate(x)
-
-        
-    #     print(g1 * g2)
-
-    #     tl = Z
-    #     tr = 2 * rr
-
-    #     # mv, mx = find_local_minimum(, tl, tr)
-
-    #     pf = fast_callable(f            , vars=[x], domain=CC)
-    #     # p1 = fast_callable(norm(f1)     , vars=[x], domain=CC)
-    #     # p2 = fast_callable(norm(f2)     , vars=[x], domain=CC)
-    #     pg = fast_callable(g1 * g2      , vars=[x], domain=CC)
-
-    #     resf , _ = numerical_integral(pf, tl, tr)
-    #     resg , _ = numerical_integral(pg, tl, tr)
-    #     # res1, _ = numerical_integral(p1, tl, tr)
-    #     # res2, _ = numerical_integral(p2, tl, tr)
-
-
-    #     print("Resf: " + str(resf))
-    #     print("Resg: " + str(resg))
-    #     # print("Est: " + str(res1 * res2))
-
 # Wolfram: integrate ln(0.5/(2 * 50000 - 1)(x - 1))/(x * sqrt(x * (2 * 50000 - x))) for x from 1 to 2 * 50000
 
 
@@ -405,28 +338,22 @@ def test_schwarz_paper_3():
         print(numerical_integral(g2(R=rr, C=cc), cc, rr + cc)[0])
 
 
-
 def test_schwarz_paper_4():
     Z = 1
     R = var('R', domain='positive')
     C = var('C', domain='positive')
-    e(y) = 0.5 / (2 * R - Z) * (y - Z)
-
-    f  = ln(e(y=x))^2 * 1 / (x * sqrt(x * (2 * R - x)))
-    # f1 = ln(e(y=x))^2 * 1 / (x * sqrt(2 * R - x)) # TODO R - x?
-    qq = 1 / sqrt(2 * R - x)
-    # (y - y1) / (x - x1) = (y2 - y1) / (x2 - x1)
-    # x1 = Z
-    # x2 = R
-    # ww = (qq(x=R) - qq(x=Z)) / (R - Z) * (x - Z) + qq(x = Z)
-    ww = qq(x=R)
-    f1 = ln(e(y=x))^2 * 1 / x * ww
-    f2 = ln(e(y=R))^2 * 1 / (x * sqrt(x * (2 * R - x)))
-
-    # f21 = norm(ln(e(y=x)) * R / (-(C - x)^2 + R^2 + x^2) * sqrt(sqrt(-(C - x)^2 + R^2)))
-    # f22 = norm(ln(e(y=x)) * 1 / sqrt(sqrt(-(C - x)^2 + R^2)))
-
-    # print(numerical_integral(f(R=rr), Z, 2 * rr)[0])
+    e(y) = 0.5 / (C + R - Z) * (y - Z) # TODO!!!!
+    phi = asin((C - Z) / R)
+    f  = ln(e(y=R * sin(t) + C))^2 * 1 / (R + C^2/R + 2 * C * sin(t))
+    g  = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
+    # min at x = C!
+    g1 = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - C) * 1 / sqrt(R - C + Z) # denominator is > 1, we are safe to throw it away, overestimation
+    # print((ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x)).integrate(x))
+    # g1: x < C
+    # Ok, integrate ln^2(a x + b) / (c x + d), and then estimate?
+    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - x) # sqrt((R + C - x) * (R - C + x))
+    g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * C) * 1 / sqrt(R + C - x) * 1  / sqrt((R - C + C))
+    
 
     for q in range(3, 30, 3):
         print("=======")
@@ -434,9 +361,68 @@ def test_schwarz_paper_4():
         rr = RRR(r=r_cayley).n()
         cc = CCC(r=r_cayley).n()
         print("R = " + str(rr))
+        print("C = " + str(cc))
 
-        print(numerical_integral(f(R=rr), Z, 2 * rr)[0])
-        print(numerical_integral(f1(R=rr), Z, rr)[0])
-        print(numerical_integral(f2(R=rr), rr, 2 * rr)[0])
+        # print(numerical_integral(f(R=rr, C=cc), -phi(R=rr, C=cc), pi/2)[0])
+        print(numerical_integral(g(R=rr, C=cc), 0, Z)[0])
+        # print(numerical_integral(g1(R=rr, C=cc), Z, cc)[0])
+        # print(numerical_integral(g2(R=rr, C=cc), cc, rr + cc)[0])
 
-test_schwarz_paper_3()
+def test_schwarz_paper_5():
+    Z = 1
+    R = var('R', domain='positive')
+    C = var('C', domain='positive')
+
+
+
+    # tl = C - R
+    # tr = Z/2
+
+    # f  = ln(e(y=R * sin(t) + C))^2 * 1 / (R + C^2/R + 2 * C * sin(t))
+    e(y) = 1 - y
+    g  = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
+    # gg = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
+    gg = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - Z/2) * (R - C + x))
+    gg = ((-x)/(1 + (-x)))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - Z/2) * (R - C + x)) # TODO !!!! estimate!
+    # should be easily integrable after?
+
+    ggg = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * Z/2) * 1 / sqrt((R + C - Z) * (R - C + Z/2)) # easy lol
+
+    # TODO second part: similar to third?....
+
+
+
+    # f  = ln(e(y=x))^2 * R / (2 * R * x) * 1 / sqrt((2 * R - x) * (x))
+    # ff = ln(e(y=tr))^2 * R / (2 * R * x) * 1 / sqrt((2 * R - tr) * x)
+    # min at x = C!
+    # g1 = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - C) * 1 / sqrt(R - C + Z) # denominator is > 1, we are safe to throw it away, overestimation
+    # print((ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x)).integrate(x))
+    # g1: x < C
+    # Ok, integrate ln^2(a x + b) / (c x + d), and then estimate?
+    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - x) # sqrt((R + C - x) * (R - C + x))
+    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * C) * 1 / sqrt(R + C - x) * 1  / sqrt((R - C + C))
+    
+
+
+
+    for q in range(3, 50, 3):
+        print("=======")
+        r_cayley = 1 - 2 ** (-q)
+        rr = RRR(r=r_cayley).n()
+        cc = CCC(r=r_cayley).n()
+        print("R = " + str(rr))
+        print("C = " + str(cc))
+
+        # print(numerical_integral(f(R=rr, C=cc), -phi(R=rr, C=cc), pi/2)[0])
+        # print(numerical_integral(g(R=rr, C=cc), cc - rr, Z)[0])
+        # print(numerical_integral(gg(R=rr, C=cc), cc - rr, Z)[0])
+        print(numerical_integral(g(R=rr, C=cc), cc - rr, Z/2)[0])
+        print(numerical_integral(gg(R=rr, C=cc), cc - rr, Z/2)[0])
+
+        print(numerical_integral(g(R=rr, C=cc), Z/2, Z)[0])
+        print(numerical_integral(ggg(R=rr, C=cc), Z/2, Z)[0])
+
+
+
+# test_schwarz_paper()
+test_schwarz_paper_5()
