@@ -17,9 +17,11 @@
 % \DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
 
 \newcommand{\mcL}{\mathcal{L}}
+\newcommand{\mcO}{\mathcal{O}}
 \newcommand{\mcH}{\mathcal{H}}
 \newcommand{\bbT}{\mathbb{T}}
 \newcommand{\bbC}{\mathbb{C}}
+\newcommand{\bbR}{\mathbb{R}}
 \newcommand{\bbD}{\mathbb{D}}
 
 \newcommand{\eexp}[1]{e^{#1}}
@@ -152,10 +154,12 @@ Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bound
 
 \subsection{Estimate of $\int \abs{f(t)}^2$}
 
-First, we will compute a lower bound $l(k)$ for $s(k)$, such that $0 \le l(k) \le s(k)$. Then, we replace $s(k)$ with its lower bound under the integral sign and will prove convergence of this integral to $0$. This reasoning is valid since for $s(k) \le 1$, $\ln l(k) \le \ln s(k)$.
+If we use $s(k)$ directly, it is not possible to evaluate integral analytically. However, $s(k)$ has nice properly of being an absolute value of the determinant of $S$-matrix, which means $0 \le s(k) \le 1$. This means we are free to replace $s(k)$ with a lower bound $l(k)$ such that $0 \le l(k) \le s(k)$, and prove convergence of the resulting integral to $0$ instead. This reasoning is valid since for $s(k) \le 1$, $\ln l(k) \le \ln s(k) \le 0$. We are going to rely on this fact heavily and use simple functions (e.g. piecewise linear) or simple known bounds for logarith to estimate the original integral.
 
-\subsubsection{Computing $s(k)$}
-First, notice that $s(k)$ is periodic w.r.t. real axis.
+\subsubsection{Computing $l(k)$}
+First, we will simplify $s(k)$ across all of the upper complex plane and make it independent of real part of the argument.
+
+Notice that $s(k)$ is periodic w.r.t. real axis.
 \todo{Plot of $\abs{\det S}$ ?}
 % Since $\sin k$ and $\cos k$ are periodic w.r.t the real axis, with the period of $2 \pi$, 
 \todo{is this step really necessary?}
@@ -168,66 +172,94 @@ Notice that for any $x$, $s(x + \iu y) \le s(\iu y)$
 Now, we are free to replace $s(x + \iu y)$ with:
 
 \begin{align*}
-s_1(x + \iu y)
+l_1(x + \iu y)
  &= \abs{\frac{(W^2 + 1) \sinh y - 2 W \cosh y}{(W^2 + 1) \sinh y + 2 W \cosh y}} && \text{(since $\cosh y \ge 1$)}\\
  &= \abs{\frac{\tanh y - V}{\tanh y + V}}
 \end{align*}
 
-Note that now $s_1(k)$ has zeroes along the line $\Im k = Z$, which means $\ln s_1(k)$ will have continuous number of singularities along this line. However, we'll show that the function is still integrable.
+Note that now $l_1(k)$ has zeroes along the line $\Im k = Z$, which means $\ln l_1(k)$ will have continuous number of singularities along this line. Intuitively, it shouldn't spoil anything, because the integration contour might have or have not crossed a singularity of $\ln s(k)$ anyway. And indeed, we'll show that the function is still integrable.
 
 \todo{Plot?}
 
-Next, since $\tanh y \ge 0$ for $y \ge 0$ and is strictly increasing, we can get rid of the absolute value:
+Next, since $\tanh y$ is non-negative and strictly incresing for $y \ge 0$, we can get rid of the absolute value:
 
 \todo{make the formula bigger}
 \[
-s_1(x + \iu y)
+l_1(x + \iu y)
  = \begin{cases}
  \frac{V - \tanh y}{\tanh y + V}, & 0 \le y \le Z \\
  \frac{\tanh y - V}{\tanh y + V}, & y > Z 
  \end{cases}
 \]
 
-Now, the estimation splits in two cases:
+Next, we split the estimation in two separate cases (below/above the singularity):
 
 \subsubsection*{Case 1: $0 \le y \le Z$}
-We will estimate the function from below by a piecewise function containing of two pieces. We do that by noticing that the function is convex on $0 \le y \le Z$ and can be approximated from below with its first derivative at $0$ and at $Z$. 
-\todo{this step is necessary because we have to $\ln f(z)$ is zero in vicinity of 0}
+Crucial property of $s(k)$ as $\Im k$ gets close to $0$ is that it gets close to $1$. This is very important, since it implies that $\ln s(k)$ goes to $0$, which is essential part of convergence of the integral. Intuitively, the contour gets closer and closer to the real axis, so if $\ln s(k)$ did not nullify on $\bbR$, we wouldn't have convergence to zero. So, a sensible lower bound of $s(k)$ should respect that property as well and converge to $1$ as $\Im k \to 0$.
 
-\[
-f(y) = 
+Since the function is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the \todo{positiveness??} property, so we have to approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
+
+\begin{align*}
+f(y)
+& = 
 \begin{cases}
 s_1'(0) y + 1   &, 0 \le y < Z_0  \\
 s_1'(Z) (y - Z) &, Z_0 \le y < Z \\
 \end{cases}
-=
+\\
+& =
 \begin{cases}
 \frac{-2}{V} y + 1   &, 0 \le y < Z_0  \\
 \frac{1}{2 V}(V^2 - 1) (y - Z) &, Z_0 \le y < Z \\
 \end{cases}
-\]
+\end{align*}
 
+Notice that the estimate does not necessarily has to be continuous, so any $Z_0$ works as long as the estimate is positive definite. However for computational convenience $Z_0 = \frac{V}{4}$ suits our needs best \todo{prove?}.
 
-Since denominator $\tanh y + V$ only increases as $0 \le y \le Z$, we can replace it with its maximum value $\tanh Z + V = 2 V$, thus getting estimate $s_2$:
+\subsection*{$0 \le y < \frac{V}{4}$}
 
-\[
-s_2(x + \iu y) = \frac{V - \tanh y}{2 V} = \frac{1}{2} - \frac{1}{2 V} \tanh y \le s_1(x + \iu y)
-\]
-
-Since $\tanh(y)$ is concave, $s_2$ is convex \todo{proof} on $0 \le y \le Z$, we can approximate it from below using its first derivative at $Z$:
+We compute the upper bound for the integrand \todo{$\int\limits_{y = C - R }^{V/4}$ }.
 
 \[
-s_3(x + \iu y) = s_2'(Z)(y - Z) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W} (Z - y)
+\ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
 \]
-% \[
-% h'(Z) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W}
-% \]
-% h'(W=2) = 9/40; h'(W=3) = 8/15
 
-Since $s_3$ is stricly decreasing, $s(0) = \frac{{\left(W^{2} - 1\right)}^{2}}{4 \, {\left(W^{2} + 1\right)} W} Z$ is strictly positive and $s(Z) = 0$, $s_3(k)$ is non-negative and $\ln s_3(k)$ is well defined on $0 \le y \le Z$.
+We use the inequality $\frac{x}{1 + x} \le \ln (1 + x)$ for $x > -1$, where $x = -\frac{2}{V} y$. In this case, since the argument of the logarithm is less than $1$, $(1 + x)^2 \le \frac{x^2}{(1 + x)^2}$.
 
-\todo{We might need one more estimate to ensure $l(x + 0 \iu) = 1$}
+\[
+\le \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2} \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
+\]
 
+Replace $1 - \frac{2}{V}y$ with its minimum value $0.5$ and $R + C - y$ with its minimum value $R + C - \frac{V}{4}$.
+
+\todo{dammit, finish this}
+
+\subsection*{$\frac{V}{4} \le y < Z$}
+
+\[
+\ln^2 \left( \frac{1}{2 V}(V^2 - 1) (y - Z) \right) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
+\]
+
+Replace:
+\begin{itemize}
+\item $R^2 - C^2 + 2 (C + 1) y + 1$ with its minimum value $R^2 - C^2 + 2 (C + 1) \frac{V}{4} + 1$
+\item $R - C + y$ with its minimum value $R - C + \frac{V}{4}$
+\item $R + C - y$ with its minimum value $R + C - Z$
+\end{itemize}
+
+Function $\ln^2(x)$ is integrable in the neighbourhood of $0$ and it is well known \todo{reference?} that
+
+\[
+\int\limits_{x=x_0}^b \ln^2(a (x - b)) dx = (b - x_0) (\ln^2(a (x_0 - b)) - 2 \ln(a (x_0 - b)) + 2)
+\]
+
+In our case, $x_0 = \frac{V}{4}$, $b = Z$, therefore the integral is bounded by constant independent of $R$ and $C$. Therefore, the behaviour of the function is defined by the behaviour of its multiplier before the integral:
+
+\[
+\frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + \frac{V}{4}}} \frac{1}{\sqrt{R + C - Z}}
+\]
+
+As $r \to \infty$, clearly $R \to \infty$, $C \to \infty$, $R - C \to 0$ and one can easily see that the expression above is $\mcO(\frac{1}{\sqrt{R + C}})$, therefore, zero in the limit.
 
 \subsubsection*{Case 2: $y > Z$}
 For $y > Z$, 
@@ -289,7 +321,14 @@ dt &= \frac{1}{\sqrt{R^2 - (C - y)^2}} dy \\
 
 To estimate, we will split the integration in two parts: from $Z$ to $C$ and from $C$ to $R + C$.
 
-\todo{first part}
+First part:
+\begin{align*} 
+    & \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + y)}} \frac{1}{\sqrt{(R + C - y)}} dy\\
+\le & \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + Z)}} \frac{1}{\sqrt{(R + C - C)}} dy\\
+=   & \frac{1}{\sqrt{R - C + Z}} \frac{R}{\sqrt{R}}  \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{1}{R^2 - C^2 + 2 C y} dy\\
+\end{align*}
+
+\todo{ugh, estimate via $\int \ln^2(a x + b) \frac{1}{c x + d}$? }
 
 Second part:
 
@@ -300,13 +339,5 @@ Second part:
 =   & \ln^2 f(C) \frac{R}{R^2 + C^2} \frac{1}{\sqrt{R}} 2 \sqrt{R}\\
 \end{align*}
 \todo{show that logarithmic part is constant, that finishes the proof}
-
-\begin{align*} 
-    & \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + y)}} \frac{1}{\sqrt{(R + C - y)}} dy\\
-\le & \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y} \frac{1}{\sqrt{(R - C + Z)}} \frac{1}{\sqrt{(R + C - C)}} dy\\
-=   & \frac{1}{\sqrt{R - C + Z}} \frac{R}{\sqrt{R}}  \int\limits_{y = Z}^{C} \ln^2 f(y) \frac{1}{R^2 - C^2 + 2 C y} dy\\
-\end{align*}
-
-\todo{ugh, estimate via $\int \ln^2(a x + b) \frac{1}{c x + d}$? }
 
 \end{document}
