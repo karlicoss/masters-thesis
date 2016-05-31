@@ -160,7 +160,7 @@ First, notice that $s(k)$ is periodic w.r.t. real axis.
 % Since $\sin k$ and $\cos k$ are periodic w.r.t the real axis, with the period of $2 \pi$, 
 \todo{is this step really necessary?}
 
-$s(k)$ has countable number of zeros, all with $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define $Z = \atanh \frac{2 W}{W^2 + 1}$.
+$s(k)$ has countable number of zeros, all with $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define $V = \frac{2 W}{W^2 + 1}$, $Z = \atanh V$.
 
 Notice that for any $x$, $s(x + \iu y) \le s(\iu y)$
 \todo{How to prove? We could probably take a look at numerator and denominator in separate?}
@@ -170,10 +170,10 @@ Now, we are free to replace $s(x + \iu y)$ with:
 \begin{align*}
 s_1(x + \iu y)
  &= \abs{\frac{(W^2 + 1) \sinh y - 2 W \cosh y}{(W^2 + 1) \sinh y + 2 W \cosh y}} && \text{(since $\cosh y \ge 1$)}\\
- &= \abs{\frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}}
+ &= \abs{\frac{\tanh y - V}{\tanh y + V}}
 \end{align*}
 
-Note that now $s_1(k)$ has zeroes along the line $\Im k = Z = \atanh \frac{2 W}{W^2 + 1}$, which means $\ln s_1(k)$ will have continuous number of singularities along this line. However, we'll show that the function is still integrable.
+Note that now $s_1(k)$ has zeroes along the line $\Im k = Z$, which means $\ln s_1(k)$ will have continuous number of singularities along this line. However, we'll show that the function is still integrable.
 
 \todo{Plot?}
 
@@ -183,18 +183,35 @@ Next, since $\tanh y \ge 0$ for $y \ge 0$ and is strictly increasing, we can get
 \[
 s_1(x + \iu y)
  = \begin{cases}
- \frac{\frac{2 W}{W^2 + 1} - \tanh y}{\tanh y + \frac{2 W}{W^2 + 1}}, & 0 \le y \le Z \\
- \frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}, & y > Z 
+ \frac{V - \tanh y}{\tanh y + V}, & 0 \le y \le Z \\
+ \frac{\tanh y - V}{\tanh y + V}, & y > Z 
  \end{cases}
 \]
 
 Now, the estimation splits in two cases:
 
 \subsubsection*{Case 1: $0 \le y \le Z$}
-Since denominator $\tanh y + \frac{2 W}{W^2 + 1}$ only increases as $0 \le y \le Z$, we can replace it with its maximum value $\tanh Z + \frac{2 W}{W^2 + 1} = \frac{4 W}{W^2 + 1}$, thus getting estimate $s_2$:
+We will estimate the function from below by a piecewise function containing of two pieces. We do that by noticing that the function is convex on $0 \le y \le Z$ and can be approximated from below with its first derivative at $0$ and at $Z$. 
+\todo{this step is necessary because we have to $\ln f(z)$ is zero in vicinity of 0}
 
 \[
-s_2(x + \iu y) = \frac{\frac{2 W}{W^2 + 1} - \tanh y}{\frac{4 W}{W^2 + 1}} = \frac{1}{2} - \frac{W^2 + 1}{4 W} \tanh y \le s_1(x + \iu y)
+f(y) = 
+\begin{cases}
+s_1'(0) y + 1   &, 0 \le y < Z_0  \\
+s_1'(Z) (y - Z) &, Z_0 \le y < Z \\
+\end{cases}
+=
+\begin{cases}
+\frac{-2}{V} y + 1   &, 0 \le y < Z_0  \\
+\frac{1}{2 V}(V^2 - 1) (y - Z) &, Z_0 \le y < Z \\
+\end{cases}
+\]
+
+
+Since denominator $\tanh y + V$ only increases as $0 \le y \le Z$, we can replace it with its maximum value $\tanh Z + V = 2 V$, thus getting estimate $s_2$:
+
+\[
+s_2(x + \iu y) = \frac{V - \tanh y}{2 V} = \frac{1}{2} - \frac{1}{2 V} \tanh y \le s_1(x + \iu y)
 \]
 
 Since $\tanh(y)$ is concave, $s_2$ is convex \todo{proof} on $0 \le y \le Z$, we can approximate it from below using its first derivative at $Z$:
@@ -237,11 +254,11 @@ s_4(x + \iu y) =
 \subsection*{Proof of convergence}
 
 \[
-l(k) =
+l(x + \iu y) =
 \begin{cases}
-1 \\
-2 \\
-3 
+ \\
+s_2'(Z)(y - Z)                       &, Z_0 < y \le Z \\
+\frac{s_1(C + R)}{C + R - Z} (y - Z) &, y > Z
 \end{cases}
 \]
 
