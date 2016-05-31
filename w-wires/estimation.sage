@@ -446,21 +446,28 @@ def test_schwarz_paper_first():
 
     g(y)   = ln(1 - 2 / V * y)^2 * R / (-C^2 + R^2 + 2 * C * (y + 1) + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
     g1(y)  = ln(1 - 2 / V * y)^2 * R / (-C^2 + R^2 + 2 * C * (y + 1) + 1) * 1 / sqrt((R + C - tt) * (R - C + y))
-    g2(y) =  ((- 2 / V * y) / (1 + - 2 / V * y))^2 * R / (-C^2 + R^2 + 2 * C * (y + 1) + 1) * 1 / sqrt((R + C - mm) * (R - C + y))
-    g3(y) =  ((- 2 / V * y) / (1 + - 2 / V * mm))^2 * R / (-C^2 + R^2 + 2 * C * (C - R + 1) + 1) * 1 / sqrt((R + C - mm) * (R - C + y))
+    g2(y) =  ((- 2 / V * y) / (1 - 2 / V * y))^2 * R / (-C^2 + R^2 + 2 * C * (y + 1) + 1) * 1 / sqrt((R + C - mm) * (R - C + y))
+    g3(y) =  ((- 2 / V * y) / (1 - 2 / V * mm))^2 * R / (-C^2 + R^2 + 2 * C * (C - R + 1) + 1) * 1 / sqrt((R + C - mm) * (R - C + y))
+    # g3: singularity of type x^{-1/2}
+    # integral: 
+    # TODO R - C might be easy to compute in terms of r
+    qq = 2 * (C - R) * (R - C + V/4)^(1/2) + 2/3 * (-C + R + V/4)^(3/2) 
+    qq = 1
+    print((qq * R / (-C^2 + R^2 + 2 * C * (C - R + 1) + 1) * 1 / sqrt(R + C - mm))(C=R).limit(R=oo))
+    raise RuntimeError
 
     f(y)   = ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * C * (y + 1) + 1) * 1 / sqrt((R + C - y) * (R - C + y))
     f1(y)  = ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * C * ((C - R) + 1) + 1) * 1 / sqrt((R + C - y) * (R - C + y))
     f2(y)  = ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * C * ((C - R) + 1) + 1) * 1 / sqrt((R + C - y) * (R - C + mm))
     f3(y)  = ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * C * ((C - R) + 1) + 1) * 1 / sqrt((R + C - tt) * (R - C + mm))
+    # f3: singularity of type ln^2(x) around x = 0 is integrable and bounded by constant since V/4 is independent of R and C
+    # now we can clearly see that f3 goes to 0 as R, C goes to infinity
 
     for q in range(3, 30, 3):
         print("=======")
         r_cayley = 1 - 2 ** (-q)
         rr = RRR(r=r_cayley).n()
         cc = CCC(r=r_cayley).n()
-        # print((-C^2 + R^2 + 2 * (C + 1) * y)(R=rr, C=cc)(y=cc-rr))
-        # print(g(R=rr, C=cc)(y=cc - rr))
 
         print("R = " + str(rr))
         print("C = " + str(cc))
@@ -483,11 +490,9 @@ def test_schwarz_paper_first():
             plot(g3(R=rr, C=cc), fff, mmm, color='red') +
             plot(f3(R=rr, C=cc), mmm, ttt, color='red')
         ).save("plot_%d.png" % q, ymin=0, ymax=1)
-
         ###
 
-        # plot(g(R=rr, C=cc), ff(R=rr, C=cc), tt(R=rr, C=cc)).save("plotttt.png")
-        # raise RuntimeError
+        ### integrals
         print("!!! First part:")
         for gi in [g, g1, g2, g3]:
             print(numerical_integral(gi(R=rr, C=cc), fff, mmm)[0])
@@ -496,6 +501,7 @@ def test_schwarz_paper_first():
         for fi in [f, f1, f2, f3]:
             # plot(ff(R=rr, C=cc), mm(R=rr, C=cc), tt(R=rr, C=cc)).save("plotttt.png")
             print(numerical_integral(fi(R=rr, C=cc), mmm, ttt)[0])
+        ###
 
 # test_schwarz_paper()
 # test_schwarz_paper_5()
