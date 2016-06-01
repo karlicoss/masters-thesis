@@ -326,6 +326,7 @@ def test_logarithmic_paper():
         est_base = [
             o,
             ln(e(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y) * (R - C + y)),
+            ln(e(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y) * (R - C + ff)),
         ]
 
         # ff to ll
@@ -335,12 +336,12 @@ def test_logarithmic_paper():
 
         # ll to mm
         est_mid = est_base + [
-            ln(e(y=ll))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - mm) * (R - C + ll)),
+            ln(e(y=ll))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - mm) * (R - C + ff)),
         ]
 
         # mm to tt
         est_right = est_base + [
-            ln(e(y=mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / sqrt((R + C - y) * (R - C + mm)),
+            ln(e(y=mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / sqrt((R + C - y) * (R - C + ff)),
         ]
 
         colors = [
