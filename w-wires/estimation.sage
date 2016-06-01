@@ -311,12 +311,14 @@ def test_logarithmic_paper():
     # from Z to C + R
     def second(r_val, c_val, tag=''):
         ff = Z - R + R
+        ll = Z + 1 / R # huh?
         mm = C
         tt = C + R
 
         e(y) = w(y=tt) / (C + R - Z) * (y - Z)
 
         fff = ff(R=rr, C=cc)
+        lll = ll(R=rr, C=cc)
         mmm = mm(R=rr, C=cc)
         ttt = tt(R=rr, C=cc)
 
@@ -326,26 +328,59 @@ def test_logarithmic_paper():
             ln(e(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y) * (R - C + y)),
         ]
 
+        # ff to ll
         est_left = est_base + [
-            ln(e(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y) * 1 / sqrt((R + C - mm) * (R - C + ff)),
+            ln(e(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * ff + 1) * 1 / sqrt((R + C - ll) * (R - C + ff)),
         ]
 
+        # ll to mm
+        est_mid = est_base + [
+            ln(e(y=ll))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - mm) * (R - C + ll)),
+        ]
+
+        # mm to tt
         est_right = est_base + [
             ln(e(y=mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / sqrt((R + C - y) * (R - C + mm)),
         ]
 
+        colors = [
+            'black',
+            # 'blue',
+            'magenta',
+            # 'green',
+            'red'
+        ]
+
+        # print(n(fff))
+        # print(n(lll))
+        # print(n(mmm))
+        # print(n(ttt))
+
+        # plot1 = sum(plot(fi(R=rr, C=cc), fff, lll, color=col) for fi, col in zip(est_left, colors))
+        # plot2 = sum(plot(fi(R=rr, C=cc), lll, mmm, color=col) for fi, col in zip(est_mid, colors))
+        # plot3 = sum(plot(fi(R=rr, C=cc), mmm, ttt, color=col) for fi, col in zip(est_right, colors))
+        # (plot1 + plot2 + plot3).save("plot_%s.png" % tag, ymin=0, ymax=4)
+
+
+
+
         print("Left:")
         for fi in est_left:
-            print(my_numerical_integral(fi(R=rr, C=cc), y, fff, mmm))
+            print(my_numerical_integral(fi(R=rr, C=cc), y, fff, lll))
+
+        print("Mid:")
+        for fi in est_mid:
+            print(my_numerical_integral(fi(R=rr, C=cc), y, lll, mmm))
 
         print("Right:")
         for fi in est_right:
             print(my_numerical_integral(fi(R=rr, C=cc), y, mmm, ttt))
 
 
-    for q in range(3, 30, 3):
+    for q in range(1, 30, 3):
         print("=======")
-        r_cayley = 1 - 2 ** (-q)
+        r_cayley = 1 - 3 ** (-q)
+        # r_cayley = 0.69
         rr = RRR(r=r_cayley).n()
         cc = CCC(r=r_cayley).n()
 
@@ -353,7 +388,7 @@ def test_logarithmic_paper():
         print("C = " + str(cc))
 
         # first(rr, cc, tag='f_' + str(q))
-        second(rr, cc, tag='s_' + str(q))
+        second(rr, cc, tag='second_' + str(q))
 
 
 test_logarithmic_paper()
