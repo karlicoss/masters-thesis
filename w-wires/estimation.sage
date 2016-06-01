@@ -130,35 +130,6 @@ RRR(r) = ((icayley(r) - icayley(-r)) / 2).imag()
 
 
 # cv(t) = changevar(f * 1 / (k + i)^2, k == rr * exp(i * t) + rr * i, t)
-def test_schwarz(f):
-    Z = atanh(4/5)
-    for rr in [2 ** q for q in range(1, 30)]:
-        phi = n(acos((rr - Z) / rr))
-        f1 = f(k=rr * exp(i * t) + rr * i) * sqrt(rr) / (rr * exp(i * t) + rr * i + i) # ???
-        f2 = 1 / (rr * exp(i * t) + rr * i + i) * i * sqrt(rr) * exp(i * t) # looks like it converges to pi
-        p  = f1 * f2
-        p1 = fast_callable(norm(f1)     , vars=[t], domain=CC)
-        p2 = fast_callable(norm(f2)     , vars=[t], domain=CC)
-        print("Phi: " + str(phi))
-        intervals = [
-            (-pi/2 - phi, -pi/2 + phi),
-            (-pi/2 + phi, -pi/2 + 2 * pi - phi),
-            (0, 2 * pi),
-        ]
-        for tl, tr in intervals:
-            res = norm(complex_integral(p, t, tl, tr))
-            print("Complex: " + str(res))
-
-            res1, _ = numerical_integral(p1, tl, tr)
-            print("Logarithmic: " + str(res1))
-
-            res2, _ = numerical_integral(p2, tl, tr)
-            print("Jacobian: " + str(res2))
-
-            print("Upper bound: " + str(res1 * res2))
-            print("---------------")            
-        print("================================")
-
 
 Z = atanh(4/5)
 # test_schwarz(ln(abs(1/Z * (Z - k.imag()))))
@@ -253,69 +224,7 @@ def test_schwarz_paper():
         print("================================")
 
 
-def test_schwarz_paper_3():
-    Z = 1
-    R = var('R', domain='positive')
-    C = var('C', domain='positive')
-    e(y) = 0.5 / (C + R - Z) * (y - Z) # TODO!!!!
-    phi = asin((C - Z) / R)
-    f  = ln(e(y=R * sin(t) + C))^2 * 1 / (R + C^2/R + 2 * C * sin(t))
-    g  = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
-    # min at x = C!
-    g1 = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - C) * 1 / sqrt(R - C + Z) # denominator is > 1, we are safe to throw it away, overestimation
-    # print((ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x)).integrate(x))
-    # g1: x < C
-    # Ok, integrate ln^2(a x + b) / (c x + d), and then estimate?
-    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - x) # sqrt((R + C - x) * (R - C + x))
-    g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * C) * 1 / sqrt(R + C - x) * 1  / sqrt((R - C + C))
-    
-
-    for q in range(3, 30, 3):
-        print("=======")
-        r_cayley = 1 - 2 ** (-q)
-        rr = RRR(r=r_cayley).n()
-        cc = CCC(r=r_cayley).n()
-        print("R = " + str(rr))
-        print("C = " + str(cc))
-
-        print(numerical_integral(f(R=rr, C=cc), -phi(R=rr, C=cc), pi/2)[0])
-        print(numerical_integral(g(R=rr, C=cc), Z, rr + cc)[0])
-        print(numerical_integral(g1(R=rr, C=cc), Z, cc)[0])
-        print(numerical_integral(g2(R=rr, C=cc), cc, rr + cc)[0])
-
-
-def test_schwarz_paper_4():
-    Z = 1
-    R = var('R', domain='positive')
-    C = var('C', domain='positive')
-    e(y) = 0.5 / (C + R - Z) * (y - Z) # TODO!!!!
-    phi = asin((C - Z) / R)
-    f  = ln(e(y=R * sin(t) + C))^2 * 1 / (R + C^2/R + 2 * C * sin(t))
-    g  = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
-    # min at x = C!
-    g1 = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - C) * 1 / sqrt(R - C + Z) # denominator is > 1, we are safe to throw it away, overestimation
-    # print((ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x)).integrate(x))
-    # g1: x < C
-    # Ok, integrate ln^2(a x + b) / (c x + d), and then estimate?
-    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - x) # sqrt((R + C - x) * (R - C + x))
-    g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * C) * 1 / sqrt(R + C - x) * 1  / sqrt((R - C + C))
-    
-
-    for q in range(3, 30, 3):
-        print("=======")
-        r_cayley = 1 - 2 ** (-q)
-        rr = RRR(r=r_cayley).n()
-        cc = CCC(r=r_cayley).n()
-        print("R = " + str(rr))
-        print("C = " + str(cc))
-
-        # print(numerical_integral(f(R=rr, C=cc), -phi(R=rr, C=cc), pi/2)[0])
-        print(numerical_integral(g(R=rr, C=cc), 0, Z)[0])
-        # print(numerical_integral(g1(R=rr, C=cc), Z, cc)[0])
-        # print(numerical_integral(g2(R=rr, C=cc), cc, rr + cc)[0])
-
-# from 0 to Z
-def test_schwarz_paper_first():
+def test_logarithmic_paper():
     W = 2
     coeff = W ** 2 + 1
     a = 0
@@ -333,7 +242,8 @@ def test_schwarz_paper_first():
     C = var('C', domain='positive')
     assume(R > C)
 
-    s(y)   = ln(abs(S(k=i * y)))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
+    w(y) = abs(S(k=i * y))
+    s(y)   = ln(w(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
     # o(y)   = ln(abs((V - tanh(y)) / (tanh(y) + V)))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
     o = s
 
@@ -398,6 +308,41 @@ def test_schwarz_paper_first():
             print(my_numerical_integral(fi(R=rr, C=cc), y, mmm, ttt))
         ##
 
+    # from Z to C + R
+    def second(r_val, c_val, tag=''):
+        ff = Z - R + R
+        mm = C
+        tt = C + R
+
+        e(y) = w(y=tt) / (C + R - Z) * (y - Z)
+
+        fff = ff(R=rr, C=cc)
+        mmm = mm(R=rr, C=cc)
+        ttt = tt(R=rr, C=cc)
+
+
+        est_base = [
+            o,
+            ln(e(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y) * (R - C + y)),
+        ]
+
+        est_left = est_base + [
+            ln(e(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y) * 1 / sqrt((R + C - mm) * (R - C + ff)),
+        ]
+
+        est_right = est_base + [
+            ln(e(y=mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / sqrt((R + C - y) * (R - C + mm)),
+        ]
+
+        print("Left:")
+        for fi in est_left:
+            print(my_numerical_integral(fi(R=rr, C=cc), y, fff, mmm))
+
+        print("Right:")
+        for fi in est_right:
+            print(my_numerical_integral(fi(R=rr, C=cc), y, mmm, ttt))
+
+
     for q in range(3, 30, 3):
         print("=======")
         r_cayley = 1 - 2 ** (-q)
@@ -407,9 +352,8 @@ def test_schwarz_paper_first():
         print("R = " + str(rr))
         print("C = " + str(cc))
 
-        first(rr, cc, tag=str(q))
+        # first(rr, cc, tag='f_' + str(q))
+        second(rr, cc, tag='s_' + str(q))
 
 
-# test_schwarz_paper()
-# test_schwarz_paper_5()
-test_schwarz_paper_first()
+test_logarithmic_paper()
