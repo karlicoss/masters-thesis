@@ -20,6 +20,12 @@ def icayley(z):
 def cayley(z):
     return (z - i) / (z + i)
 
+def my_numerical_integral(expr, x, ff, tt):
+    f = fast_callable(expr, vars=[x], domain=CC)
+    res, err = numerical_integral(f, ff, tt)
+    if err > 0.1: # meh
+        raise RuntimeError("Error is too large")
+    return res 
 
 def complex_integral(expr, x, ff, tt):
     rp = fast_callable(expr.real(), vars=[x], domain=CC)
@@ -246,65 +252,6 @@ def test_schwarz_paper():
         print("Total upper bound: " + str(sum_sup))
         print("================================")
 
-# test_schwarz_paper()
-
-def test_schwarz_paper_x():
-    W = 2
-    coeff = W ** 2 + 1
-    a = 0
-    b = 0
-    L = 1
-    num = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) + 2 * W * i * k ** 2 * cos(L * k) + i * (a + b) * k * sin(L * k)
-    den = W * (a + b) * k * cos(L * k) + (a * b - coeff * k ** 2) * sin(L * k) - 2 * W * i * k ** 2 * cos(L * k) - i * (a + b) * k * sin(L * k)
-    S = abs(num / den)
-
-
-
-    V = 2 * W / (W^2 + 1)
-    Z = atanh(V)
-    for q in range(3, 30, 2):
-        r_cayley = 1 - 2 ** (-q)
-        rr = R(r=r_cayley).n()
-        cc = C(r=r_cayley).n()
-        # rr = 2 ** q
-        # cc = rr
-
-        print("R = " + str(rr))
-
-
-        f1 = ln(1/(2 * rr - Z) * (x - Z)) ** 2
-        f2 = 1 / (x * sqrt(x * (2 * rr - x)))
-        f = f1 * f2
-
-        g1 = f1.diff(x)
-        g2 = f2.integrate(x)
-
-        
-        print(g1 * g2)
-
-        tl = Z
-        tr = 2 * rr
-
-        # mv, mx = find_local_minimum(, tl, tr)
-
-        pf = fast_callable(f            , vars=[x], domain=CC)
-        # p1 = fast_callable(norm(f1)     , vars=[x], domain=CC)
-        # p2 = fast_callable(norm(f2)     , vars=[x], domain=CC)
-        pg = fast_callable(g1 * g2      , vars=[x], domain=CC)
-
-        resf , _ = numerical_integral(pf, tl, tr)
-        resg , _ = numerical_integral(pg, tl, tr)
-        # res1, _ = numerical_integral(p1, tl, tr)
-        # res2, _ = numerical_integral(p2, tl, tr)
-
-
-        print("Resf: " + str(resf))
-        print("Resg: " + str(resg))
-        # print("Est: " + str(res1 * res2))
-
-
-# Wolfram: integrate ln(0.5/(2 * 50000 - 1)(x - 1))/(x * sqrt(x * (2 * 50000 - x))) for x from 1 to 2 * 50000
-
 
 def test_schwarz_paper_3():
     Z = 1
@@ -367,59 +314,6 @@ def test_schwarz_paper_4():
         # print(numerical_integral(g1(R=rr, C=cc), Z, cc)[0])
         # print(numerical_integral(g2(R=rr, C=cc), cc, rr + cc)[0])
 
-def test_schwarz_paper_5():
-    Z = 1
-    R = var('R', domain='positive')
-    C = var('C', domain='positive')
-
-
-
-    # tl = C - R
-    # tr = Z/2
-
-    # f  = ln(e(y=R * sin(t) + C))^2 * 1 / (R + C^2/R + 2 * C * sin(t))
-    e(y) = 1 - y
-    g  = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
-    # gg = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - x) * (R - C + x))
-    gg = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - Z/2) * (R - C + x))
-    gg = ((-x)/(1 + (-x)))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt((R + C - Z/2) * (R - C + x)) # TODO !!!! estimate!
-    # should be easily integrable after?
-
-    ggg = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * Z/2) * 1 / sqrt((R + C - Z) * (R - C + Z/2)) # easy lol
-
-    # TODO second part: similar to third?....
-
-    # TODO prove about arbitrary linear function?...
-
-
-    # f  = ln(e(y=x))^2 * R / (2 * R * x) * 1 / sqrt((2 * R - x) * (x))
-    # ff = ln(e(y=tr))^2 * R / (2 * R * x) * 1 / sqrt((2 * R - tr) * x)
-    # min at x = C!
-    # g1 = ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - C) * 1 / sqrt(R - C + Z) # denominator is > 1, we are safe to throw it away, overestimation
-    # print((ln(e(y=x))^2 * R / (-C^2 + R^2 + 2 * C * x)).integrate(x))
-    # g1: x < C
-    # Ok, integrate ln^2(a x + b) / (c x + d), and then estimate?
-    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * x) * 1 / sqrt(R + C - x) # sqrt((R + C - x) * (R - C + x))
-    # g2 = ln(e(y=C))^2 * R / (-C^2 + R^2 + 2 * C * C) * 1 / sqrt(R + C - x) * 1  / sqrt((R - C + C))
-    
-
-    for q in range(3, 50, 3):
-        print("=======")
-        r_cayley = 1 - 2 ** (-q)
-        rr = RRR(r=r_cayley).n()
-        cc = CCC(r=r_cayley).n()
-        print("R = " + str(rr))
-        print("C = " + str(cc))
-
-        # print(numerical_integral(f(R=rr, C=cc), -phi(R=rr, C=cc), pi/2)[0])
-        # print(numerical_integral(g(R=rr, C=cc), cc - rr, Z)[0])
-        # print(numerical_integral(gg(R=rr, C=cc), cc - rr, Z)[0])
-        print(numerical_integral(g(R=rr, C=cc), cc - rr, Z/2)[0])
-        print(numerical_integral(gg(R=rr, C=cc), cc - rr, Z/2)[0])
-
-        print(numerical_integral(g(R=rr, C=cc), Z/2, Z)[0])
-        print(numerical_integral(ggg(R=rr, C=cc), Z/2, Z)[0])
-
 # from 0 to Z
 def test_schwarz_paper_first():
     W = 2
@@ -437,8 +331,11 @@ def test_schwarz_paper_first():
 
     R = var('R', domain='positive')
     C = var('C', domain='positive')
+    assume(R > C)
 
-    o(y)   = ln(abs((V - tanh(y)) / (tanh(y) + V)))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
+    s(y)   = ln(abs(S(k=i * y)))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
+    # o(y)   = ln(abs((V - tanh(y)) / (tanh(y) + V)))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
+    o = s
 
     # from C - R to Z
     def first(r_val, c_val, tag=''):
@@ -470,6 +367,7 @@ def test_schwarz_paper_first():
         ]
         # f3: singularity of type ln^2(x) around x = 0 is integrable and bounded by constant since V/4 is independent of R and C
         # now we can clearly see that f3 goes to 0 as R, C goes to infinity
+        # TODO prove about arbitrary linear function?...
 
         fff = ff(R=rr, C=cc)
         mmm = mm(R=rr, C=cc)
@@ -492,12 +390,12 @@ def test_schwarz_paper_first():
         ### integrals
         print("!!! First part:")
         for gi in gs:
-            print(numerical_integral(gi(R=rr, C=cc), fff, mmm)[0])
+            print(my_numerical_integral(gi(R=rr, C=cc), y, fff, mmm))
 
         print("!!! Second part:")
         for fi in fs:
             # plot(ff(R=rr, C=cc), mm(R=rr, C=cc), tt(R=rr, C=cc)).save("plotttt.png")
-            print(numerical_integral(fi(R=rr, C=cc), mmm, ttt)[0])
+            print(my_numerical_integral(fi(R=rr, C=cc), y, mmm, ttt))
         ##
 
     for q in range(3, 30, 3):
