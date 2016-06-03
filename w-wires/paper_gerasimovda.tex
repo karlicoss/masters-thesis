@@ -265,8 +265,8 @@ As $r \to \infty$, clearly $R \to \infty$, $C \to \infty$, $R - C \to 0$ and one
 For $y > Z$, 
 \[
 s_1(x + \iu y) 
- = \frac{\tanh y - \frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}
- = 1 - 2 \frac{\frac{2 W}{W^2 + 1}}{\tanh y + \frac{2 W}{W^2 + 1}}
+ = \frac{\tanh y - V}{\tanh y + V}
+ = 1 - 2 \frac{V}{\tanh y + V}
 \]
 
 % TODO
@@ -279,23 +279,23 @@ s_4(x + \iu y) =
 \frac{s_1(C + R)}{C + R - Z} (y - Z)
 \]
 
-\subsection*{Proofs of convergence for logarithmic parts}
+\todo{Ask Popov? Add to slides?? Unit cicle in Cayley space maps to $R$, and $\ln\abs{\det S}$ on $R$ is zero everywhere}
 
-\todo{Unit cicle in Cayley space maps to $R$, and $\ln\abs{\det S}$ on $R$ is zero everywhere}
+% \subsection*{Proof of convergence}
 
-\subsection*{Proof of convergence}
-
-\[
-l(x + \iu y) =
-\begin{cases}
- \\
-s_2'(Z)(y - Z)                       &, Z_0 < y \le Z \\
-\frac{s_1(C + R)}{C + R - Z} (y - Z) &, y > Z
-\end{cases}
-\]
+% \[
+% l(x + \iu y) =
+% \begin{cases}
+%  \\
+% s_2'(Z)(y - Z)                       &, Z_0 < y \le Z \\
+% \frac{s_1(C + R)}{C + R - Z} (y - Z) &, y > Z
+% \end{cases}
+% \]
 
 
 \todo{full circle; explain what is $\phi$}
+
+\todo{move up, this is relevant to every piece}
 \begin{align*}
     & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 s(R \eexp{\iu t} + \iu C) \frac{R}{\norm{R \eexp{\iu t} + \iu C + i}^2} dt\\
 =   & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 f(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dt\\
@@ -316,8 +316,35 @@ dt &= \frac{1}{\sqrt{R^2 - (C - y)^2}} dy \\
 \begin{align*}
     & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dy \\
 =   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - (C - y)^2 + (y + 1)^2} \frac{1}{\sqrt{R^2 - (C - y)^2}} dy\\
-=   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 C y + 1} \frac{1}{\sqrt{(R - C + y)}} \frac{1}{\sqrt{(R + C - y)}} dy\\
+=   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}  dy\\
 \end{align*}
+
+First, notice that for $Z \le y \le R + C$:
+\begin{align*}
+    & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}} \\
+\le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\end{align*}
+
+
+To estimate, we will split the integration in three parts:
+
+\subsection*{from $Z$ to $Z + \frac{1}{R}$}
+
+\begin{align*}
+       & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) Z + 1} \frac{1}{\sqrt{R + C - (Z + \frac{1}{R})}} \frac{1}{\sqrt{R - C + Z}}
+% \\  = & \ln^2 f(y) \mcO()
+\end{align*}
+
+% TODO REFERENCE!
+$\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy$ is easy to compute directly, using the fact that:
+
+\[
+    \int\limits_b^{b + c} \ln^2 (a (x - b)) dx = c (\ln^2(a c) - 2 \ln (a c) + 2)
+\]
+
+Hence, $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy = \frac{1}{R} ( \ln^2 (\frac{s_1(C + R)}{C + R - Z} \frac{1}{R}) - 2 \ln (\frac{s_1(C + R)}{C + R - Z} \frac{1}{R}) + 2)$, which clearly is $\mcO(\frac{\ln^2(C + R - Z)}{R})$. Taking into account that the constant coefficient before the integral is of order $\frac{1}{\sqrt{R}}$ \todo{???}, it is clear that the first part goes to $0$ as $R, C \to \infty$.
+
 
 To estimate, we will split the integration in two parts: from $Z$ to $C$ and from $C$ to $R + C$.
 
