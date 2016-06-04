@@ -58,17 +58,19 @@ Since $S$-matrix is naturally defined on the complex plane, it is easier work in
 
 , where $C_r$ is the image of the curve $\abs{\zeta} = r$ under the inverse Cayley transform. Since Cayley transform is a Mobius transformation and preserves circles, $C_r$ will actually be a circle with radius $R(r) = \Im \frac{w(r) - w(-r)}{2}$ and center $C(r) = \Im \frac{w(r) + w(-r)}{2}$.
 
-For the computational convenience, $C_r$ is parameterized via $k = R(r) \eexp{\iu t} + \iu C(r)$, which yields us the final form of the criterion, which we will use further:
+For the computational convenience, $C_r$ is parameterized via $k = R(r) \eexp{\iu t} + \iu C(r)$. After throwing away constants which don't affect the integrals convergence we get the final form of the criterion, which we will use further:
+
+\todo{$C + R = \Im w(r) = \frac{1 + r}{1 - r}$, $C - R = \Im w(-r) = \frac{1 - r}{1 + r}$}
 
 \begin{equation}\label{critp}
-\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(R(r) \eexp{\iu t} + \iu C(r))} \frac{2 \iu}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} R \iu dt = 0
+\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(R(r) \eexp{\iu t} + \iu C(r))} \frac{R}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} dt = 0
 \end{equation}
 
 \section{Model}
 
 Scatterer consists of $W$ wires of length $1$, on the left joint vertex $\delta$-well with depth $a$, on the right: $\delta$-well with depth $b$. 
 
-\todo{Picture}
+\todo{Picture (in presentation)}
 
 \todo{System of equations}
 
@@ -96,12 +98,10 @@ s(k) = \abs{\det S(k)}
 
 , so we seek the proof of convergence of integral \todo{blah blah $s(k)$}
 
-We know that $s(k)$ is bounded by $1$ from above in the upper complex plane  ($\Im k \ge 0$) \todo{why?}, hence $\ln \abs{\det S} \le 0$ and the desired integral is bounded from above by $0$. However, we have to show that the integral is bounded from below as well. To do that, for each $r$ we will compute a lower bound $L_r(k)$ for the integral under the limit, and will prove that $\lim\limits_{r \to 1} L_r(k) = 0$.
 
 \section{Estimation of integral for fixed $r$}
 
-
-To compute the estimate, we will use the Cauchy-Schwartz inequality:
+Suppose we fixed $r$, also for the sake of readability, define $C = C(r)$, $R = R(r)$. For each such $r$, we will estimate the integral and prov that these estimates converge to zero. To do that, we will use the Cauchy-Schwartz inequality:
 
 \[
 \big| \langle u,v \rangle \big| \leq \left\|u\right\| \left\|v\right\|
@@ -123,9 +123,9 @@ To make use of the inequality, we split the integrand of (\ref{critp}) into $f(t
 a      &= 0 \\
 b      &= 2 \pi \\
 f(t)   &= \ln s(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
-g^*(t) &= \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
+g^*(t) &= \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
 \end{align*}
-\todo{Multiply $g^*(t)$ by 2 $\iu$}. Next, we will show that $\int \abs{g(t)}^2$ has an upper bound independent of $r$, and $\int \abs{f(t)}^2$ converges to $0$ as $r$ goes to $1$, which immediately proves the convergence to zero.
+Next, we will show that $\int \abs{g(t)}^2$ has an upper bound independent of $r$, and $\int \abs{f(t)}^2$ converges to $0$ as $r$ goes to $1$, which immediately results in convergence to zero for (\ref{critp}).
 
 \subsection{Estimate of $\int \abs{g(t)}^2$}
 
@@ -134,10 +134,10 @@ g^*(t) &= \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
 &=   \frac{\sqrt{R}^2}{\abs{R \cos t + \iu R \sin t + \iu C + i}^2} \\
 &=   \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} \\
 &= \frac{R}{R^2 \cos^2 t + R^2 \sin^2 t + (C + 1)^2  + 2 R (C + 1) \sin t} \\
-&=   \frac{1}{R + (C + 1) \frac{C + 1}{R} + 2 (C + 1) \sin t} \\ 
+&=   \frac{1}{R + \frac{(C + 1)^2}{R} + 2 (C + 1) \sin t} \\ 
 \end{align*}
 
-If we take $a = R + (C + 1) \frac{C + 1}{R}$, $b = 2 (C + 1)$, and notice $a > b$ \todo{Prove}, the antiderivative is well known \todo{reference}:
+If we take $a = R + \frac{(C + 1)^2}{R}$, $b = 2 (C + 1)$, and notice $a > b$ \todo{Prove}, the antiderivative is well known \todo{reference}:
 \[
 \int \frac{dx}{a + b \sin x} = \frac{2}{\sqrt{a^2 - b^2}} \atan \frac{a \tan \frac{x}{2} + b}{\sqrt{a^2 - b^2}}
 \]
@@ -146,36 +146,44 @@ If we take $a = R + (C + 1) \frac{C + 1}{R}$, $b = 2 (C + 1)$, and notice $a > b
 
 \begin{align*}
 a^2 - b^2
-& =  (R + (C + 1) \frac{C + 1}{R})^2 - (2 (C + 1))^2\\
+& =  (R + \frac{(C + 1)^2}{R})^2 - (2 (C + 1))^2\\
 & =  R^2 + \frac{(C+1)^4}{R^2} + 2 (C+1)^2 - 4 (C + 1)^2 \\
-& =  (R - (C + 1) \frac{C + 1}{R})^2 && \text{,and, since $C \ge R$} \\
-&\ge (R - (R + 1) \frac{R + 1}{R})^2 \\
+& =  (R - \frac{(C + 1)^2}{R})^2 && \text{,and, since $C \ge R$} \\
+&\ge (R - \frac{(R + 1)^2}{R})^2 \\
 &\ge (2 + \frac{1}{R})^2 \\
 &\ge 4
 \end{align*}
 
-We can choose the branch cut of the antiderivative in such a way that integration from $0$ to $2 \pi$ only affects a single Riemann sheet, therefore, we can use the fact that $\abs{\int\limits_a^b f(x) dx} \le \abs{F(b) - F(a)} \le \abs{F(a)} + \abs{F(b)}$.
+We can choose the branch cut of the antiderivative in such a way that integration from $0$ to $2 \pi$ only affects a single Riemann sheet, therefore, we can use the fundamental theorem of calculus and in particular, the fact that $\abs{\int\limits_a^b f(x) dx} \le \abs{F(b) - F(a)} \le \abs{F(a)} + \abs{F(b)}$.
 
-Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bounded by $\frac{\pi}{2}$, by direct application of the fact above, we conclude that the integral is less than $\pi$.
+Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bounded by $\frac{\pi}{2}$, by a direct application of the fact above, we conclude that the integral is less than $\pi$.
 
 \subsection{Estimate of $\int \abs{f(t)}^2$}
+If we used $s(k)$ directly, it is would not possible to evaluate integral analytically. However, $s(k)$ has nice properly of being an absolute value of the determinant of $S$-matrix, which means $0 \le s(k) \le 1$ in the upper complex plane. This means that we are free to replace $s(k)$ with a lower bound $l(k)$ such that $0 \le l(k) \le s(k)$, and prove convergence of the resulting integral to $0$ instead. This reasoning is valid since for $s(k) \le 1$, $\ln l(k) \le \ln s(k) \le 0$ hence $\ln^2 s(k) \le \ln^2 l(k)$. We are going to rely on this fact heavily and use simple functions (e.g. piecewise linear) or simple well-known bounds for logarithm to estimate the original integral.
 
-If we use $s(k)$ directly, it is not possible to evaluate integral analytically. However, $s(k)$ has nice properly of being an absolute value of the determinant of $S$-matrix, which means $0 \le s(k) \le 1$. This means we are free to replace $s(k)$ with a lower bound $l(k)$ such that $0 \le l(k) \le s(k)$, and prove convergence of the resulting integral to $0$ instead. This reasoning is valid since for $s(k) \le 1$, $\ln l(k) \le \ln s(k) \le 0$. We are going to rely on this fact heavily and use simple functions (e.g. piecewise linear) or simple known bounds for logarith to estimate the original integral.
 
 \subsubsection{Computing $l(k)$}
-First, we will simplify $s(k)$ across all of the upper complex plane and make it independent of real part of the argument.
+First, we will simplify $s(k)$ across all of the upper complex plane and make it independent of the real part of the argument.
 
 Notice that $s(k)$ is periodic w.r.t. real axis.
 \todo{Plot of $\abs{\det S}$ ?}
 % Since $\sin k$ and $\cos k$ are periodic w.r.t the real axis, with the period of $2 \pi$, 
 \todo{is this step really necessary?}
 
-$s(k)$ has countable number of zeros, all with $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define $V = \frac{2 W}{W^2 + 1}$, $Z = \atanh V$.
+$s(k)$ has countable number of zeros, all with $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define
+
+\[
+V = \frac{2 W}{W^2 + 1}
+\]
+
+\[
+Z = \atanh V
+\]
 
 Notice that for any $x$, $s(x + \iu y) \le s(\iu y)$
 \todo{How to prove? We could probably take a look at numerator and denominator in separate?}
 
-Now, we are free to replace $s(x + \iu y)$ with:
+Now, we are can give $s(x + \iu y)$ a lower bound:
 
 \begin{align*}
 l_1(x + \iu y)
@@ -198,41 +206,46 @@ l_1(x + \iu y)
  \end{cases}
 \]
 
-
-\todo{full circle; explain what is $\phi$}
-
-\todo{move up, this is relevant to every piece}
-\begin{align*}
-    & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 s(R \eexp{\iu t} + \iu C) \frac{R}{\norm{R \eexp{\iu t} + \iu C + i}^2} dt\\
-=   & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 f(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dt\\
-\le & \int\limits_{t = \phi}^{\frac{\pi}{2}} \ln^2 f(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C)^2} dt\\
-\end{align*}
-
-
-Change of variables:
+\subsection*{TODO???}
 
 \begin{align*}
-y &= R \sin t + C \\
-t &= \asin \frac{y - C}{R} \\
-dt &= \frac{1}{\sqrt{R^2 - (C - y)^2}} dy \\
-\cos t &= \frac{\sqrt{R^2 - (C - y)^2}}{R}
+    & \int\limits_{t = 0}^{2 \pi} \ln^2 s(R \eexp{\iu t} + \iu C) \frac{R}{\norm{R \eexp{\iu t} + \iu C + i}^2} dt\\
+=   & \int\limits_{t = 0}^{2 \pi} \ln^2 s(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dt
 \end{align*}
 
+First, notice that since:
+\[
+\sin(-\pi/2 + t) = \sin(-\pi/2 - t) = - \cos t
+\]
+\[
+\cos^2(-\pi/2 + t) = \cos^2(-\pi/2 = t) = \sin^2 t
+\]
+
+, the integrand is symmetric w.r.t. the $y$ axis, and therefore, it's enough to prove the convergence of the integral for $-\pi/2 \le t \le \pi/2$.
+
+Next, we change the integration variable:
+\begin{align*}
+   y         &= R \sin t + C
+\\ t         &= \asin \frac{y - C}{R}
+\\ dt        &= \frac{1}{\sqrt{R^2 - (C - y)^2}} dy
+\\ \cos t    &= \frac{\sqrt{R^2 - (C - y)^2}}{R}
+\\ y(-\pi/2) &= C - R 
+\\ y(\pi/2)  &= C + R 
+\end{align*}
+, which results in:
 
 \begin{align*}
-    & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dy \\
-=   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - (C - y)^2 + (y + 1)^2} \frac{1}{\sqrt{R^2 - (C - y)^2}} dy\\
-=   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}  dy\\
+    & \int\limits_{y = C - R}^{C + R} \ln^2 f(y) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dy \\
+=   & \int\limits_{y = C - R}^{C + R} \ln^2 f(y) \frac{R}{R^2 - (C - y)^2 + (y + 1)^2} \frac{1}{\sqrt{R^2 - (C - y)^2}} dy\\
+=   & \int\limits_{y = C - R}^{C + R} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}  dy\\
 \end{align*}
 
+There are multiple singularities on the integration path ($y = C - R, Z, C + R$), and the function is quite complex, so it is hard to estimate directly. We split the integral into multiple segments.
 
+\subsubsection*{Case 1: $C - R \le y \le Z$}
+Crucial property of $s(k)$ is that as $\Im k$ gets close to $0$, $s(k)$ gets close to $1$. This is very important, since it implies that $\ln s(k)$ goes to $0$, which is essential for the convergence of this integral (intuitively, since the contour gets closer and closer to the real axis, so if $\ln s(k)$ did not nullify on $\bbR$, we wouldn't have convergence to zero). So, a sensible lower bound of $s(k)$ should respect that property as well and converge to $1$ as $\Im k \to 0$.
 
-Next, we split the estimation in two separate cases (below/above the singularity):
-
-\subsubsection*{Case 1: $0 \le y \le Z$}
-Crucial property of $s(k)$ as $\Im k$ gets close to $0$ is that it gets close to $1$. This is very important, since it implies that $\ln s(k)$ goes to $0$, which is essential part of convergence of the integral. Intuitively, the contour gets closer and closer to the real axis, so if $\ln s(k)$ did not nullify on $\bbR$, we wouldn't have convergence to zero. So, a sensible lower bound of $s(k)$ should respect that property as well and converge to $1$ as $\Im k \to 0$.
-
-Since the function is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the \todo{positiveness??} property, so we have to approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
+Since the function \todo{which} is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the \todo{positiveness??} property, so we have to approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
 
 \begin{align*}
 f(y)
@@ -249,12 +262,12 @@ s_1'(Z) (y - Z) &, Z_0 \le y < Z \\
 \end{cases}
 \end{align*}
 
-Notice that the estimate does not necessarily has to be continuous, so any $Z_0$ works as long as the estimate is positive definite. However for computational convenience $Z_0 = \frac{V}{4}$ suits our needs best \todo{prove?}.
+Notice that the estimate does not necessarily has to be continuous, so any $Z_0$ works as long as the estimate is positive definite. However for computational convenience $Z_0 = \frac{V}{4}$ suits our needs pretty well. \todo{plot?}
 
 
-\subsection*{$0 \le y < \frac{V}{4}$}
+\subsection*{$C - R \le y < \frac{V}{4}$}
 
-First we will compute an upper bound for the integrand. Notice that for $0 \le y \le \frac{V}{4}$:
+First we will compute an upper bound for the integrand. Notice that for $C - R \le y \le \frac{V}{4}$:
 
 \todo{???}
 \begin{align*}
@@ -339,7 +352,7 @@ First, notice that for $Z \le y \le R + C$:
 \end{align*}
 
 
-To estimate, we will split the inegral in three parts:
+To estimate, we will split the inegral in three parts.
 
 \subsection*{from $Z$ to $Z + \frac{1}{R}$}
 
