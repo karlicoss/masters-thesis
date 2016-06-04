@@ -19,6 +19,7 @@
 \newcommand{\mcL}{\mathcal{L}}
 \newcommand{\mcO}{\mathcal{O}}
 \newcommand{\mcH}{\mathcal{H}}
+
 \newcommand{\bbT}{\mathbb{T}}
 \newcommand{\bbC}{\mathbb{C}}
 \newcommand{\bbR}{\mathbb{R}}
@@ -58,12 +59,18 @@ Since $S$-matrix is naturally defined on the complex plane, it is easier work in
 
 , where $C_r$ is the image of the curve $\abs{\zeta} = r$ under the inverse Cayley transform. Since Cayley transform is a Mobius transformation and preserves circles, $C_r$ will actually be a circle with radius $R(r) = \Im \frac{w(r) - w(-r)}{2}$ and center $C(r) = \Im \frac{w(r) + w(-r)}{2}$.
 
-For the computational convenience, $C_r$ is parameterized via $k = R(r) \eexp{\iu t} + \iu C(r)$. After throwing away constants which don't affect the integrals convergence we get the final form of the criterion, which we will use further:
+For the computational convenience, $C_r$ is parameterized via $C_r = \{R(r) \eexp{\iu t} + \iu C(r) \mid t \in [0, 2 \pi)\}$. For brevity, we define:
+
+\[
+s(k) = \abs{\det S(k)}
+\]
+
+, and after throwing away constants which don't affect convergence we get the final form of the criterion, which we will use further:
 
 \todo{$C + R = \Im w(r) = \frac{1 + r}{1 - r}$, $C - R = \Im w(-r) = \frac{1 - r}{1 + r}$}
 
 \begin{equation}\label{critp}
-\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(R(r) \eexp{\iu t} + \iu C(r))} \frac{R}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} dt = 0
+\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln s(R(r) \eexp{\iu t} + \iu C(r)) \frac{R}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} dt = 0
 \end{equation}
 
 \section{Model}
@@ -77,38 +84,24 @@ Scatterer consists of $W$ wires of length $1$, on the left joint vertex $\delta$
 \todo{Solutions for transmission/refletion?}
 
 Simplifying, we get:
-
 \[
 \det S(k) = \frac{W {\left(a + b\right)} k \cos\left(k\right) + 2 i \, W k^{2} \cos\left(k\right) + {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}{W {\left(a + b\right)} k \cos\left(k\right) - 2 i \, W k^{2} \cos\left(k\right) - {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}
 \]
 
 
 \section{Proof of completeness for $a = b = 0$}
-Under the substitituion $a = 0, b = 0$, $\det S$ simplifies to:
-
+For simplicity, first we take look at the case $a = 0, b = 0$. After the substitution, we obtain:
 \[
-\det S(k) = - \frac{2 i \, W \cos\left(k\right) - {\left(W^{2} + 1\right)} \sin\left(k\right)}{2 i \, W \cos\left(k\right) + {\left(W^{2} + 1\right)} \sin\left(k\right)}
+s(k) = \abs{\det S(k)} = \abs{\frac{2 i \, W \cos\left(k\right) - {\left(W^{2} + 1\right)} \sin\left(k\right)}{2 i \, W \cos\left(k\right) + {\left(W^{2} + 1\right)} \sin\left(k\right)}}
 \]
-
-Also, for the sake of brevity, we define 
-
-\[
-s(k) = \abs{\det S(k)}
-\]
-
-, so we seek the proof of convergence of integral \todo{blah blah $s(k)$}
-
 
 \section{Estimation of integral for fixed $r$}
 
 Suppose we fixed $r$, also for the sake of readability, define $C = C(r)$, $R = R(r)$. For each such $r$, we will estimate the integral and prov that these estimates converge to zero. To do that, we will use the Cauchy-Schwartz inequality:
-
 \[
 \big| \langle u,v \rangle \big| \leq \left\|u\right\| \left\|v\right\|
 \]
-
 , or, to be more specific, its $\mcL^2[a, b]$ version:
-
 \[
 \abs{
 \int\limits_{t=a}^{b} f(t) g^*(t) dt
@@ -117,7 +110,7 @@ Suppose we fixed $r$, also for the sake of readability, define $C = C(r)$, $R = 
 \int\limits_{t=a}^b \abs{f(t)}^2 dt 
 \int\limits_{t=a}^b \abs{g(t)}^2 dt 
 \]
-
+% 
 To make use of the inequality, we split the integrand of (\ref{critp}) into $f(t) g^*(t)$:
 \begin{align*}
 a      &= 0 \\
@@ -245,7 +238,7 @@ There are multiple singularities on the integration path ($y = C - R, Z, C + R$)
 \subsubsection*{Case 1: $C - R \le y \le Z$}
 Crucial property of $s(k)$ is that as $\Im k$ gets close to $0$, $s(k)$ gets close to $1$. This is very important, since it implies that $\ln s(k)$ goes to $0$, which is essential for the convergence of this integral (intuitively, since the contour gets closer and closer to the real axis, so if $\ln s(k)$ did not nullify on $\bbR$, we wouldn't have convergence to zero). So, a sensible lower bound of $s(k)$ should respect that property as well and converge to $1$ as $\Im k \to 0$.
 
-Since the function \todo{which} is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the \todo{positiveness??} property, so we have to approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
+Since $l_1$ is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the property of the estimate being positive (it is under the logarithm sign), so we have to be more careful and approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
 
 \begin{align*}
 f(y)
@@ -268,28 +261,22 @@ Notice that the estimate does not necessarily has to be continuous, so any $Z_0$
 \subsection*{$C - R \le y < \frac{V}{4}$}
 
 First we will compute an upper bound for the integrand. Notice that for $C - R \le y \le \frac{V}{4}$:
-
-\todo{???}
 \begin{align*}
-    & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}} \\
-\le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+       & \ln^2 s(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}
+\\ \le & \ln^2 s(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
 \end{align*}
 
-We compute the upper bound for the integrand \todo{$\int\limits_{y = C - R }^{V/4}$ }.
+Next, we use the inequality $\frac{x}{1 + x} \le \ln (1 + x)$ for $x > -1$, where $x = -\frac{2}{V} y$. In this case, since the argument of the logarithm is less than $1$, $\ln^2 (1 + x) \le \frac{x^2}{(1 + x)^2}$.
 
-\[
-\ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
-\]
-
-We use the inequality $\frac{x}{1 + x} \le \ln (1 + x)$ for $x > -1$, where $x = -\frac{2}{V} y$. In this case, since the argument of the logarithm is less than $1$, $(1 + x)^2 \le \frac{x^2}{(1 + x)^2}$.
-
-\[
-\le \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2} \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
-\]
+\begin{align*}
+       & \dots 
+\\ \le & \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2}  \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\end{align*}
 
 Replace $1 - \frac{2}{V}y$ with its minimum value $0.5$ and $R + C - y$ with its minimum value $R + C - \frac{V}{4}$.
 
-\todo{dammit, finish this}
+\todo{dammit, finish this. Ugh, we probably can just notice thate $\ln^2 f(y) \frac{1}{\sqrt{R + C - y}}$ grows and then calculate its value?}
 
 \subsection*{$\frac{V}{4} \le y < Z$}
 
@@ -388,7 +375,7 @@ Hence, $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy = \frac{1}{R} ( \ln^2 (\
 , in our case $a = 2 (C + 1)$, $b = R^2 - C^2 + 1$. By applying the \todo{fundamental theorem?} over the second interval, we get:
 
 \[
-\frac{\ln \frac{2 (C + 1) C + R^2 - C^2 + 1}{2 (C + 1) (Z + \frac{1}{R}) + R^2 - C^2 + 1}}{2 (C + 1)} = \frac{\mcO(\ln(C^2 + R^2)) + \mcO(TODO)}{C + 1}
+\frac{\ln \frac{2 (C + 1) C + R^2 - C^2 + 1}{2 (C + 1) (Z + \frac{1}{R}) + R^2 - C^2 + 1}}{2 (C + 1)} = \frac{\mcO(\ln(C^2 + R^2)) + \mcO(\todo{TODO})}{C + 1}
 \]
 
 \todo{We should probably estimate logarithm at zero by a hyperbola after that. Finish the proof.}
@@ -401,8 +388,6 @@ Hence, $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy = \frac{1}{R} ( \ln^2 (\
 % \\  = & \ln^2 f(y) \mcO()
 \end{align*}
 
-Integral of $\frac{1}{\sqrt{R + C - y}}$ from $C$ to $C + R$ is trivial and equals to $2 \sqrt{R}$.
-
-\todo{Simplify, it's clear that integral goes to zero}
+Integral of $\frac{1}{\sqrt{R + C - y}}$ from $C$ to $C + R$ is trivial and equals to $2 \sqrt{R}$. \todo{Simplify, it's clear that integral goes to zero}
 
 \end{document}
