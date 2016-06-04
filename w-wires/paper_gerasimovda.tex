@@ -37,6 +37,12 @@
 
 \begin{document}
 
+
+\todo{Ask Popov? Add to slides?? Unit cicle in Cayley space maps to $R$, and $\ln\abs{\det S}$ on $R$ is zero everywhere}
+\todo{Prove about zeroes separate by finite intervals?}
+\todo{Prove about arbitrary linear function?}
+
+
 \section{Convergence criterion}
 
 In the Cayley space, the \todo{name} criterion is:
@@ -192,106 +198,6 @@ l_1(x + \iu y)
  \end{cases}
 \]
 
-Next, we split the estimation in two separate cases (below/above the singularity):
-
-\subsubsection*{Case 1: $0 \le y \le Z$}
-Crucial property of $s(k)$ as $\Im k$ gets close to $0$ is that it gets close to $1$. This is very important, since it implies that $\ln s(k)$ goes to $0$, which is essential part of convergence of the integral. Intuitively, the contour gets closer and closer to the real axis, so if $\ln s(k)$ did not nullify on $\bbR$, we wouldn't have convergence to zero. So, a sensible lower bound of $s(k)$ should respect that property as well and converge to $1$ as $\Im k \to 0$.
-
-Since the function is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the \todo{positiveness??} property, so we have to approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
-
-\begin{align*}
-f(y)
-& = 
-\begin{cases}
-s_1'(0) y + 1   &, 0 \le y < Z_0  \\
-s_1'(Z) (y - Z) &, Z_0 \le y < Z \\
-\end{cases}
-\\
-& =
-\begin{cases}
-\frac{-2}{V} y + 1   &, 0 \le y < Z_0  \\
-\frac{1}{2 V}(V^2 - 1) (y - Z) &, Z_0 \le y < Z \\
-\end{cases}
-\end{align*}
-
-Notice that the estimate does not necessarily has to be continuous, so any $Z_0$ works as long as the estimate is positive definite. However for computational convenience $Z_0 = \frac{V}{4}$ suits our needs best \todo{prove?}.
-
-\subsection*{$0 \le y < \frac{V}{4}$}
-
-We compute the upper bound for the integrand \todo{$\int\limits_{y = C - R }^{V/4}$ }.
-
-\[
-\ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
-\]
-
-We use the inequality $\frac{x}{1 + x} \le \ln (1 + x)$ for $x > -1$, where $x = -\frac{2}{V} y$. In this case, since the argument of the logarithm is less than $1$, $(1 + x)^2 \le \frac{x^2}{(1 + x)^2}$.
-
-\[
-\le \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2} \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
-\]
-
-Replace $1 - \frac{2}{V}y$ with its minimum value $0.5$ and $R + C - y$ with its minimum value $R + C - \frac{V}{4}$.
-
-\todo{dammit, finish this}
-
-\subsection*{$\frac{V}{4} \le y < Z$}
-
-\[
-\ln^2 \left( \frac{1}{2 V}(V^2 - 1) (y - Z) \right) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
-\]
-
-Replace:
-\begin{itemize}
-\item $R^2 - C^2 + 2 (C + 1) y + 1$ with its minimum value $R^2 - C^2 + 2 (C + 1) \frac{V}{4} + 1$
-\item $R - C + y$ with its minimum value $R - C + \frac{V}{4}$
-\item $R + C - y$ with its minimum value $R + C - Z$
-\end{itemize}
-
-Function $\ln^2(x)$ is integrable in the neighbourhood of $0$ and it is well known \todo{reference?} that
-
-\[
-\int\limits_{x=x_0}^b \ln^2(a (x - b)) dx = (b - x_0) (\ln^2(a (x_0 - b)) - 2 \ln(a (x_0 - b)) + 2)
-\]
-
-In our case, $x_0 = \frac{V}{4}$, $b = Z$, therefore the integral is bounded by constant independent of $R$ and $C$. Therefore, the behaviour of the function is defined by the behaviour of its multiplier before the integral:
-
-\[
-\frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + \frac{V}{4}}} \frac{1}{\sqrt{R + C - Z}}
-\]
-
-As $r \to \infty$, clearly $R \to \infty$, $C \to \infty$, $R - C \to 0$ and one can easily see that the expression above is $\mcO(\frac{1}{\sqrt{R + C}})$, therefore, zero in the limit.
-
-\subsubsection*{Case 2: $y > Z$}
-For $y > Z$, 
-\[
-s_1(x + \iu y) 
- = \frac{\tanh y - V}{\tanh y + V}
- = 1 - 2 \frac{V}{\tanh y + V}
-\]
-
-% TODO
-% https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
- % \todo{proof? just take a look at second derivative?}
-Since $s_1$ is concave, strictly increasing and for fixed $r$, our domain of interest is only $\Im k \le C + R$, we estimate the function from below by a linear function $s_4$:
-
-\[
-s_4(x + \iu y) = 
-\frac{s_1(C + R)}{C + R - Z} (y - Z)
-\]
-
-\todo{Ask Popov? Add to slides?? Unit cicle in Cayley space maps to $R$, and $\ln\abs{\det S}$ on $R$ is zero everywhere}
-
-% \subsection*{Proof of convergence}
-
-% \[
-% l(x + \iu y) =
-% \begin{cases}
-%  \\
-% s_2'(Z)(y - Z)                       &, Z_0 < y \le Z \\
-% \frac{s_1(C + R)}{C + R - Z} (y - Z) &, y > Z
-% \end{cases}
-% \]
-
 
 \todo{full circle; explain what is $\phi$}
 
@@ -319,6 +225,113 @@ dt &= \frac{1}{\sqrt{R^2 - (C - y)^2}} dy \\
 =   & \int\limits_{y = Z}^{R + C} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}  dy\\
 \end{align*}
 
+
+
+Next, we split the estimation in two separate cases (below/above the singularity):
+
+\subsubsection*{Case 1: $0 \le y \le Z$}
+Crucial property of $s(k)$ as $\Im k$ gets close to $0$ is that it gets close to $1$. This is very important, since it implies that $\ln s(k)$ goes to $0$, which is essential part of convergence of the integral. Intuitively, the contour gets closer and closer to the real axis, so if $\ln s(k)$ did not nullify on $\bbR$, we wouldn't have convergence to zero. So, a sensible lower bound of $s(k)$ should respect that property as well and converge to $1$ as $\Im k \to 0$.
+
+Since the function is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the \todo{positiveness??} property, so we have to approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
+
+\begin{align*}
+f(y)
+& = 
+\begin{cases}
+s_1'(0) y + 1   &, 0 \le y < Z_0  \\
+s_1'(Z) (y - Z) &, Z_0 \le y < Z \\
+\end{cases}
+\\
+& =
+\begin{cases}
+\frac{-2}{V} y + 1   &, 0 \le y < Z_0  \\
+\frac{1}{2 V}(V^2 - 1) (y - Z) &, Z_0 \le y < Z \\
+\end{cases}
+\end{align*}
+
+Notice that the estimate does not necessarily has to be continuous, so any $Z_0$ works as long as the estimate is positive definite. However for computational convenience $Z_0 = \frac{V}{4}$ suits our needs best \todo{prove?}.
+
+
+\subsection*{$0 \le y < \frac{V}{4}$}
+
+First we will compute an upper bound for the integrand. Notice that for $0 \le y \le \frac{V}{4}$:
+
+\todo{???}
+\begin{align*}
+    & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}} \\
+\le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\end{align*}
+
+We compute the upper bound for the integrand \todo{$\int\limits_{y = C - R }^{V/4}$ }.
+
+\[
+\ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
+\]
+
+We use the inequality $\frac{x}{1 + x} \le \ln (1 + x)$ for $x > -1$, where $x = -\frac{2}{V} y$. In this case, since the argument of the logarithm is less than $1$, $(1 + x)^2 \le \frac{x^2}{(1 + x)^2}$.
+
+\[
+\le \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2} \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + y}} \frac{1}{\sqrt{R + C - y}}
+\]
+
+Replace $1 - \frac{2}{V}y$ with its minimum value $0.5$ and $R + C - y$ with its minimum value $R + C - \frac{V}{4}$.
+
+\todo{dammit, finish this}
+
+\subsection*{$\frac{V}{4} \le y < Z$}
+
+First we will compute an upper bound for the integrand. Notice that for $\frac{V}{4} \le y < Z$:
+
+\begin{align*}
+    & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}} 
+\\ \le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) \frac{V}{4} + 1} \frac{1}{\sqrt{R + C - Z}} \frac{1}{\sqrt{R - C + \frac{V}{4}}}
+\\ \le & \ln^2 \left( \frac{1}{2 V}(V^2 - 1) (y - Z) \right) \frac{R}{R^2 - C^2 + 2 (C + 1) \frac{V}{4} + 1} \frac{1}{\sqrt{R + C - Z}} \frac{1}{\sqrt{R - C + \frac{V}{4}}}
+\end{align*}
+
+Function $\ln^2(x)$ is integrable in the neighbourhood of $x = 0$ and it is well known \todo{reference?} that
+
+\[
+\int\limits_{x=x_0}^b \ln^2(a (x - b)) dx = (b - x_0) (\ln^2(a (x_0 - b)) - 2 \ln(a (x_0 - b)) + 2)
+\]
+
+In our case, $x_0 = \frac{V}{4}$, $b = Z$, therefore $x_0 - b \ne 0$ and the integral is bounded by a constant independent of $R$ and $C$. Therefore, the behaviour of the function is defined by the behaviour of its constant multiplier:
+
+\[
+\frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + \frac{V}{4}}} \frac{1}{\sqrt{R + C - Z}}
+\]
+
+As $r \to \infty$, clearly $R \to \infty$, $C \to \infty$, $R - C \to 0$ and one can easily see that the expression above is $\mcO(\frac{1}{\sqrt{R + C}})$, therefore, zero in the limit. \todo{dependency on $r$ everywhere???}
+
+\subsubsection*{Case 2: $y > Z$}
+For $y > Z$, 
+\[
+s_1(x + \iu y) 
+ = \frac{\tanh y - V}{\tanh y + V}
+ = 1 - 2 \frac{V}{\tanh y + V}
+\]
+
+% TODO
+% https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
+ % \todo{proof? just take a look at second derivative?}
+Since $s_1$ is concave, strictly increasing and for fixed $r$, our domain of interest is only $\Im k \le C + R$, we estimate the function from below by a linear function $s_4$: \todo{plot?}
+
+\[
+s_4(x + \iu y) = 
+\frac{s_1(C + R)}{C + R - Z} (y - Z)
+\]
+
+% \subsection*{Proof of convergence}
+
+% \[
+% l(x + \iu y) =
+% \begin{cases}
+%  \\
+% s_2'(Z)(y - Z)                       &, Z_0 < y \le Z \\
+% \frac{s_1(C + R)}{C + R - Z} (y - Z) &, y > Z
+% \end{cases}
+% \]
+
+
 First, notice that for $Z \le y \le R + C$:
 \begin{align*}
     & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}} \\
@@ -326,7 +339,7 @@ First, notice that for $Z \le y \le R + C$:
 \end{align*}
 
 
-To estimate, we will split the integration in three parts:
+To estimate, we will split the inegral in three parts:
 
 \subsection*{from $Z$ to $Z + \frac{1}{R}$}
 

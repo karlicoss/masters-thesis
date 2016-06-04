@@ -157,7 +157,7 @@ def test_schwarz_paper():
         rr = R(r=r_cayley).n()
         cc = C(r=r_cayley).n()
 
-        Z0 = cc + rr # TODO Ymax
+        Z0 = cc + rr
 
         print("R = " + str(rr))
         print("C = " + str(cc))
@@ -197,7 +197,7 @@ def test_schwarz_paper():
         sum_sup = 0.0
         for (tl, tr), ff in zip(intervalsT, functions):
             print("Interval: {:.2f}-{:.2f}".format(float(tl.real()), float(tr.real())))
-            f1 = ln(ff(y=imag(rr * exp(i * t) + cc * i))) * sqrt(rr) / (rr * exp(i * t) + cc * i) # TODO apparently adding i here doesn't help a lot?
+            f1 = ln(ff(y=imag(rr * exp(i * t) + cc * i))) * sqrt(rr) / (rr * exp(i * t) + cc * i) # NOTE apparently adding i here doesn't help a lot?
             f2 = 1 / (rr * exp(i * t) + cc * i + i) * i * sqrt(rr) * exp(i * t) # looks like it converges to pi
             p  = f1 * f2
             p1 = fast_callable(norm(f1)     , vars=[t], domain=CC)
@@ -237,10 +237,8 @@ def test_logarithmic_paper():
     V = 2 * W / (W^2 + 1)
     Z = atanh(V)
 
-
     R = var('R', domain='positive')
     C = var('C', domain='positive')
-    assume(R > C)
 
     w(y) = abs(S(k=i * y))
     s(y)   = ln(w(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y))
@@ -253,31 +251,29 @@ def test_logarithmic_paper():
         mm = V / 4 - R + R
         tt = Z - R + R
 
-        gs = [
+        est_base = [
             o,
-            ln(1 - 2 / V * y)^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y ) * (R - C + y)),
-            ln(1 - 2 / V * y)^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - tt) * (R - C + y)),
-            ((- 2 / V * y) / (1 - 2 / V * y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - mm) * (R - C + y)),
-            ((- 2 / V * y) / (1 - 2 / V * mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - mm) * (R - C + y)),
+            ln(w(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
         ]
-        # g3: singularity of type x^{-1/2}
-        # integral: 
-        # TODO R - C might be easy to compute in terms of r
-        # qq = 2 * (C - R) * (R - C + V/4)^(1/2) + 2/3 * (-C + R + V/4)^(3/2) 
-        # qq = 1
-        # print((qq * R / (-C^2 + R^2 + 2 * C * (C - R + 1) + 1) * 1 / sqrt(R + C - mm))(C=R).limit(R=oo))
-        # raise RuntimeError
 
-        fs = [
-            o,
-            ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / sqrt((R + C - y) * (R - C + y)),
-            ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / sqrt((R + C - y) * (R - C + y)),
-            ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / sqrt((R + C - y) * (R - C + mm)),
-            ln(1 / (2 * V) * (V^2 - 1) * (y - Z))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / sqrt((R + C - tt) * (R - C + mm)),
+        # we can't use ln(w(y=mm)) here, integral grows too fast, and we get constant
+        # we can't replace y in denominator to ff, still too fast
+        e(y) = 1 - 2 / V * y
+        est_left = est_base + [
+            ln(e(y=y))^2 * R                        / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
+            # -x / (1 - x) <= log(1 - x)
+            ((- 2 / V * y) / (1 - 2 / V * y))^2  * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
+            # since x / sqrt(C + x) is always increasing,
+            (-2 / V * mm)^2 / sqrt(R - C + mm) * (1 / (1 - 2 / V * mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / (sqrt(R + C - Z)),
+            # yay!!!
+        ]
+
+        ee(y) = 1 / (2 * V) * (V^2 - 1) * (y - Z)
+        est_right = est_base + [
+            ln(w(y=y))^2  * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + mm) * sqrt(R + C - Z)),
+            ln(ee(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + mm) * sqrt(R + C - Z)),
         ]
         # f3: singularity of type ln^2(x) around x = 0 is integrable and bounded by constant since V/4 is independent of R and C
-        # now we can clearly see that f3 goes to 0 as R, C goes to infinity
-        # TODO prove about arbitrary linear function?...
 
         fff = ff(R=rr, C=cc)
         mmm = mm(R=rr, C=cc)
@@ -292,18 +288,18 @@ def test_logarithmic_paper():
             'red'
         ]
 
-        plot1 = sum(plot(gi(R=rr, C=cc), fff, mmm, color=col) for gi, col in zip(gs, colors))
-        plot2 = sum(plot(fi(R=rr, C=cc), mmm, ttt, color=col) for fi, col in zip(fs, colors))
+        # plot1 = sum(plot(fi(R=rr, C=cc), fff, mmm, color=col) for fi, col in zip(est_left, colors))
+        # plot2 = sum(plot(fi(R=rr, C=cc), mmm, ttt, color=col) for fi, col in zip(est_right, colors))
 
-        (plot1 + plot2).save("plot_%s.png" % tag, ymin=0, ymax=1)
+        # (plot1 + plot2).save("plot_%s.png" % tag, ymin=0, ymax=1)
 
         ### integrals
         print("!!! First part:")
-        for gi in gs:
-            print(my_numerical_integral(gi(R=rr, C=cc), y, fff, mmm))
+        for fi in est_left:
+            print(my_numerical_integral(fi(R=rr, C=cc), y, fff, mmm))
 
         print("!!! Second part:")
-        for fi in fs:
+        for fi in est_right:
             # plot(ff(R=rr, C=cc), mm(R=rr, C=cc), tt(R=rr, C=cc)).save("plotttt.png")
             print(my_numerical_integral(fi(R=rr, C=cc), y, mmm, ttt))
         ##
@@ -316,6 +312,7 @@ def test_logarithmic_paper():
         tt = C + R
 
         e(y) = w(y=tt) / (C + R - Z) * (y - Z)
+        # e(y) = w(y=tt) / (C + R) * (y - Z) # NOTE ok for big enough C + R !!!!
 
         fff = ff(R=rr, C=cc)
         lll = ll(R=rr, C=cc)
@@ -378,7 +375,7 @@ def test_logarithmic_paper():
             print(my_numerical_integral(fi(R=rr, C=cc), y, mmm, ttt))
 
 
-    for q in range(1, 30, 3):
+    for q in range(3, 30, 3):
         print("=======")
         r_cayley = 1 - 3 ** (-q)
         # r_cayley = 0.69
@@ -388,8 +385,8 @@ def test_logarithmic_paper():
         print("R = " + str(rr))
         print("C = " + str(cc))
 
-        # first(rr, cc, tag='f_' + str(q))
-        second(rr, cc, tag='second_' + str(q))
+        first(rr, cc, tag='f_' + str(q))
+        # second(rr, cc, tag='second_' + str(q))
 
 
 test_logarithmic_paper()
