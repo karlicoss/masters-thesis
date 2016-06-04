@@ -1,0 +1,174 @@
+% $Id: gost71.bbx,v 1.4c 2011/05/12 18:28:32 lehman stable $
+
+\ProvidesFile{gost71.bbx}
+[\abx@bbxid $Id: gost71.bbx,v 1.4c 2011/05/12 18:28:32 lehman stable $]
+
+\RequireBibliographyStyle{standard}
+\ExecuteBibliographyOptions{pagetracker}
+%
+%\DeclareBibliographyOption{dashed}[true]{%
+%  \ifstrequal{#1}{true}
+%    {\ExecuteBibliographyOptions{pagetracker}%
+%     \renewbibmacro*{bbx:savehash}{\savefield{fullhash}{\bbx@lasthash}}}
+%    {\renewbibmacro*{bbx:savehash}{}}}
+
+\DeclareFieldFormat{shorthandwidth}{#1}
+\setlength{\bibitemsep}{0pt}
+
+\renewbibmacro*{date}{
+    \iffieldundef{date}%
+        {\iffieldundef{eventyear}
+           {\printfield{year}}
+           {\printfield{eventyear}}}%
+        {\printdate}%
+    \newunit}
+
+\renewbibmacro*{chapter+pages}{%
+  \printfield{chapter}%
+  \setunit*{\bibpagespunct}%
+  \printfield{pages}%
+  \newunit}
+
+\renewbibmacro*{note+pages}{%
+  \printfield{note}%
+  \setunit*{\bibpagespunct}%
+  \printfield{pages}%
+  \newunit}
+
+\DeclareNameFormat{gostname}{%
+    \mkbibemph{#1 \ifblank{#4}{}{\space #4 \isdot}}
+    \ifthenelse{\value{listcount}<\value{liststop}}
+        {\addcomma\space}
+        {}}
+
+\DeclareFieldFormat*{title}{#1}
+\DeclareFieldFormat*{booktitle}{#1}
+\DeclareFieldFormat*{journaltitle}{#1}
+\DeclareFieldFormat*{url}{#1}
+\DeclareFieldFormat*{number}{\bibstring{number}#1}
+
+\DeclareNameAlias{author}{gostname}
+\DeclareNameAlias{editor}{gostname}
+\DeclareNameAlias{translator}{gostname}
+
+\defbibheading{bibliography}[\bibname]{
+  \chapter*{#1}\addcontentsline{toc}{chapter}{#1}}
+
+\defbibheading{none}[\bibname]{}
+
+%\InitializeBibliographyStyle{%
+%  \global\undef\bbx@lasthash}
+
+%\newbibmacro*{bbx:savehash}{%
+%  \savefield{fullhash}{\bbx@lasthash}}
+
+%\newbool{bbx@inset}
+%\DeclareBibliographyDriver{set}{%
+%  \booltrue{bbx@inset}%
+%  \entryset{}{}%
+%  \newunit\newblock
+%  \usebibmacro{setpageref}%
+%  \finentry}
+
+
+\newbibmacro*{publisher+location+date}{%
+  \printlist{location}%
+  \iffieldundef{venue}%
+    {\iflistundef{publisher}%
+       {\setunit*{\addcomma\space}}%
+       {\setunit*{\addcolon\space}}%
+     \printlist{publisher}}%
+    {\setunit*{\addcomma\space}%
+     \printfield{venue}}%
+  \setunit*{\addcomma\space}%
+  \usebibmacro{date}%
+  \newunit}
+
+\newbibmacro*{event+venue+date}{%
+  \printfield{eventtitle}%
+  \ifboolexpr{
+    test {\iffieldundef{venue}}
+    and
+    test {\iffieldundef{eventyear}}
+  }
+    {}
+    {\setunit*{\addcomma\space}%
+     \printtext{\mkbibdatelong{eventyear}{eventmonth}{eventday}}
+     \setunit*{\addcomma\space}%
+     \printfield{venue}}
+  \newunit}
+
+\DeclareBibliographyDriver{inproceedings}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \printfield{title}%
+  \setunit{\addspace}
+  \printtext{\slash}
+  \setunit{\addspace}
+  \iffieldundef{booktitle}
+    {\printfield{eventtitle}}
+    {\usebibmacro{maintitle+booktitle}}
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \iffieldundef{maintitle}
+    {\printfield{volume}%
+     \printfield{part}}
+    {}%
+  \newunit
+  \printfield{volumes}%
+  \newunit\newblock
+  \usebibmacro{series+number}%
+  \newunit\newblock
+  \printfield{note}%
+  \newunit\newblock
+  \printlist{organization}%
+  \newunit
+  \usebibmacro{publisher+location+date}%
+  \newunit\newblock
+  \usebibmacro{chapter+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{isbn}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \usebibmacro{finentry}}
+
+\DeclareBibliographyDriver{article}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \printfield{title}%
+  \setunit{\addspace}
+  \printtext{\slash\slash}
+  \setunit{\addspace}
+  \usebibmacro{journal}%
+  \newunit\newblock
+  \usebibmacro{date}%
+  \newunit\newblock
+  \usebibmacro{series+number}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \usebibmacro{note+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{issn}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \usebibmacro{finentry}}
+
+\endinput

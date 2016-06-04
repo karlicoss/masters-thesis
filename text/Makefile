@@ -1,9 +1,29 @@
-all:
-	latexmk -outdir=build -shell-escape -pdf demo.tex
+NAME      := thesis.tex
+BUILD_DIR := build
 
+
+all: build
+
+.PHONY: build # latexmk does the job for us
+build: 
+	latexmk -outdir=$(BUILD_DIR) -bibtex -shell-escape -pdf $(NAME)
+
+
+.PHONY: preview # latexmk does the job for us
 preview:
-	latexmk -outdir=build -shell-escape -pdf -pvc demo.tex
+	latexmk -outdir=$(BUILD_DIR) -bibtex -shell-escape -pdf -pvc $(NAME)
 
 
+.PHONY: clean
 clean:
-	latexmk -outdir=build -c
+	latexmk -outdir=$(BUILD_DIR) -c
+
+
+.PHONY: wipe
+wipe:
+	latexmk -outdir=$(BUILD_DIR) -C
+
+
+.PHONY: export
+export: build
+	zip demo.zip $(NAME) build/thesis_gerasimovda.pdf

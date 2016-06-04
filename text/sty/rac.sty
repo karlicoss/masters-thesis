@@ -1,0 +1,551 @@
+%localization
+
+\def\kw@BIBLIOGRAPHY{Источники}
+\def\kw@ACKNOWLEDGEMENTS{Благодарности}
+\def\kw@ABSTRACT{Общие сведения}
+\def\kw@PREFACE{Введение}
+\def\kw@TABLEOFCONTENTS{Содержание}
+\def\kw@FIGURESLIST{Список рисунков}
+\def\kw@FIGURE{Рисунок}
+\def\kw@TABLESLIST{Перечень таблиц}
+\def\kw@APPENDICESLIST{Приложения}
+\def\kw@APPENDIX{Приложение}
+\def\kw@CHAPTER{Глава}
+\def\kw@CONCLUSION{Заключение}
+
+\parindent=15mm
+%\listparindent=0mm
+%\itemindent=0mm
+\leftmargini=15mm
+
+\renewcommand\labelitemi{\textbullet~~~}
+
+%Define styles
+
+\def\st@HEADING#1{{\Huge\bf\textsf{\expandafter{#1}}}}
+%\def\st@PRECHAPTER#1{\st@DEFAULTTITLE{#1}}
+%\def\st@CHAPTER#1{\st@DEFAULTTITLE{#1}}
+
+\def\st@DEFAULTCONTENTSTITLE{\Large\bf}
+\def\st@DEFAULTCONTENTSLINE{\Large}
+\def\st@CONTENTSCHAPTER{\st@DEFAULTCONTENTSTITLE}
+\def\st@CONTENTSPRECHAPTER{\st@DEFAULTCONTENTSTITLE}
+
+\def\st@Section{\center\LARGE\bfseries\scshape}
+\def\st@Subsection{\center\Large\bfseries\sffamily}
+\def\st@Subsubsection{\center\Large\bfseries\sffamily}
+
+%-- Page styles --
+
+\def\ps@title{
+ \def\@oddhead{}
+ \def\@oddfoot{}
+ \def\@evenhead{}
+ \let\@evenfoot\@oddfoot
+}
+
+\def\ps@chappage{% jj: the first page for chapters
+ \def\@oddhead{}
+ \def\@oddfoot{\hfil \rm\Large \thepage \hfil}
+ \def\@evenhead{}
+ \let\@evenfoot\@oddfoot
+}
+
+\def\ps@plain{%
+ \def\@oddhead{}
+ \def\@oddfoot{\hfil \rm\Large \thepage \hfil}
+ \def\@evenhead{}
+ \let\@evenfoot\@oddfoot
+}
+
+%-- Margins --
+
+\hoffset=-10mm
+\voffset=-20mm
+\textheight=245mm
+\textwidth=165mm
+
+\newlength{\thelinewidth}
+\thelinewidth=\textwidth
+
+\sloppy
+
+%-- Front pages --
+
+\def\unnumberedpage{%
+ \newpage
+ \thispagestyle{empty}
+ \hbox{ }
+}
+
+\def\makeheading#1{ % Makes heading of chapter.
+  \noindent\st@HEADING{#1}
+  \vspace*{7mm}
+}
+
+\def\initializefrontsections{
+ \setcounter{page}{1} 
+ \pagestyle{chappage} 
+ \renewcommand{\thepage}{\arabic{page}}
+ \small\normalsize
+}
+
+\def\startprefacepage{%
+ \newpage
+ \addcontentsline{toc}{chapter}{\st@CONTENTSPRECHAPTER\kw@PREFACE}
+ \hbox{ }
+ \makeheading{\kw@PREFACE}
+ \vspace{0.3in}
+}
+
+\def\startconclusionpage{%
+ \newpage
+ \addcontentsline{toc}{chapter}{\st@CONTENTSPRECHAPTER\kw@CONCLUSION}
+ \makeheading{\kw@CONCLUSION}
+}
+
+\def\startabstractpage#1#2#3{%
+ \ttlpg
+ \hbox{ }
+ \vspace{0.5in}
+% \begin{center}
+  {\large\bf \kw@ABSTRACT} \\
+  \vspace{0.25in}
+   #1 \\
+  \vspace{0.25in}
+   by \\
+   #2 \\
+% \end{center}
+ \vspace{0.5in}
+ \noindent #3 \vspace{0.25in} \\
+ \small\normalsizedbl
+}
+
+
+%-- Table of contents and lists --
+
+\def\dotfill{\leaders\hbox{$\m@th \mkern \@dotsep mu.\mkern \@dotsep mu$}\hfill}
+
+\def\producetableofcontents{\tableofcontents}
+\def\producelistoffigures{\listoffigures}
+\def\producelistoftables{\listoftables}
+\def\producelistofmaps{\listofmaps}
+\def\producelistofanythings{\listofanythings}
+\def\producelistofappendices{\listofappendices}
+
+% jj: The only difference is \dotfill instead of \hfil.
+\def\l@chapter#1#2{\pagebreak[3]
+ \vskip 1.0em plus 1pt \@tempdima 1.5em \begingroup
+ \parindent \z@ \rightskip \@pnumwidth
+ \parfillskip -\@pnumwidth
+ \bf \leavevmode #1\dotfill \hbox to\@pnumwidth{\hss #2}\par
+ \endgroup
+}
+%\def\l@section{\@dottedtocline{1}{1.5em}{2.3em}} -- in report.sty.
+%\def\l@subsection{\@dottedtocline{2}{3.8em}{3.2em}}
+%\def\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
+%\def\l@paragraph{\@dottedtocline{4}{10em}{5em}}
+%\def\l@subparagraph{\@dottedtocline{5}{12em}{6em}}
+
+%\def\l@chap{\@dottedtocline{1}{0.5em}{3.5em}}
+%\def\l@section{\@dottedtocline{2}{5.0em}{2.3em}}
+%\def\l@subsection{\@dottedtocline{3}{8.3em}{3.2em}}
+%\def\l@subsubsection{\@dottedtocline{4}{12.5em}{4.1em}}
+\def\l@chap{\@dottedtocline{1}{0em}{3.5em}}
+\def\l@section{\@dottedtocline{2}{2em}{2.3em}}
+\def\l@subsection{\@dottedtocline{3}{4em}{3.2em}}
+\def\l@subsubsection{\@dottedtocline{4}{5em}{4.1em}}
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{2}
+
+% jj: \def\l@figure{\@dottedtocline{1}{1.5em}{2.3em}} -- in report.sty.
+\def\l@figure{\@dottedtocline{1}{1.0em}{3.5em}}
+\let\l@table\l@figure
+\let\l@map\l@figure
+\let\l@anything\l@figure
+\def\l@appendix{\@dottedtocline{1}{1.0em}{2.5em}}
+
+\def\tableofcontents{%
+ \newpage\small\Large
+% \addcontentsline{toc}{chapter}{\st@CONTENTSPRECHAPTER\kw@TABLEOFCONTENTS}
+ \makeheading{\kw@TABLEOFCONTENTS}
+ \@mkboth{\kw@TABLEOFCONTENTS}{\kw@TABLEOFCONTENTS}
+ \@starttoc{toc}\if@restonecol\twocolumn\fi
+}
+
+\def\listoffigures{%
+ \newpage\small\Large
+ \addcontentsline{toc}{chapter}{\st@CONTENTSPRECHAPTER\kw@FIGURESLIST}
+ \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
+ \hbox{ }
+% \vspace{0.5in}
+ \centerline{\st@PRECHAPTER\kw@FIGURESLIST}
+ \vspace{0.3in}
+ \@mkboth{\kw@FIGURESLIST}{\kw@FIGURESLIST}
+ \@starttoc{lof}\if@restonecol\twocolumn\fi
+ \addtocontents{lof}{\noindent\underline{\bf \kw@FIGURE}\hfill\rm\protect\newline}
+% \addtocontents{lof}{\hbox{ }}
+}
+
+\def\listoftables{%
+ \newpage\small\normalsize
+ \addcontentsline{toc}{chapter}{\kw@TABLESLIST}
+ \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
+ \hbox{ }
+ \vspace{0.5in}
+ \centerline{\st@PRECHAPTER\kw@TABLESLIST}
+ \vspace{0.7in}
+ \@mkboth{\kw@TABLESLIST}{\kw@TABLESLIST}
+ \@starttoc{lot}\if@restonecol\twocolumn\fi
+ \addtocontents{lot}{\noindent\underline{\bf \kw@TABLE}\hfill\rm\protect\newline}
+% \addtocontents{lot}{\hbox{ }}
+}
+
+\def\listofmaps{%
+ \newpage\small\normalsize
+ \addcontentsline{toc}{chapter}{LIST OF MAPS}
+ \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
+ \hbox{ }
+ \vspace{0.5in}
+ \centerline{\large\bf LIST OF MAPS}
+ \vspace{0.7in}
+ \@mkboth{LIST OF MAPS}{LIST OF MAPS}
+ \@starttoc{lom}\if@restonecol\twocolumn\fi
+ \addtocontents{lom}{\noindent\underline{\bf Map}\hfill\rm\protect\newline}
+% \addtocontents{lom}{\hbox{ }}
+}
+
+\def\listofanythings#1{%
+ \newpage\small\normalsize
+ \def\anythingtitle{#1}
+ \addcontentsline{toc}{chapter}{#1}
+ \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
+ \hbox{ }
+ \vspace{0.5in}
+ \centerline{\large\bf \anythingtitle}
+ \vspace{0.7in}
+ \@mkboth{\anythingtitle}{\anythingtitle}
+ \@starttoc{lox}\if@restonecol\twocolumn\fi
+ \addtocontents{lox}{\noindent\underline{\bf \anythingtopic}\hfill\rm\protect\newline}
+% \addtocontents{lox}{\hbox{ }}
+}
+
+\def\listofappendices{%
+ \newpage\small\normalsize
+ \addcontentsline{toc}{chapter}{\kw@APPENDICESLIST}
+ \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
+ \hbox{ }
+ \vspace{0.5in}
+ \centerline{\st@PRECHAPTER\kw@APPENDICESLIST}
+ \vspace{0.7in}
+ \@mkboth{\kw@APPENDICESLIST}{\kw@APPENDICESLIST}
+ \@starttoc{loa}\if@restonecol\twocolumn\fi
+ \addtocontents{loa}{\noindent\underline{\bf \kw@APPENDIX}\hfill\rm\protect\newline}
+% \addtocontents{loa}{\hbox{ }}
+}
+
+%-- Start chapters --
+
+\def\thechapter {\arabic{chapter}}
+\def\thesection {\@arabic\c@chapter.\@arabic\c@section}
+\def\thefigure {\@arabic\c@chapter.\@arabic\c@figure}
+\def\thetable {\@arabic\c@chapter.\@arabic\c@table}
+\def\theequation {\@arabic\c@chapter.\@arabic\c@equation}
+
+%\def\anythingtopic{Anything}
+\def\defineanythingtopic#1{\def\anythingtopic{#1}}
+
+\newcounter{anything}[chapter]
+\def\theanything{\@arabic\c@chapter.\@arabic\c@anything}
+\def\fps@anything{tbp}
+\def\ftype@anything{1}
+\def\ext@anything{lox}
+\def\fnum@anything{\anythingtopic\ \theanything}
+\def\anything{\@float{anything}}
+\let\endanything\end@float
+\@namedef{anything*}{\@dblfloat{anything}}
+\@namedef{endanything*}{\end@dblfloat}
+
+\newcounter{map}[chapter]
+\def\themap{\@arabic\c@chapter.\@arabic\c@map}
+\def\fps@map{tbp}
+\def\ftype@map{1}
+\def\ext@map{lom}
+\def\fnum@map{Map \themap}
+\def\map{\@float{map}}
+\let\endmap\end@float
+\@namedef{map*}{\@dblfloat{map}}
+\@namedef{endmap*}{\end@dblfloat}
+
+%\renewcommand{\@makecaption}[2]{%
+%  \vskip\abovecaptionskip%
+%  \setlength{\as@captionwidth}{\linewidth}%
+%  \as@makecaption{#1}{#2}%
+%  \vskip\belowcaptionskip}
+
+\long\def\@makecaption#1#2{#1.#2}
+
+
+\newcounter{appendix}[chapter]
+\def\theappendix{\@Alph\c@appendix}
+\def\fps@appendix{tbp}
+\def\ftype@appendix{1}
+\def\ext@appendix{loa}
+
+\def\startthechapters{%
+ \def\@chapapp{\kw@CHAPTER}
+%main font indicated here
+ \largeoneandhalf
+ \clearpage
+ \setcounter{chapter}{0}
+% \renewcommand{\thepage}{\arabic{page}}
+ \pagestyle{plain}
+ \def\tocname{toc}
+}
+
+\def\chapter{\clearpage \thispagestyle{chappage} \global\@topnum\z@
+ \@afterindenttrue \secdef\@chapter\@schapter
+}
+\def\@chapter[#1]#2{%
+ \ifnum \c@secnumdepth >\m@ne
+  \refstepcounter{chapter}
+  \typeout{\@chapapp\space\thechapter.}
+  \addtocontents{toc}{\hbox{ }}
+
+%  \addcontentsline{toc}{chapter}{\protect\numberline{\hbox{ }\hfill\bf\thechapter.\hspace{5pt}}{\bf #1}}
+  \addcontentsline{toc}{chapter}{\st@CONTENTSCHAPTER \@chapapp{} \thechapter.~ #1}
+  \addtocontents{toc}{\hbox{ }}
+ \else
+  \addtocontents{toc}{\hbox{ }}
+  \addcontentsline{toc}{chap}{#1}
+  \addtocontents{toc}{\hbox{ }}
+ \fi
+ \chaptermark{#1}
+% \addtocontents{lof}{\hbox{ }}
+% \addtocontents{lot}{\hbox{ }}
+% \addtocontents{lom}{\hbox{ }}
+% \addtocontents{lox}{\hbox{ }}
+ \makeheading{\kw@CHAPTER~\thechapter.~#2}
+}
+
+\def\@makeschapterhead#1{%
+ \vspace*{0.7in}
+ {\parindent 0pt \raggedright
+  \centerline{\Large\bf #1} \par
+  \nobreak \vskip 0.7in
+ }
+}
+
+\def\section{\@startsection{section}{1}{\z@}
+{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}{\st@Section}}
+\def\subsection{\@startsection{subsection}{2}{\z@}
+{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}{\st@Subsection}}
+\def\subsubsection{\@startsection{subsubsection}{2}{\z@}
+{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}{\st@Subsubsection}}
+
+% jj: The following is copied from latex.tex, with \addcontentline
+%     changed to conditional -- only the sections in chapters will be
+%     added to toc, noly the ones in appendices.  12/15/88
+
+\def\@chaptest{\kw@APPENDIX}
+\def\@sect#1#2#3#4#5#6[#7]#8{
+ \ifnum #2>\c@secnumdepth \def\@svsec{}
+ \else 
+  \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname\hskip 1em }
+ \fi
+ \@tempskipa #5\relax
+ \ifdim \@tempskipa>\z@ 
+  \begingroup #6\relax
+   \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}
+  \endgroup
+  \csname #1mark\endcsname{#7}
+  \ifx \@chapapp \@chaptest
+  \else
+   \addcontentsline{toc}{#1}{\ifnum #2>\c@secnumdepth \else
+   \protect\numberline{\csname the#1\endcsname}\fi #7}
+  \fi
+ \else
+  \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname {#7}
+  \ifx \@chapapp \@chaptest
+  \else
+   \addcontentsline{toc}{#1}{\ifnum #2>\c@secnumdepth \else
+   \protect\numberline{\csname the#1\endcsname}\fi #7}
+  \fi
+  }
+ \fi
+ \@xsect{#5}
+}
+
+\long\def\@caption#1[#2]#3{%
+% \addtocontents{\csname ext@#1\endcsname}{\hbox{ }}
+ \addcontentsline{\csname ext@#1\endcsname}{#1}{\protect\numberline{\csname
+%  the#1\endcsname}{\ignorespaces\protect\small\protect\normalsize\rm #2}}
+  the#1\endcsname}{#2}}
+ \par
+ \begingroup
+  \@parboxrestore
+  \@makecaption{\csname fnum@#1\endcsname}{\ignorespaces\protect\small\normalsize\rm #3}
+  \par
+ \endgroup
+}
+
+%\long\def\@makecaption#1#2{
+% \vskip 10pt 
+% \setbox\@tempboxa\hbox{#1: #2}
+% \ifdim \wd\@tempboxa >\hsize #1: #2\par
+% \else \hbox to\hsize{\hfill\box\@tempboxa\hfill} 
+% \fi}
+\long\def\@makecaption#1#2{
+ \vskip 10pt 
+ \setbox\@tempboxa\hbox{#1. #2}
+ \ifdim \wd\@tempboxa >\hsize 
+  \setbox\@tempboxa\hbox{#1. }
+  \def\@tempdimj{\hsize}
+  \advance\@tempdimj -\wd\@tempboxa
+  \hbox to\hsize{#1. \parbox[t]{\@tempdimj}{#2}}
+ \else \hbox to\hsize{\hfill\box\@tempboxa\hfill} 
+ \fi}
+
+
+%-- Appendices and bibliography --
+
+% jj:  \@sect is copied from latex.tex; toc changed to \tocname.
+\def\@sect#1#2#3#4#5#6[#7]#8{
+        \ifnum #2>\c@secnumdepth
+    \def\@svsec{}\else
+    \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname.\hskip 1em }\fi
+    \@tempskipa #5\relax
+    \ifdim \@tempskipa>\z@ 
+        \begingroup #6\relax
+            \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}
+        \endgroup
+        \csname #1mark\endcsname{#7}
+        \addcontentsline{\tocname}{#1}{\ifnum #2>\c@secnumdepth \else
+            \protect\numberline{\csname the#1\endcsname}\fi #7}
+    \else                               
+        \def\@svsechd{#6\hskip #3\@svsec #8
+        \csname #1mark\endcsname{#7}
+        \addcontentsline{\tocname}{#1}{\ifnum #2>\c@secnumdepth \else
+            \protect\numberline{\csname the#1\endcsname}\fi #7}}
+    \fi
+    \@xsect{#5}
+}
+
+\def\startappendices{\par
+ \def\thechapter{\Alph{chapter}}
+ \def\thesection{\thechapter.\arabic{section}}
+
+ \ifx \selectfont\undefined
+ \def\theequation{{\rm \thechapter}.\arabic{equation}}
+ \def\thefigure{{\rm \thechapter}.\@arabic\c@figure}
+ \def\thetable{{\rm \thechapter}.\@arabic\c@table}
+ \def\themap{{\rm \thechapter}.\@arabic\c@map}
+ \def\theanything{{\rm \thechapter}.\@arabic\c@anything}
+ \else
+ \def\theequation{{\mathrm \thechapter}.\arabic{equation}}
+ \def\thefigure{{\mathrm \thechapter}.\@arabic\c@figure}
+ \def\thetable{{\mathrm \thechapter}.\@arabic\c@table}
+ \def\themap{{\mathrm \thechapter}.\@arabic\c@map}
+ \def\theanything{{\mathrm \thechapter}.\@arabic\c@anything}
+ \fi
+
+ \let\theappendix=\thechapter
+ \let\chapter=\startanappendix
+ \setcounter{chapter}{0}
+ \setcounter{section}{0}
+ \def\@chapapp{APPENDIX}
+ \def\tocname{loa}
+ \pagestyle{plain}
+ \clearpage
+ \thispagestyle{chappage}
+ \addcontentsline{toc}{chapter}{APPENDICES}
+ \hbox{ }
+ \vfill
+ \centerline{\large\bf APPENDICES}
+ \vfill
+}
+
+\let\appendix=\startappendices
+
+\def\startanappendix#1{%
+ \clearpage \global\@topnum\z@ \@afterindenttrue
+ \refstepcounter{chapter}
+ \typeout{\@chapapp\space\thechapter.}
+ \addtocontents{loa}{\hbox{ }}
+ \addcontentsline{loa}{appendix}{\protect\numberline{\thechapter.}{\ignorespaces\rm #1}}
+ \addtocontents{loa}{\hbox{ }}
+% \addtocontents{lof}{\hbox{ }}
+% \addtocontents{lot}{\hbox{ }}
+% \addtocontents{lom}{\hbox{ }}
+% \addtocontents{lox}{\hbox{ }}
+ \hbox{ }
+ \vspace{0.5in}
+ \centerline{\large\bf \@chapapp{} \thechapter} \par
+ \vspace{0.3in}
+% \begin{center}
+  \Large\bf #1
+% \end{center}
+ \vspace{0.7in}
+}
+
+\def\endofchapterbibliography{%
+    \clearpage
+    \addtocontents{toc}{\hspace{0.6in} \kw@BIBLIOGRAPHY} % adds entry to table of contents
+    \hbox{ }
+    \vspace{0.7in}
+    %\begin{center}
+        {\large \bf \kw@BIBLIOGRAPHY}
+    %\end{center}
+    \vspace{0.75in}
+}
+
+
+\def\thebibliography#1{%
+ \clearpage
+ \thispagestyle{chappage}
+ \addcontentsline{toc}{chapter}{\st@CONTENTSPRECHAPTER\kw@BIBLIOGRAPHY}
+ \makeheading{\kw@BIBLIOGRAPHY}
+ \@mkboth{\kw@BIBLIOGRAPHY}{\kw@BIBLIOGRAPHY}
+ \small\normalsize
+ \list{[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+ \advance\leftmargin\labelsep
+ \usecounter{enumi}}
+ \def\newblock{\hskip .11em plus .33em minus -.07em}
+ \sloppy\clubpenalty4000\widowpenalty4000
+ \sfcode`\.=1000\relax}
+\let\endthebibliography=\endlist
+\def\startbibliography{ }
+
+\newenvironment{code}[1][]{
+\ttfamily\obeylines\obeyspaces\frenchspacing\normalsize%
+
+\def\abstract{\textbf{abstract}}
+\def\catch{\textbf{catch}}
+\def\class{\textbf{class}}
+\def\extends{\textbf{extends}}
+\def\final{\textbf{final}}
+\def\implements{\textbf{implements}}
+\def\interface{\textbf{interface}}
+\def\new{\textbf{new}}
+\def\null{\textbf{null}}
+\def\private{\textbf{private}}
+\def\protected{\textbf{protected}}
+\def\public{\textbf{public}}
+\def\return{\textbf{return}}
+\def\static{\textbf{static}}
+\def\super{\textbf{super}}
+\def\this{\textbf{this}}
+\def\try{\textbf{try}}
+\def\void{\textbf{void}}
+
+\vspace{5mm}
+}
+{
+\vspace{5mm}
+}
+
+
+%Additional 
+
+\def\code#1{\b\t{\hbox{#1}}}
+

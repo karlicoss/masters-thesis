@@ -1,0 +1,33 @@
+\newcommand{\Lx}{3.0};
+\newcommand{\Ly}{1.5};
+\newcommand{\Sw}{0.2};
+\newcommand{\wgH}{2.0};
+\newcommand{\wgL}{-10.0};
+\newcommand{\wgR}{10.0};
+\coordinate (Wul) at (\wgL, 0);
+\coordinate (Wur) at (\wgR, 0);
+\coordinate (Wbl) at (\wgL, -\wgH);
+\coordinate (Wbr) at (\wgR, -\wgH);
+\coordinate (Rbl) at (-\Lx / 2, 0);
+\coordinate (Rbr) at (\Lx / 2, 0);
+\coordinate (Rul) at (-\Lx / 2, \Ly);
+\coordinate (Rur) at (\Lx / 2, \Ly);
+\coordinate (Sl) at (-\Sw / 2, 0);
+\coordinate (Sr) at (\Sw / 2, 0);
+
+% waveguide + resonator
+\draw[ultra thick, dotted] (\wgL - 1.0, 0) -- (Wul);
+\draw[ultra thick] (Wul)--(Sl);
+\draw[ultra thick] (Sr)--(Wur);
+\draw[ultra thick, dotted] (Wur) -- (\wgR + 1.0, 0);
+\draw[ultra thick, dotted] (\wgL - 1.0, -\wgH) -- (Wbl);
+\draw[ultra thick] (Wbl)--(Wbr);
+\draw[ultra thick, dotted] (Wbr) -- (\wgR + 1.0, -\wgH);
+\draw[ultra thick] (Rbl) -- node [left] {$L_y$} (Rul) -- node [above] {$L_x$} (Rur) -- (Rbr);
+%
+
+% labels
+\draw (0, \Ly / 2) node {$\Omega_R$};
+\draw (0, -\wgH / 2) node {$\Omega_W$};
+\draw[|<->|] (\wgL / 2, 0) -- node [left]{$H$} (\wgL / 2, -\wgH);
+%

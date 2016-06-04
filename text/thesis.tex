@@ -1,0 +1,187 @@
+\documentclass[a4paper]{report}
+
+%uncomment to see the references
+%\usepackage{showkeys}
+\usepackage[T2A]{fontenc}
+
+\usepackage[section]{algorithm} % ???
+\usepackage{algorithmic} % ???
+\usepackage[english,russian]{babel}
+
+\usepackage[backend=biber,bibencoding=utf8,sorting=none,sortcites=true,bibstyle=sty/gost71,maxnames=99,citestyle=numeric-comp,babel=other]{biblatex
+}
+
+\defbibenvironment{bibliography}
+  {\list
+     {\printfield[labelnumberwidth]{labelnumber}.}
+     {\setlength{\labelwidth}{2\labelnumberwidth}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \addtolength{\leftmargin}{\labelsep}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}%
+      \renewcommand*{\makelabel}[1]{\hss##1}}
+  {\endlist}
+  {\item}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes} % ????
+%\usepackage{expdlist}
+%\usepackage[nottoc,notbib]{tocbibind}
+\usepackage[pdftex]{graphicx}
+\graphicspath{{pic/}}
+\usepackage{tikz}
+
+\usepackage{mathtools} % xmapsto, \Vector
+\usepackage{comment}
+\usepackage{soul} % text striking
+\usepackage{amsmath,amsfonts,amssymb,amsthm,amscd,amsxtra}
+\usepackage{physics}
+\usepackage[sharp]{easylist}
+\usepackage{siunitx}
+\usepackage{sty/kbordermatrix}
+\sisetup{locale=US}
+
+
+\usepackage{sty/dbl12}
+%\usepackage{srcltx}
+\usepackage{epsfig}
+% \usepackage{verbatim}
+\usepackage{sty/rac}
+\usepackage[singlelinecheck=false]{caption}
+
+\usepackage{xcolor, colortbl}
+\definecolor{light-gray}{RGB}{230,230,230}
+\definecolor{dkgreen}{RGB}{0,154,0}
+\definecolor{gray}{RGB}{128,128,128}
+\definecolor{mauve}{RGB}{149,0,210}
+\definecolor{purpur}{RGB}{255,204,153}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\captionsetup[figure]{justification=centering,   position=bottom, skip=0pt}
+\captionsetup[table] {justification=raggedright, position=top,    skip=0pt}
+
+% Redefine margins and other page formatting
+
+\setlength{\oddsidemargin}{0.5in}
+
+% Various theorem environments. All of the following have the same numbering
+% system as theorem.
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Теорема}
+\newtheorem{prop}[theorem]{Утверждение}
+\newtheorem{corollary}[theorem]{Следствие}
+\newtheorem{lemma}[theorem]{Лемма}
+\newtheorem{question}[theorem]{Вопрос}
+\newtheorem{conjecture}[theorem]{Гипотеза}
+\newtheorem{assumption}[theorem]{Предположение}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Определение}
+\newtheorem{notation}[theorem]{Обозначение}
+\newtheorem{condition}[theorem]{Условие}
+\newtheorem{example}[theorem]{Пример}
+%\newtheorem{algorithm}[theorem]{Алгоритм}
+\floatname{algorithm}{Листинг}
+\renewcommand{\algorithmicrequire}{\textbf{Вход:}}
+
+\renewcommand{\proofname}{Доказательство}
+
+%\newtheorem{introduction}[theorem]{Introduction}
+
+\renewcommand{\proof}{\\\textbf{Доказательство.}~}
+ 
+\input{macros.tex}
+
+% \lstnewenvironment{snippet}[1][]%
+% {
+%    \noindent
+%    \minipage{\linewidth} 
+%    \vspace{0.5\baselineskip}
+%    \lstset{basicstyle=\ttfamily\footnotesize,frame=single,#1}}
+% {\endminipage}
+
+%\theoremstyle{remark}
+%\newtheorem{remark}[theorem]{Remark}
+%\include{header}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\numberwithin{theorem}{chapter}        % Numbers theorems "x.y" where x
+                                        % is the section number, y is the
+                                        % theorem number
+
+%\renewcommand{\thetheorem}{\arabic{chapter}.\arabic{theorem}}
+
+%\makeatletter                          % This sequence of commands will
+%\let\c@equation\c@theorem              % incorporate equation numbering
+%\makeatother                           % into the theorem numbering scheme
+
+%\renewcommand{\theenumi}{(\roman{enumi})}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\binoppenalty=10000
+\relpenalty=10000
+
+\addbibresource{thesis.bib}
+
+\begin{document}
+ % \renewcommand{\thelstlisting}{\thesection.\arabic{lstlisting}}
+% Begin the front matter as required by Rackham dissertation guidelines
+\initializefrontsections
+
+\pagestyle{title}
+
+\begin{center}
+Университет ИТМО
+
+\vspace{2cm}
+
+Естественно-научный факультет
+
+Кафедра высшей математики
+
+\vspace{3cm}
+
+{\Large Герасимов Дмитрий Александрович}
+
+\vspace{2cm}
+
+\vbox{\LARGE\bfseries
+Исследование полноты резонансных состояний оператора Шредингера для модели квантовых графов
+}
+
+\vspace{4cm}
+
+{\Large Научный руководитель: доктор физ.-мат. наук, \\ профессор кафедры ВМ И.~Ю.~Попов}
+
+\vspace{6cm}
+
+Санкт-Петербург\\ 2016
+\end{center}
+
+\newpage
+
+\setcounter{page}{3}
+\pagestyle{plain}
+
+\tableofcontents
+%\listoffigures
+
+% Chapters
+\startthechapters
+\input{parts/intro.tex}
+\input{parts/chapter1.tex} % TODO rename to 'survey'?
+\input{parts/chapter2.tex} % TODO rename to 'description'?
+\input{parts/chapter3.tex} % TODO rename to 'results'?
+\input{parts/outro.tex}
+% \input{parts/trash.tex}
+
+\printbibliography
+
+%\startappendices
+%\input{parts/appendix1.tex}
+
+\end{document}
