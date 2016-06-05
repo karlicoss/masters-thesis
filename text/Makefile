@@ -26,4 +26,4 @@ wipe:
 
 .PHONY: export
 export: build
-	zip demo.zip $(NAME) build/thesis_gerasimovda.pdf
+	zip thesis_gerasimovda.zip $(NAME) build/thesis.pdf

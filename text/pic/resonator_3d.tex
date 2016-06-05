@@ -5,8 +5,8 @@
 \coordinate (LL)  at (-\Wglen, 0);
 \coordinate (RR)  at ( \Wglen, 0);
 % change these to take resonator length into account
-\coordinate (L)   at (0, 0);
-\coordinate (R)   at (0, 0);
+\coordinate (L)   at (-2, 0);
+\coordinate (R)   at (2, 0);
 %
 
 \coordinate (U) at (0, 3); % upper point of resonator
@@ -16,9 +16,17 @@
 \draw[ultra thick] (LL)--(L);
 \draw[ultra thick] (R)--(RR);
 \draw[ultra thick, dotted] (RR) -- (RRR);
-\draw[ultra thick] node [below] {$V$} (0, 0) -- node [left] {$\Omega$} (U);
 %
 
 \draw[<-] (-\Wglen + 1, 2) -- (-\Wglen + 5, 2) node [midway, above] {$R e^{-\iu k x}$};
 \draw[->] (-\Wglen + 1, 0.5) -- (-\Wglen + 5, 0.5) node [midway, above] {$e^{\iu k x}$};
 \draw[->] (\Wglen - 5, 0.5) -- (\Wglen - 1, 0.5) node [midway, above] {$T e^{\iu k x}$};
+
+\draw[ultra thick] (0, 2) node [above] {$\Omega$};
+
+\draw (-2,0) arc (180:360:2cm and 0.5cm);
+\draw[dashed] (-2,0) arc (180:0:2cm and 0.5cm);
+\draw (0,2) arc (90:270:0.5cm and 2cm);
+\draw[dashed] (0,2) arc (90:-90:0.5cm and 2cm);
+\draw (0,0) circle (2cm);
+\shade[ball color=blue!10!white,opacity=0.20] (0,0) circle (2cm);
