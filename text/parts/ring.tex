@@ -1,0 +1,103 @@
+\subsection{Модель исследования}
+% TODO http://tex.stackexchange.com/a/155317/5966 ?
+\begin{figure}[!htb] % TODO maybe just ref instead?
+\begin{tikzpicture}[scale=0.8] % TODO SCALE!!!
+\input{pic/resonator_ring.tex}
+\end{tikzpicture}
+\caption{квантовый граф $\Gamma$, состоящий из полубесконечных ребер $\Omega_L, \Omega_R$ и рассеивателя $\Omega$, представляющего из себя окружность длиной $1$.}
+\end{figure}
+
+Мы рассматриваем случай рассеяния волны c волновым вектором $k$, приходящей слева направо. Таким образом, волновые функции на различных частях графа принимают следующий вид:
+
+\begin{equation}\label{eq:ring_system}
+\begin{aligned}
+\psi_L(x) &= \eexp{\iu k x} + R \eexp{-\iu k x} \\
+\psi_R(x) &= T \eexp{\iu k x}\\
+\psi_\Omega(x) &= P \sin(k x) + Q \cos(k x)
+\end{aligned}
+\end{equation}
+, где $R$ и $T$ — коэффициенты отражения и прохождения волны. Так как граф симметричен, его матрица рассеяния принимает вид
+$S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}$.
+
+В вершине $V$ мы ставим $\delta$-образную потенциальную яму высотой $a$, которая порождает следущие граничные условия:
+
+\begin{equation}\label{eq:ring_bc}
+\begin{aligned}
+\psi_L(0) = \psi_R(0) = \psi_\Omega(0) = \psi_\Omega(1) \\ 
+-\psi'_L(0) + \psi'_\Omega(0) - \psi'_\Omega(1) + \psi'_R(0) = a \psi_L(0)
+\end{aligned}
+\end{equation}
+
+
+\subsection{Вычисление S-матрицы}
+Определим коэффициенты прохождения и отражения, подставив функции (\ref{eq:ring_system}) в (\ref{eq:ring_bc}) и решив систему линейных уравнений:
+\begin{align*}
+& 1 + R &= T \\
+& 1 + R &= Q \\
+& Q \cos k + P \sin k &= T \\
+& -P k \cos k + Q k \sin k + P k + \iu R k + \iu T k - \iu k &= T a
+\end{align*}
+
+Решив систему, получаем:
+
+\begin{align*}
+R(k) = -\frac{2 \, k \cos\left(k\right) + a \sin\left(k\right) - 2 \, k}{2 \, k \cos\left(k\right) + {\left(a - 2 i \, k\right)} \sin\left(k\right) - 2 \, k} \\
+T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a - 2 i \, k\right)} \sin\left(k\right) - 2 \, k}
+\end{align*}
+, подставляя полученные значения коэффициента прохождения и отражения в S-матрицу, получаем определитель S-матрицы в замкнутой форме:
+
+\begin{equation}\label{eq:ring_detS}
+\det S = 
+\frac
+{\cos\left(k\right) + {\left(\frac{a}{2 k} + i\right)} \sin\left(k\right) - 1}
+{\cos\left(k\right) + {\left(\frac{a}{2 k} - i\right)} \sin\left(k\right) - 1}
+\end{equation}
+
+
+\subsection{Исследование полноты при $a=0$}
+Рассмотрим случай $a=0$:
+\[
+\det S
+= \frac
+{\cos\left(k\right) + \iu \sin\left(k\right) - 1}
+{\cos\left(k\right) - \iu \sin\left(k\right) - 1}
+= \frac{\eexp{\iu k} - 1}{\eexp{-\iu k} - 1}
+= -\eexp{i k}
+\]
+
+Из выражения выше легко заметить, что подынтегриальное выражение в (\todo{ссылку}) сводится к $\ln \abs{\det S} = \ln \eexp{- \Im k} = -\Im k$. Вычислим интеграл в пространстве единичного диска, для этого применим обратное преобразование Кэли $w(\zeta) = \iu \frac{1 + \zeta}{1 - \zeta}$, к подынтегральной функции: $\Im k \to \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right) $.
+
+\[
+  \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \ln \abs{\det S(\zeta)} d \zeta
+= \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right)  d\zeta = \dots
+\]
+, параметризуем контур интегрирования полярными координатами: $\zeta \to R \eexp{\iu \phi}, d\zeta \to R \iu \eexp{\iu \phi}$:
+\[
+\dots = \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \Im \left( \iu \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) R \iu \eexp{\iu \phi} d\phi
+\]
+
+Комплексный интеграл складывается из сумм интегралов действительной и мнимной части подынтегрального выражения. Рассчитаем мнимую часть:
+
+\begin{align*}
+   \Im \left(  \Im \left( \iu \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) R \iu \eexp{\iu \phi} \right)
+\\ &= R \Re \left(  \Re \left( \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) \eexp{\iu \phi} \right)
+\\ &= R \Re \left( \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) \Re \left(   \eexp{\iu \phi} \right)
+\\ &= R \Re \left( \frac{(1 + R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi}) }{(1 - R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi})} \right) \cos \phi
+\\ &= R \Re \left( \frac{1 - R^2 + 2 \iu R \sin \phi}{1 + R^2 - 2 R \cos \phi} \right) \cos \phi
+\\ &= R \frac{1 - R^2}{1 + R^2 - 2 R \cos \phi} \cos \phi 
+% \\ &= \frac{1 - R^2}{2} \frac{\cos \phi}{\frac{1 + R^2}{2R} - \cos \phi} 
+\end{align*}
+
+\todo{доинтегрировать}
+
+Интегрируя, получаем $2 \pi R^2$, что значит, что предел мнимой части при $R \to 1$ равен $2 \pi$, следовательно, по критерию полноты, система резонатных состояний графа $\Gamma$ не является полной на кольце $\Omega$.
+
+\todo{график S-матрицы?}
+
+
+\subsection{Исследование полноты при $a \ne 0$}
+\todo{опровергнуть!!}
+
+\todo{Объяснить результат}
+
+\todo{другие виды резонаторов?}
