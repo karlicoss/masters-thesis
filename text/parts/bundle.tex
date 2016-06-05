@@ -1,6 +1,327 @@
+\subsection{Модель исследования}
+% TODO http://tex.stackexchange.com/a/155317/5966 ?
+\begin{figure}[!htb] % TODO maybe just ref instead?
+\begin{tikzpicture}[scale=0.8] % TODO SCALE!!!
+\input{pic/resonator_bundle.tex}
+\end{tikzpicture}
+\caption{Квантовый граф $\Gamma$, состоящий из полубесконечных ребер $\Omega_L, \Omega_R$ и рассеивателя $\Omega$, представляющего из себя $W$ идентичных ребер длины 1. В вершинах $V_a$, $V_b$ находятся $\delta$-образные потенциальные ямы глубины $a$ и $b$ соответственно.}
+\end{figure}
 
-\todo{описание}
+\subsection{Вычисление $S$-матрицы}
+\todo{System of equations}
+\todo{Solutions for transmission/refleсtion?}
 
-\todo{figure}
+После решения систмы уравнений, мы получаем: \todo{индукция??}
+\begin{equation*}
+\resizebox{0.85\hsize}{!}{$
+\det S(k) = \frac{W {\left(a + b\right)} k \cos\left(k\right) + 2 i \, W k^{2} \cos\left(k\right) + {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}{W {\left(a + b\right)} k \cos\left(k\right) - 2 i \, W k^{2} \cos\left(k\right) - {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}
+$}
+\end{equation*}
+
+\subsection{Доказательство полноты резонансных состояний при $a = b = 0$}
+Для простоты, рассмотрим случай $a = 0, b = 0$. После подстановки, получим
+\begin{equation}\label{eq:bundle_s}
+s(k) = \abs{\det S(k)} = \abs{\frac{2 i \, W \cos\left(k\right) - {\left(W^{2} + 1\right)} \sin\left(k\right)}{2 i \, W \cos\left(k\right) + {\left(W^{2} + 1\right)} \sin\left(k\right)}}
+\end{equation}
 
 \todo{Определитель $S$-матрицы в замкнутой форме}
+
+\todo{график S-матрицы?}
+
+Зафиксируем $r$, и далее, для улучшения читаемости, определим $C = C(r)$, $R = R(r)$. Для каждого такого $r$, оценим интеграл и покажем, что последовательность оценок стремится к нулю.
+
+Воспольземся неравенством Коши-Буняковского:
+\[
+\big| \langle u,v \rangle \big| \leq \left\|u\right\| \left\|v\right\|
+\]
+, а если точнее, его специализацией на $\mcL^2[a, b]$:
+\[
+\abs{
+\int\limits_{t=a}^{b} f(t) g^*(t) dt
+}^2
+\le
+\int\limits_{t=a}^b \abs{f(t)}^2 dt 
+\int\limits_{t=a}^b \abs{g(t)}^2 dt 
+\]
+% 
+Чтобы воспользоваться неравенством, разделим подынтегральное выражение в \todo{ref} (\ref{critp}) на $f(t) g^*(t)$ следующим образом:
+\begin{equation*}
+\begin{aligned}
+a      &= 0 \\
+b      &= 2 \pi \\
+f(t)   &= \ln s(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
+g^*(t) &= \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
+\end{aligned}
+\end{equation*}
+Далее будет показано, что $\int \abs{g(t)}^2$ ограничено сверху константой, не зависящей от $r$, а $\int \abs{f(t)}^2$ стремится к нулю, из чего будет немедленно следовать сходимость интеграла (\ref{critp}).
+
+\subsubsection{Оценка $\int \abs{g(t)}^2$}
+
+\begin{align*}
+\abs{g(t)}^2 = \abs{g^*(t)}^2
+&=   \frac{\sqrt{R}^2}{\abs{R \cos t + \iu R \sin t + \iu C + i}^2} \\
+&=   \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} \\
+&= \frac{R}{R^2 \cos^2 t + R^2 \sin^2 t + (C + 1)^2  + 2 R (C + 1) \sin t} \\
+&=   \frac{1}{R + \frac{(C + 1)^2}{R} + 2 (C + 1) \sin t} \\ 
+\end{align*}
+
+Интеграл такого типа хорошо известен, и его первообразная при $a > b$:
+\[
+\int \frac{dx}{a + b \sin x} = \frac{2}{\sqrt{a^2 - b^2}} \atan \frac{a \tan \frac{x}{2} + b}{\sqrt{a^2 - b^2}}
+\]
+В нашем случае $a = R + \frac{(C + 1)^2}{R}$, $b = 2 (C + 1)$, и свойство $a > b$ действительно выполняется. \todo{Prove} Рассмотрим:
+\begin{align*}
+a^2 - b^2
+& =  (R + \frac{(C + 1)^2}{R})^2 - (2 (C + 1))^2\\
+& =  R^2 + \frac{(C+1)^4}{R^2} + 2 (C+1)^2 - 4 (C + 1)^2 \\
+& =  (R - \frac{(C + 1)^2}{R})^2 && \text{,так как $C > R$} \\
+&\ge (R - \frac{(R + 1)^2}{R})^2 \\
+&\ge (2 + \frac{1}{R})^2 \\
+&\ge 4
+\end{align*}
+
+\todo{аргх, добить}
+
+% Если сделать разрезВетвь первообразной может быть выбрана таким образом, что весь путь интегрирования от $0$ до $2 \pi$ проходит only affects a single Riemann sheet, therefore, we can use the fundamental theorem of calculus and in particular, the fact that $\abs{\int\limits_{x_1}^{x_2} f(x) dx} \le \abs{F(x_2) - F(x_1)} \le \abs{F(x_1)} + \abs{F(x_2)}$.
+
+% Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bounded by $\frac{\pi}{2}$, by a direct application of the fact above, we conclude that the integral is less than $\pi$.
+
+
+\subsubsection{Estimate of $\int \abs{f(t)}^2$}
+If we used $s(k)$ directly, it is would not possible to evaluate integral analytically. However, $s(k)$ has nice properly of being an absolute value of the determinant of $S$-matrix, which means $0 \le s(k) \le 1$ in the upper complex plane. This means that we are free to replace $s(k)$ with a lower bound $l(k)$ such that $0 \le l(k) \le s(k)$, and prove convergence of the resulting integral to $0$ instead. This reasoning is valid since for $s(k) \le 1$, $\ln l(k) \le \ln s(k) \le 0$ hence $\ln^2 s(k) \le \ln^2 l(k)$. We are going to rely on this fact heavily and use simple functions (e.g. piecewise linear) or simple well-known bounds for logarithm to estimate the original integral.
+
+
+\subsubsection{Computing $l(k)$}
+First, we will simplify $s(k)$ across all of the upper complex plane and make it independent of the real part of the argument.
+
+Notice that $s(k)$ is periodic w.r.t. real axis.
+\todo{Plot of $\abs{\det S}$ ?}
+% Since $\sin k$ and $\cos k$ are periodic w.r.t the real axis, with the period of $2 \pi$, 
+\todo{is this step really necessary?}
+
+$s(k)$ has countable number of zeros, all with $\Im k = \atanh \frac{2 W}{W^2 + 1}$. For brevity, let's define
+
+\[
+V = \frac{2 W}{W^2 + 1}
+\]
+
+\[
+Z = \atanh V
+\]
+
+Notice that for any $x$, $s(x + \iu y) \le s(\iu y)$
+\todo{How to prove? We could probably take a look at numerator and denominator in separate?}
+
+Now, we are can give $s(x + \iu y)$ a lower bound:
+
+\begin{align*}
+l_1(x + \iu y)
+ &= \abs{\frac{(W^2 + 1) \sinh y - 2 W \cosh y}{(W^2 + 1) \sinh y + 2 W \cosh y}} && \text{(since $\cosh y \ge 1$)}\\
+ &= \abs{\frac{\tanh y - V}{\tanh y + V}}
+\end{align*}
+
+Note that now $l_1(k)$ has zeroes along the line $\Im k = Z$, which means $\ln l_1(k)$ will have continuous number of singularities along this line. Intuitively, it shouldn't spoil anything, because the integration contour might have or have not crossed a singularity of $\ln s(k)$ anyway. And indeed, we'll show that the function is still integrable.
+
+\todo{Plot?}
+
+Next, since $\tanh y$ is non-negative and strictly incresing for $y \ge 0$, we can get rid of the absolute value:
+
+\todo{make the formula bigger}
+\[
+l_1(x + \iu y)
+ = \begin{cases}
+ \frac{V - \tanh y}{\tanh y + V}, & 0 \le y \le Z \\
+ \frac{\tanh y - V}{\tanh y + V}, & y > Z 
+ \end{cases}
+\]
+
+\subsection*{TODO???}
+
+\begin{align*}
+    & \int\limits_{t = 0}^{2 \pi} \ln^2 s(R \eexp{\iu t} + \iu C) \frac{R}{\norm{R \eexp{\iu t} + \iu C + i}^2} dt\\
+=   & \int\limits_{t = 0}^{2 \pi} \ln^2 s(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dt
+\end{align*}
+
+First, notice that since:
+\[
+\sin(-\pi/2 + t) = \sin(-\pi/2 - t) = - \cos t
+\]
+\[
+\cos^2(-\pi/2 + t) = \cos^2(-\pi/2 = t) = \sin^2 t
+\]
+
+, the integrand is symmetric w.r.t. the $y$ axis, and therefore, it's enough to prove the convergence of the integral for $-\pi/2 \le t \le \pi/2$.
+
+Next, we change the integration variable:
+\begin{align*}
+   y         &= R \sin t + C
+\\ t         &= \asin \frac{y - C}{R}
+\\ dt        &= \frac{1}{\sqrt{R^2 - (C - y)^2}} dy
+\\ \cos t    &= \frac{\sqrt{R^2 - (C - y)^2}}{R}
+\\ y(-\pi/2) &= C - R 
+\\ y(\pi/2)  &= C + R 
+\end{align*}
+, which results in:
+
+\begin{align*}
+    & \int\limits_{y = C - R}^{C + R} \ln^2 f(y) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dy \\
+=   & \int\limits_{y = C - R}^{C + R} \ln^2 f(y) \frac{R}{R^2 - (C - y)^2 + (y + 1)^2} \frac{1}{\sqrt{R^2 - (C - y)^2}} dy\\
+=   & \int\limits_{y = C - R}^{C + R} \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}  dy\\
+\end{align*}
+
+There are multiple singularities on the integration path ($y = C - R, Z, C + R$), and the function is quite complex, so it is hard to estimate directly. We split the integral into multiple segments.
+
+\subsubsection*{Case 1: $C - R \le y \le Z$}
+Crucial property of $s(k)$ is that as $\Im k$ gets close to $0$, $s(k)$ gets close to $1$. This is very important, since it implies that $\ln s(k)$ goes to $0$, which is essential for the convergence of this integral (intuitively, since the contour gets closer and closer to the real axis, so if $\ln s(k)$ did not nullify on $\bbR$, we wouldn't have convergence to zero). So, a sensible lower bound of $s(k)$ should respect that property as well and converge to $1$ as $\Im k \to 0$.
+
+Since $l_1$ is convex on $0 \le y \le Z$, it can be approximated from below with its first derivative at $0$. However, just this will violate the property of the estimate being positive (it is under the logarithm sign), so we have to be more careful and approximate the function at $Z$ with its first derivative as well, and then glue them together at some point $Z_0$:
+
+\begin{align*}
+f(y)
+& = 
+\begin{cases}
+s_1'(0) y + 1   &, 0 \le y < Z_0  \\
+s_1'(Z) (y - Z) &, Z_0 \le y < Z \\
+\end{cases}
+\\
+& =
+\begin{cases}
+\frac{-2}{V} y + 1   &, 0 \le y < Z_0  \\
+\frac{1}{2 V}(V^2 - 1) (y - Z) &, Z_0 \le y < Z \\
+\end{cases}
+\end{align*}
+
+Notice that the estimate does not necessarily has to be continuous, so any $Z_0$ works as long as the estimate is positive definite. However for computational convenience $Z_0 = \frac{V}{4}$ suits our needs pretty well. \todo{plot?}
+
+
+\subsection*{$C - R \le y < \frac{V}{4}$}
+
+First we will compute an upper bound for the integrand. Notice that for $C - R \le y \le \frac{V}{4}$:
+\begin{align*}
+       & \ln^2 s(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}
+\\ \le & \ln^2 s(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\end{align*}
+
+Next, we use the inequality $\frac{x}{1 + x} \le \ln (1 + x)$ for $x > -1$, where $x = -\frac{2}{V} y$. In this case, since the argument of the logarithm is less than $1$, $\ln^2 (1 + x) \le \frac{x^2}{(1 + x)^2}$.
+
+\begin{align*}
+       & \dots 
+\\ \le & \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2}  \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\end{align*}
+
+Replace $1 - \frac{2}{V}y$ with its minimum value $0.5$ and $R + C - y$ with its minimum value $R + C - \frac{V}{4}$.
+
+\todo{dammit, finish this. Ugh, we probably can just notice thate $\ln^2 f(y) \frac{1}{\sqrt{R + C - y}}$ grows and then calculate its value?}
+
+\subsection*{$\frac{V}{4} \le y < Z$}
+
+First we will compute an upper bound for the integrand. Notice that for $\frac{V}{4} \le y < Z$:
+
+\begin{align*}
+    & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}} 
+\\ \le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) \frac{V}{4} + 1} \frac{1}{\sqrt{R + C - Z}} \frac{1}{\sqrt{R - C + \frac{V}{4}}}
+\\ \le & \ln^2 \left( \frac{1}{2 V}(V^2 - 1) (y - Z) \right) \frac{R}{R^2 - C^2 + 2 (C + 1) \frac{V}{4} + 1} \frac{1}{\sqrt{R + C - Z}} \frac{1}{\sqrt{R - C + \frac{V}{4}}}
+\end{align*}
+
+Function $\ln^2(x)$ is integrable in the neighbourhood of $x = 0$ and it is well known \todo{reference?} that
+
+\[
+\int\limits_{x=x_0}^b \ln^2(a (x - b)) dx = (b - x_0) (\ln^2(a (x_0 - b)) - 2 \ln(a (x_0 - b)) + 2)
+\]
+
+In our case, $x_0 = \frac{V}{4}$, $b = Z$, therefore $x_0 - b \ne 0$ and the integral is bounded by a constant independent of $R$ and $C$. Therefore, the behaviour of the function is defined by the behaviour of its constant multiplier:
+
+\[
+\frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R - C + \frac{V}{4}}} \frac{1}{\sqrt{R + C - Z}}
+\]
+
+As $r \to \infty$, clearly $R \to \infty$, $C \to \infty$, $R - C \to 0$ and one can easily see that the expression above is $\mcO(\frac{1}{\sqrt{R + C}})$, therefore, zero in the limit. \todo{dependency on $r$ everywhere???}
+
+\subsubsection*{Case 2: $y > Z$}
+For $y > Z$, 
+\[
+s_1(x + \iu y) 
+ = \frac{\tanh y - V}{\tanh y + V}
+ = 1 - 2 \frac{V}{\tanh y + V}
+\]
+
+% TODO
+% https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
+ % \todo{proof? just take a look at second derivative?}
+Since $s_1$ is concave, strictly increasing and for fixed $r$, our domain of interest is only $\Im k \le C + R$, we estimate the function from below by a linear function $s_4$: \todo{plot?}
+
+\[
+s_4(x + \iu y) = 
+\frac{s_1(C + R)}{C + R - Z} (y - Z)
+\]
+
+% \subsection*{Proof of convergence}
+
+% \[
+% l(x + \iu y) =
+% \begin{cases}
+%  \\
+% s_2'(Z)(y - Z)                       &, Z_0 < y \le Z \\
+% \frac{s_1(C + R)}{C + R - Z} (y - Z) &, y > Z
+% \end{cases}
+% \]
+
+
+First, notice that for $Z \le y \le R + C$:
+\begin{align*}
+    & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}} \\
+\le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\end{align*}
+
+
+To estimate, we will split the inegral in three parts.
+
+\subsection*{from $Z$ to $Z + \frac{1}{R}$}
+
+\begin{align*}
+       & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) Z + 1} \frac{1}{\sqrt{R + C - (Z + \frac{1}{R})}} \frac{1}{\sqrt{R - C + Z}}
+% \\  = & \ln^2 f(y) \mcO()
+\end{align*}
+
+% TODO REFERENCE!
+$\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy$ is easy to compute directly, using the fact that:
+
+\[
+    \int\limits_b^{b + c} \ln^2 (a (x - b)) dx = c (\ln^2(a c) - 2 \ln (a c) + 2)
+\]
+
+Hence, $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy = \frac{1}{R} ( \ln^2 (\frac{s_1(C + R)}{C + R - Z} \frac{1}{R}) - 2 \ln (\frac{s_1(C + R)}{C + R - Z} \frac{1}{R}) + 2)$, which clearly is $\mcO(\frac{\ln^2(C + R - Z)}{R})$. Taking into account that the constant coefficient before the integral is of order $\frac{1}{\sqrt{R}}$ \todo{???}, it is clear that the first part goes to $0$ as $R, C \to \infty$.
+
+
+\subsection*{Second part, from $Z + \frac{1}{R}$ to $C$}
+
+\begin{align*}
+       & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \ln^2 f(Z + \frac{1}{R}) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - C}} \frac{1}{\sqrt{R - C + Z}}
+% \\  = & \ln^2 f(y) \mcO()
+\end{align*}
+
+\todo{Essentially, we have to integrate blah-blah}. We use well known integral:
+
+\[
+\int \frac{1}{a x + b} = \frac{\ln (a x + b)}{a}
+\]
+, in our case $a = 2 (C + 1)$, $b = R^2 - C^2 + 1$. By applying the \todo{fundamental theorem?} over the second interval, we get:
+
+\[
+\frac{\ln \frac{2 (C + 1) C + R^2 - C^2 + 1}{2 (C + 1) (Z + \frac{1}{R}) + R^2 - C^2 + 1}}{2 (C + 1)} = \frac{\mcO(\ln(C^2 + R^2)) + \mcO(\todo{TODO})}{C + 1}
+\]
+
+\todo{We should probably estimate logarithm at zero by a hyperbola after that. Finish the proof.}
+
+\subsection*{Third part, from $C$ to $C + R$}
+
+\begin{align*}
+       & \ln^2 f(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \ln^2 f(C) \frac{R}{R^2 - C^2 + 2 (C + 1) C + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+% \\  = & \ln^2 f(y) \mcO()
+\end{align*}
+
+Integral of $\frac{1}{\sqrt{R + C - y}}$ from $C$ to $C + R$ is trivial and equals to $2 \sqrt{R}$. \todo{Simplify, it's clear that integral goes to zero}
