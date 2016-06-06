@@ -260,18 +260,21 @@ def test_logarithmic_paper():
         # we can't replace y in denominator to ff, still too fast
         e(y) = 1 - 2 / V * y
         est_left = est_base + [
-            ln(e(y=y))^2 * R                        / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
+            # ln(w(y=mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)), ugh, hard to prove that function increases
+            ln(e(y=y))^2                          * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1)  * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
             # -x / (1 - x) <= log(1 - x)
-            ((- 2 / V * y) / (1 - 2 / V * y))^2  * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
+            ((- 2 / V * y) / (1 - 2 / V * y ))^2  * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1)  * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
             # since x / sqrt(C + x) is always increasing,
-            (-2 / V * mm)^2 / sqrt(R - C + mm) * (1 / (1 - 2 / V * mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1) * 1 / (sqrt(R + C - Z)),
+            ((- 2 / V * y) / (1 - 2 / V * mm))^2  * R / (-C^2 + R^2 + 2 * (C + 1) * y + 1)  * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
+            # notice that function y^2/(a + b * y) increases
+            ((- 2 / V * mm) / (1 - 2 / V * mm))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + y) * sqrt(R + C - Z)),
             # yay!!!
         ]
 
         ee(y) = 1 / (2 * V) * (V^2 - 1) * (y - Z)
         est_right = est_base + [
-            ln(w(y=y))^2  * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + mm) * sqrt(R + C - Z)),
-            ln(ee(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + mm) * sqrt(R + C - Z)),
+            # ln(w(y=y))^2  * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + mm) * sqrt(R + C - Z)),
+            # ln(ee(y=y))^2 * R / (-C^2 + R^2 + 2 * (C + 1) * mm + 1) * 1 / (sqrt(R - C + mm) * sqrt(R + C - Z)),
         ]
         # f3: singularity of type ln^2(x) around x = 0 is integrable and bounded by constant since V/4 is independent of R and C
 

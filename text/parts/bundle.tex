@@ -206,18 +206,35 @@ l'(Z) (y - Z) &, Z_0 \le y < Z \\
 Посчитаем верхнюю оценку на подынтегральное выражение (\ref{eq:int_f}). Заметим, что при $C - R \le y \le \frac{V}{4}$:
 \begin{align*}
        & \ln^2 l(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + y}}
-\\ \le & \ln^2 l(y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
-\\ \le & \ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - Z}} \frac{1}{\sqrt{R - C + y}}
+% \\ \le & \ln^2 (1 - \frac{2}{V} y) \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
 \end{align*}
 ,воспользуемся неравенством $\frac{x}{1 + x} \le \ln (1 + x)$ для $x > -1$, где $x = -\frac{2}{V} y$. Так как выражение под логарифмом меньше единицы, получим что $\ln^2 (1 + x) \le \frac{x^2}{(1 + x)^2}$:
 \begin{align*}
        & \dots 
-\\ \le & \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2}  \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - y}} \frac{1}{\sqrt{R - C + Z}}
+\\ \le & \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V}y)^2}  \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - Z}} \frac{1}{\sqrt{R - C + y}}
+\\ \le & \frac{\frac{4}{V^2}y^2}{(1 - \frac{2}{V} \frac{V}{4})^2}  \frac{R}{R^2 - C^2 + 2 (C + 1) y + 1} \frac{1}{\sqrt{R + C - Z}} \frac{1}{\sqrt{R - C + y}}
 \end{align*}
 
-Replace $1 - \frac{2}{V}y$ with its minimum value $0.5$ and $R + C - y$ with its minimum value $R + C - \frac{V}{4}$.
+Заметим, что подынтегральное выражение теперь имеет вид $\frac{y^2}{a + b y}$, где $a = R^2 - C^2 + 1, b = 2 (C + 1)$, и при достаточно больших $R$ и $C$, $a > 0$ и $b > 0$. Заметим, что при этом $\frac{y^2}{a + b y}$ неотрицательно при $y > 0$, и строго возрастает:
+\[
+  \left(\frac{y^2}{a + b y}\right)'
+= \frac{2y}{a + by} + y^2 \frac{-b}{(a + by)^2}
+= \frac{2y (a + by) - b y^2}{(a + by)^2}
+= \frac{y (2a + by)}{(a + by)^2}
+\ge 0
+\]
 
-\todo{dammit, finish this. Ugh, we probably can just notice thate $\ln^2 f(y) \frac{1}{\sqrt{R + C - y}}$ grows and then calculate its value?}
+Следовательно, функцию можно оценить сверху ее значением на правом конце интервала в точке $\frac{V}{4}$, и легко видеть, что:
+\[
+\frac{y^2}{a + b y} = \mcO\left(\frac{1}{R}\right)
+\]
+
+Оставшаяся часть интеграла имеет вид:
+\[
+\int\limits_{C - R}^{\frac{V}{4}} \frac{1}{\sqrt{R - C + y}} = 2 \sqrt{\frac{V}{4} - C + R} = \mcO(1)
+\]
+, и в итоге весь интеграл на участке $[C - R, \frac{V}{4})$ имеет порядок $\mcO\left(\frac{1}{R}\right)$.
 
 \subsubsection{$\frac{V}{4} \le y < Z$}
 
