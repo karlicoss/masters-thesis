@@ -25,13 +25,11 @@ $}
 s(k) = \abs{\det S(k)} = \abs{\frac{2 i \, W \cos\left(k\right) - {\left(W^{2} + 1\right)} \sin\left(k\right)}{2 i \, W \cos\left(k\right) + {\left(W^{2} + 1\right)} \sin\left(k\right)}}
 \end{equation}
 
-\todo{Определитель $S$-матрицы в замкнутой форме}
-
 \mtodo{график S-матрицы?}
 
 Зафиксируем $r$, и далее, для улучшения читаемости, определим $C = C(r)$, $R = R(r)$. Для каждого такого $r$, оценим интеграл и покажем, что последовательность оценок стремится к нулю.
 
-Воспольземся неравенством Коши-Буняковского:
+Воспользуемся неравенством Коши-Буняковского:
 \[
 \big| \langle u,v \rangle \big| \leq \left\|u\right\| \left\|v\right\|
 \]
@@ -106,7 +104,7 @@ a^2 - b^2
 
 Легко видеть, что $s(k)$ периодична относительно вещественной части аргумента при неизменной комплексной части.
 % Since $\sin k$ and $\cos k$ are periodic w.r.t the real axis, with the period of $2 \pi$, 
-\todo{is this step really necessary?}
+\mtodo{is this step really necessary?}
 
 У функции $s(k)$ есть счетное число нулей, и для всех $\Im k = \atanh \frac{2 W}{W^2 + 1}$. Для краткости, дадим обозначения:
 
@@ -117,7 +115,7 @@ a^2 - b^2
 \end{aligned}
 \end{equation*}
 
-Далее, заметим что для любого $x$, $s(x + \iu y) \le s(\iu y)$. \todo{How to prove? We could probably take a look at numerator and denominator in separate?}. После всех вышеупомянутых замечаний, для $s(x + \iu y)$ можно дать довольно простую нижнюю оценку:
+Далее, заметим что для любого $x$, $s(x + \iu y) \le s(\iu y)$. \mtodo{How to prove? We could probably take a look at numerator and denominator in separate?}. После всех вышеупомянутых замечаний, для $s(x + \iu y)$ можно дать довольно простую нижнюю оценку:
 
 \begin{align*}
 l(x + \iu y)
@@ -145,8 +143,8 @@ l(x + \iu y)
 \todo{move up?}
 \begin{align*}
        \int\limits_{t=0}^{2 \pi} \abs{f(t)}^2 dt
-   = & \int\limits_{t = 0}^{2 \pi} \ln^2 s(R \eexp{\iu t} + \iu C) \frac{R}{\norm{R \eexp{\iu t} + \iu C + i}^2} dt
-\\ = & \int\limits_{t = 0}^{2 \pi} \ln^2 f(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dt
+   = & \int\limits_{t = 0}^{2 \pi} \ln^2 l(R \eexp{\iu t} + \iu C) \frac{R}{\norm{R \eexp{\iu t} + \iu C + i}^2} dt
+\\ = & \int\limits_{t = 0}^{2 \pi} \ln^2 l(R \sin t + C) \frac{R}{R^2 \cos^2 t + (R \sin t + C + 1)^2} dt
 \end{align*}
 % TODO f зависит только от Im k
 
@@ -182,7 +180,7 @@ l(x + \iu y)
 $}
 \end{equation}
 
-На пути интегрирования присутствуют особенности при $y = C - R$, $y = Z$, $y = C + R$), и подынтегрельное выражение все еще достаточно сложно для непосредственной оценки. Разделим интеграл на несколько сегментов и оценим каждый.
+На пути интегрирования присутствуют особенности при $y = C - R$, $y = Z$, $y = C + R$, и подынтегрельное выражение все еще достаточно сложно для непосредственной оценки. Разделим интеграл на несколько сегментов и оценим каждый.
 
 \subsubsection{Случай 1: $C - R \le y \le Z$}
 Очень важным свойством $s(k)$ является ее стремление к 1 при $\Im k$ стремящемся к нулю. Благодаря этому $\ln s(k)$ стремится к нулю, что в свою очередь необходимо чтобы компенсировать сингулярность функции $\frac{1}{R - C + y}$ при $y = C - R$. Интуитивно, контур интегрирования становится все ближе и ближе к $\bbR$ при увеличении радиуса и если бы $\ln s(k)$ не занулялась, сходимость бы пропала. Таким образом, разумная нижняя оценка на $s(k)$ также должна удовлетворять свойству сходимости к $1$ при $\Im k$ стремящемся к $0$.
@@ -192,8 +190,8 @@ $}
 f(y)
 & = 
 \begin{cases}
-s_1'(0) y + 1   &, 0 \le y < Z_0  \\
-s_1'(Z) (y - Z) &, Z_0 \le y < Z \\
+l'(0) y + 1   &, 0 \le y < Z_0  \\
+l'(Z) (y - Z) &, Z_0 \le y < Z \\
 \end{cases}
 \\
 & =
@@ -249,21 +247,20 @@ Replace $1 - \frac{2}{V}y$ with its minimum value $0.5$ and $R + C - y$ with its
 \subsubsection{Случай 2: $y > Z$}
 При $y > Z$, 
 \[
-s_1(x + \iu y) 
+l(x + \iu y) 
  = \frac{\tanh y - V}{\tanh y + V}
  = 1 - 2 \frac{V}{\tanh y + V}
 \]
 
-% TODO
 % https://proofwiki.org/wiki/Inverse_of_Strictly_Increasing_Strictly_Concave_Real_Function_is_Strictly_Convex
- % \todo{proof? just take a look at second derivative?}
-Так как $s_1$ вогнута, строго возрастает, и для фиксированного $r$, нас интересуют только $y \le C + R$, мы можем оценить функцию линейной: \mtodo{plot?}
+\mtodo{proof? just take a look at second derivative?}
+Так как $l$ вогнута, строго возрастает, и для фиксированного $r$, нас интересуют только $y \le C + R$, мы можем оценить функцию линейной: \mtodo{plot?}
 \[
-s_4(y) = 
-\frac{s_1(C + R)}{C + R - Z} (y - Z) % TODO actually, even C + R is okay but whatever
+f(y) = 
+\frac{l(C + R)}{C + R - Z} (y - Z) % TODO actually, even C + R is okay but whatever
 \]
 
-\todo{Заметим что $s_1$ в точке $C + R$ ограничена константой бла бла бла}
+Заметим, что в точке $C + R$, для начиная с достаточно большого $r$, функция $l(y)$ с зажата константами, не зависящами от $C$ и $R$. Это легко понять так как $\tanh y$ на бесконечности уходит к $1$, соответственно, $l(y)$ в пределе будет равно $1 - \frac{2 V}{V + 1}$. Это является довольно важным свойством данного квантового графа, если бы $l$ на бесконечности устремлялась к нулю, эта часть доказательства не могла бы быть проведена. \mtodo{elaborate, ref to ring?}
 
 В начале заметим, что на всем участке $Z \le y \le R + C$ у функции $\frac{1}{\sqrt{R - C + y}}$ нет сингулярности, и подынтегральное выражение (\ref{eq:int_f}) можно оценить как:
 \begin{equation}\label{eq:int_f_up}
@@ -290,7 +287,7 @@ $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy$ легко вычислить 
     \int\limits_b^{b + c} \ln^2 (a (x - b)) dx = c (\ln^2(a c) - 2 \ln (a c) + 2)
 \]
 
-Таким образом, $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy = \frac{1}{R} ( \ln^2 (\frac{s_1(C + R)}{C + R - Z} \frac{1}{R}) - 2 \ln (\frac{s_1(C + R)}{C + R - Z} \frac{1}{R}) + 2)$. Так как $s_1(C+R)$ ограничена константами, не зависящами от $r$ \todo{показать, это важно в доказательствах для других систем}, раскрывая логарифмы, легко можно понять что выражение является $\mcO(\frac{\ln^2 R}{R})$. Учитывая что коэффициент перед интегралом:
+Таким образом, $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy = \frac{1}{R} ( \ln^2 (\frac{l(C + R)}{C + R - Z} \frac{1}{R}) - 2 \ln (\frac{l(C + R)}{C + R - Z} \frac{1}{R}) + 2)$. Так как $l(C + R)$ ограничена константами, не зависящами от $r$, раскрывая логарифмы, легко можно понять что выражение принадлежит классу $\mcO(\frac{\ln^2 R}{R})$. Учитывая что коэффициент перед интегралом:
 \[
 \frac{R}{R^2 - C^2 + 2 (C + 1) Z + 1} \frac{1}{\sqrt{R + C - (Z + \frac{1}{R})}} \frac{1}{\sqrt{R - C + Z}}
 \]
@@ -312,7 +309,7 @@ $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy$ легко вычислить 
 \frac{\ln \frac{2 (C + 1) C + R^2 - C^2 + 1}{2 (C + 1) (Z + \frac{1}{R}) + R^2 - C^2 + 1}}{2 (C + 1)} = \mcO\left( \frac{\ln R}{R} \right)
 \]
 
-При стремлении $R$ к бесконечности, $\ln^2 f(Z + \frac{1}{R})$ будет также стремиться к бесконечности, поэтому необходимо оценить порядок особенности. Так как $\ln f(Z + \frac{1}{R}) = \ln \left( \frac{s_1(C + R)}{C + R - Z} \frac{1}{R} \right) = C - \ln (C + R - Z) - \ln R$, легко видеть что $\ln^2 f(Z + \frac{1}{R}) = \mcO (\ln^2 R)$.
+При стремлении $R$ к бесконечности, $\ln^2 f(Z + \frac{1}{R})$ будет также стремиться к бесконечности, поэтому необходимо оценить порядок особенности. Так как $\ln f(Z + \frac{1}{R}) = \ln \left( \frac{l(C + R)}{C + R - Z} \frac{1}{R} \right) = C - \ln (C + R - Z) - \ln R$, легко видеть что $\ln^2 f(Z + \frac{1}{R}) = \mcO (\ln^2 R)$.
 
 В резульате, комбинируя все оценки, получаем: $\mcO (\ln^2 R) \mcO\left( \frac{\ln R}{R} \right) \frac{R}{\sqrt{R}} \frac{1}{\sqrt{R - C + Z}} = \mcO\left( \frac{\ln^3 R}{\sqrt{R}} \right)$, что означает что интеграл на этом участке стремится к $0$ с увеличением $r$.
 

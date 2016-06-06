@@ -1,0 +1,5 @@
+Add to slides? Unit cicle in Cayley space maps to $R$, but $\ln\abs{\det S}$ on $R$ is zero everywhere can't interchange limit and integral
+
+Prove about zeroes separate by finite intervals?
+
+Prove about arbitrary linear function?
