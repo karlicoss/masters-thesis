@@ -1,4 +1,5 @@
-\newcommand{\Wglen}{10.0}; % waveguide length
+\newcommand{\Wglen}{6.0}; % waveguide length
+\newcommand{\Warrlen}{2.0}; % wave arrow length
 
 \coordinate (LLL) at (-\Wglen - 1, 0);
 \coordinate (RRR) at ( \Wglen + 1, 0);
@@ -18,9 +19,9 @@
 \draw[ultra thick, dotted] (RR) -- (RRR);
 %
 
-\draw[<-] (-\Wglen + 1, 2) -- (-\Wglen + 5, 2) node [midway, above] {$R e^{-\iu k x}$};
-\draw[->] (-\Wglen + 1, 0.5) -- (-\Wglen + 5, 0.5) node [midway, above] {$e^{\iu k x}$};
-\draw[->] (\Wglen - 5, 0.5) -- (\Wglen - 1, 0.5) node [midway, above] {$T e^{\iu k x}$};
+\draw[<-] (-\Wglen + 1, 1.5) -- (-\Wglen + 1 + \Warrlen, 1.5) node [midway, above] {$R e^{-\iu k x}$};
+\draw[->] (-\Wglen + 1, 0.5) -- (-\Wglen + 1 + \Warrlen, 0.5) node [midway, above] {$e^{\iu k x}$};
+\draw[->] (\Wglen - 1 - \Warrlen, 0.5) -- (\Wglen - 1, 0.5)   node [midway, above] {$T e^{\iu k x}$};
 
 \draw[ultra thick] (0, 2) node [above] {$\Omega$};
 
