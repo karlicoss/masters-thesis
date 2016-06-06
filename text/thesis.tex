@@ -33,8 +33,17 @@
 \graphicspath{{pic/}}
 \usepackage{tikz}
 
+
 \usepackage{mathtools} % xmapsto, \Vector
+
 \usepackage{comment}
+\usepackage[colorinlistoftodos,prependcaption]{todonotes} % TODO: move to preamble!!
+\presetkeys%
+    {todonotes}%
+    {inline,backgroundcolor=red}{}
+% \newcommand{\itodo}[1]{\todo[inline]{#1}}
+
+
 \usepackage{soul} % text striking
 \usepackage{amsmath,amsfonts,amssymb,amsthm,amscd,amsxtra}
 \usepackage{physics}
@@ -188,6 +197,9 @@
 % \input{parts/trash.tex}
 
 \printbibliography
+
+\newpage
+\listoftodos[Notes]
 
 %\startappendices
 %\input{parts/appendix1.tex}

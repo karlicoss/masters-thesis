@@ -6,6 +6,8 @@
 \end{tikzpicture}
 \caption{Квантовый граф $\Gamma$, состоящий из полубесконечных ребер $\Omega_L, \Omega_R$ и рассеивателя $\Omega$, представляющего из себя окружность длиной $1$.}
 \end{figure}
+\todo{уменьшить длину рисунка, увеличить высоту}
+
 
 Мы рассматриваем случай рассеяния волны c волновым вектором $k$, приходящей слева направо. Таким образом, волновые функции на различных частях графа принимают следующий вид:
 
@@ -65,38 +67,38 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
 = -\eexp{i k}
 \]
 
-Из выражения выше легко заметить, что подынтегральное выражение в (\todo{ссылку}) сводится к $\ln \abs{\det S} = \ln \eexp{- \Im k} = -\Im k$. Вычислим интеграл в пространстве единичного диска, для этого применим обратное преобразование Кэли (\ref{eq:cayley_inverse}), к подынтегральной функции: $\Im k \to \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right) $.
+Из выражения выше легко заметить, что подынтегральное выражение в критерии полноты (\ref{eq:crit_cayley}) сводится к $\ln \abs{\det S} = \ln \eexp{- \Im k} = -\Im k$. Вычислим интеграл в пространстве единичного диска, для этого применим обратное преобразование Кэли (\ref{eq:cayley_inverse}), к подынтегральной функции: $\Im k \to \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right) $.
 
 \[
-  \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \ln \abs{\det S(\zeta)} d \zeta
-= \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right)  d\zeta = \dots
+  \lim\limits_{r = 1} \int\limits_{\abs{\zeta} = r} \ln \abs{\det S(\zeta)} d \zeta
+= \lim\limits_{r = 1} \int\limits_{\abs{\zeta} = r} \Im \left( \iu \frac{1 + \zeta}{1 - \zeta} \right)  d\zeta = \dots
 \]
-, параметризуем контур интегрирования полярными координатами: $\zeta \to R \eexp{\iu \phi}, d\zeta \to R \iu \eexp{\iu \phi}$:
+, параметризуем контур интегрирования полярными координатами: $\zeta \to r \eexp{\iu \phi}, d\zeta \to r \iu \eexp{\iu \phi}$:
 \[
-\dots = \lim\limits_{R = 1} \int\limits_{\abs{\zeta} = R} \Im \left( \iu \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) R \iu \eexp{\iu \phi} d\phi
+\dots = \lim\limits_{r = 1} \int\limits_{\abs{\zeta} = r} \Im \left( \iu \frac{1 + r \eexp{\iu \phi}}{1 - r \eexp{\iu \phi}} \right) r \iu \eexp{\iu \phi} d\phi
 \]
 
 Комплексный интеграл складывается из сумм интегралов действительной и мнимной части подынтегрального выражения. Рассчитаем мнимую часть:
 
 \begin{align*}
-   \Im \left(  \Im \left( \iu \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) R \iu \eexp{\iu \phi} \right)
-\\ &= R \Re \left(  \Re \left( \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) \eexp{\iu \phi} \right)
-\\ &= R \Re \left( \frac{1 + R \eexp{\iu \phi}}{1 - R \eexp{\iu \phi}} \right) \Re \left(   \eexp{\iu \phi} \right)
-\\ &= R \Re \left( \frac{(1 + R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi}) }{(1 - R \eexp{\iu \phi}) (1 - R \eexp{-\iu \phi})} \right) \cos \phi
-\\ &= R \Re \left( \frac{1 - R^2 + 2 \iu R \sin \phi}{1 + R^2 - 2 R \cos \phi} \right) \cos \phi
-\\ &= R \frac{1 - R^2}{1 + R^2 - 2 R \cos \phi} \cos \phi 
+   \Im \left(  \Im \left( \iu \frac{1 + r \eexp{\iu \phi}}{1 - r \eexp{\iu \phi}} \right) r \iu \eexp{\iu \phi} \right)
+\\ &= r \Re \left(  \Re \left( \frac{1 + r \eexp{\iu \phi}}{1 - r \eexp{\iu \phi}} \right) \eexp{\iu \phi} \right)
+\\ &= r \Re \left( \frac{1 + r \eexp{\iu \phi}}{1 - r \eexp{\iu \phi}} \right) \Re \left(   \eexp{\iu \phi} \right)
+\\ &= r \Re \left( \frac{(1 + r \eexp{\iu \phi}) (1 - r \eexp{-\iu \phi}) }{(1 - r \eexp{\iu \phi}) (1 - r \eexp{-\iu \phi})} \right) \cos \phi
+\\ &= r \Re \left( \frac{1 - r^2 + 2 \iu r \sin \phi}{1 + r^2 - 2 r \cos \phi} \right) \cos \phi
+\\ &= r \frac{1 - r^2}{1 + r^2 - 2 r \cos \phi} \cos \phi 
 % \\ &= \frac{1 - R^2}{2} \frac{\cos \phi}{\frac{1 + R^2}{2R} - \cos \phi} 
 \end{align*}
 
-\todo{доинтегрировать}
+% MINOR доинтегрировать
 
-Интегрируя, получаем $2 \pi R^2$, что значит, что предел мнимой части при $R \to 1$ равен $2 \pi$, следовательно, по критерию полноты, система резонатных состояний графа $\Gamma$ не является полной на кольце $\Omega$.
+Интегрируя, получаем $2 \pi r^2$, что значит, что предел мнимой части при $r \to 1$ равен $2 \pi$, следовательно, по критерию полноты, система резонатных состояний графа $\Gamma$ не является полной на кольце $\Omega$.
 
 \todo{график S-матрицы?}
 
 
 \subsection{Исследование полноты при $a \ne 0$}
-\todo{опровергнуть!!}
+\todo{Доказать!}
 
 \todo{Объяснить результат}
 
