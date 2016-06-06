@@ -52,7 +52,7 @@ f(t)   &= \ln s(R \eexp{\iu t} + \iu C) \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C +
 g^*(t) &= \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
 \end{aligned}
 \end{equation*}
-Далее будет показано, что $\int \abs{g(t)}^2$ ограничено сверху константой, не зависящей от $r$, а $\int \abs{f(t)}^2$ стремится к нулю, из чего будет немедленно следовать сходимость интеграла (\ref{critp}).
+Далее будет показано, что $\int \abs{g(t)}^2$ ограничено сверху константой, не зависящей от $r$, а $\int \abs{f(t)}^2$ стремится к нулю, из чего будет немедленно следовать сходимость интеграла (\ref{eq:critp}).
 
 \subsubsection{Оценка $\int \abs{g(t)}^2$}
 
@@ -88,12 +88,9 @@ a^2 - b^2
 &\ge 4
 \end{align*}
 
-\todo{аргх, добить}
+Чтобы избежать разрыва первообразной в точке $\pi$ (из-за неопределенности $\tan \pi$), изменим интервал интегрирования на $(-\pi, \pi)$, на котором первообразная непрерывна. Таким образом, можно применить формулу Ньютона-Лейбница, в частности, тот факт, что $\abs{\int\limits_{x_1}^{x_2} f(x) dx} \le \abs{F(x_2) - F(x_1)} \le \abs{F(x_1)} + \abs{F(x_2)}$.
 
-% Заметим, что по стандартному определнию арктангекса, первообразная будет иметь разрыв в точке 
-% Если сделать разрезВетвь первообразной может быть выбрана таким образом, что весь путь интегрирования от $0$ до $2 \pi$ проходит only affects a single Riemann sheet, therefore, we can use the fundamental theorem of calculus and in particular, the fact that $\abs{\int\limits_{x_1}^{x_2} f(x) dx} \le \abs{F(x_2) - F(x_1)} \le \abs{F(x_1)} + \abs{F(x_2)}$.
-
-% Now, since $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$ and $\atan$ is bounded by $\frac{\pi}{2}$, by a direct application of the fact above, we conclude that the integral is less than $\pi$.
+Итого, так как $\frac{2}{\sqrt{a^2 - b^2}} \le \frac{2}{2} = 1$, а $\abs{\atan x}$ ограничен сверху как $\frac{\pi}{2}$, непосредственно применяя вышеупомянутый факт, получаем что весь интеграл ограничен сверху константой $\pi$.
 
 
 \subsubsection{Оценка $\int \abs{f(t)}^2$}
@@ -338,3 +335,10 @@ $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy$ легко вычислить 
 \end{align*}
 
 Интеграл $\frac{1}{\sqrt{R + C - y}}$ от $C$ до $C + R$ тривиален и равен $2 \sqrt{R}$. Функция $f$ в точке $C$ ограничена константами не зависящами от $R$ и $C$, следовательно, и квадрат ее логарифма. Очевидно, что в результате получим выражение $\mcO \left( \frac{1}{R} \right) \sqrt R = \mcO \left( \frac{1}{\sqrt{R}} \right)$.
+
+\subsubsection{Оценка $\int \abs{f(t)}^2$: итог}
+Итого, мы разбили интегрирование на пять различных участков, и в итоге имеем порядок интеграла:
+\[
+\mcO \left( \frac{1}{R} \right) + \mcO \left( \frac{1}{\sqrt{R}} \right) + \mcO \left( \frac{1}{\sqrt{R}} \right) + \mcO\left( \frac{\ln^3 R}{\sqrt{R}} \right) + \mcO \left( \frac{1}{\sqrt{R}} \right) = \mcO\left( \frac{\ln^3 R}{\sqrt{R}} \right)
+\]
+, что означает, что весь интеграл уходит в 0 при стремлении $r$ к 1 (соответственно, $R$ к бесконечности), что и требовалось доказать.
