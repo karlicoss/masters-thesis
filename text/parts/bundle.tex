@@ -1,18 +1,26 @@
 \subsection{Модель исследования}
 % TODO http://tex.stackexchange.com/a/155317/5966 ?
-\begin{figure}[!htb] % TODO maybe just ref instead?
+\begin{figure}
 \centering
 \begin{tikzpicture}[scale=1.1] % TODO SCALE!!!
 \input{pic/resonator_bundle.tex}
 \end{tikzpicture}
-\caption{Квантовый граф $\Gamma$, состоящий из полубесконечных ребер $\Omega_L, \Omega_R$ и рассеивателя $\Omega$, представляющего из себя $W$ идентичных ребер длины 1. В вершинах $V_a$, $V_b$ находятся $\delta$-образные потенциальные ямы глубины $a$ и $b$ соответственно.}
+\caption{Квантовый граф $\Gamma$, состоящий из полубесконечных ребер $\Omega_L, \Omega_R$ и рассеивателя $\Omega$, представляющего из себя $W$ идентичных ребер длины 1. В вершинах $V_a$, $V_b$ находятся $\delta$-образные потенциальные ямы глубины $a$ и $b$ соответственно.}\label{fig:res_bundle}
 \end{figure}
 
-\subsection{Вычисление $S$-матрицы}
-\todo{System of equations}
-\mtodo{Solutions for transmission/refleсtion?}
+Рассмотрим систему на \autoref{fig:res_bundle}. Оператор Шредингера действует как $-\dv[2]{\psi}{x}$ на ребрах, а в вершинах $V_a$ и $V_b$ находятся $\delta$-образные потенциальные ямы, порождающие граничные условия:
 
-После решения систмы уравнений, мы получаем:
+\begin{equation}\label{eq:bundle_system}
+\begin{aligned}
+   \forall i: \psi_i(0) &= \psi_L(0)
+\\ \forall i: \psi_i(1) &= \psi_R(0)
+\\ \psi'_L(0) - \sum\limits_{i = 1}^W \psi'_i(0) &= a \psi_L(0)
+\\ -\psi'_R(0) + \sum\limits_{i = 1}^W \psi'_i(1) &= b \psi_R(0)
+\end{aligned}
+\end{equation}
+
+\subsection{Вычисление $S$-матрицы}
+После решения системы уравнений \ref{eq:bundle_system} в сочетании с \ref{eq:wlwl}, мы получаем:
 \begin{equation*}
 \resizebox{0.85\hsize}{!}{$
 \det S(k) = \frac{W {\left(a + b\right)} k \cos\left(k\right) + 2 i \, W k^{2} \cos\left(k\right) + {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}{W {\left(a + b\right)} k \cos\left(k\right) - 2 i \, W k^{2} \cos\left(k\right) - {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}
@@ -112,8 +120,7 @@ a^2 - b^2
 \end{aligned}
 \end{equation*}
 
-Далее, заметим что для любого $x$, $s(x + \iu y) \le s(\iu y)$. \mtodo{How to prove? We could probably take a look at numerator and denominator in separate?}. После всех вышеупомянутых замечаний, для $s(x + \iu y)$ можно дать довольно простую нижнюю оценку:
-
+Далее, заметим что для любого $x$, $s(x + \iu y) \le s(\iu y)$. \mtodo{How to prove? We could probably take a look at numerator and denominator in separate?} После всех вышеупомянутых замечаний, для $s(x + \iu y)$ можно дать довольно простую нижнюю оценку:
 \begin{align*}
 l(x + \iu y)
    &= \abs{\frac{(W^2 + 1) \sinh y - 2 W \cosh y}{(W^2 + 1) \sinh y + 2 W \cosh y}}
@@ -196,7 +203,9 @@ l'(Z) (y - Z) &, Z_0 \le y < Z \\
 \end{cases}
 \end{align*}
 
-Заметим, что в качестве $Z_0$ можно взять любое число в полуинтервале $[C-R, Z)$ (оценка снизу не обязана быть непрерывной функцией), главное чтобы $f(y)$ была неотрицательно определенной. Для простоты вычислений нам подойдет $Z_0 = \frac{V}{4}$. \mtodo{plot?}. Далее, отдельно рассматриваем интегралы на участках $[C - R, \frac{V}{4})$ и $[\frac{V}{4}, Z)$.
+Заметим, что в качестве $Z_0$ можно взять любое число в полуинтервале $[C-R, Z)$ (оценка снизу не обязана быть непрерывной функцией), главное чтобы $f(y)$ была неотрицательно определенной. Для простоты вычислений нам подойдет $Z_0 = \frac{V}{4}$. \mtodo{plot?}
+
+Далее, отдельно рассматриваем интегралы на участках $[C - R, \frac{V}{4})$ и $[\frac{V}{4}, Z)$.
 
 \subsubsection{$C - R \le y < \frac{V}{4}$}
 
@@ -268,11 +277,10 @@ l(x + \iu y)
 \mtodo{proof? just take a look at second derivative?}
 Так как $l$ вогнута, строго возрастает, и для фиксированного $r$, нас интересуют только $y \le C + R$, мы можем оценить функцию линейной: \mtodo{plot?}
 \[
-f(y) = 
-\frac{l(C + R)}{C + R - Z} (y - Z) % TODO actually, even C + R is okay but whatever
+f(y) = \frac{l(C + R)}{C + R - Z} (y - Z)
 \]
-
-Заметим, что в точке $C + R$, для начиная с достаточно большого $r$, функция $l(y)$ с зажата константами, не зависящами от $C$ и $R$. Это легко понять так как $\tanh y$ на бесконечности уходит к $1$, соответственно, $l(y)$ в пределе будет равно $1 - \frac{2 V}{V + 1}$. Это является довольно важным свойством данного квантового графа, если бы $l$ на бесконечности устремлялась к нулю, эта часть доказательства не могла бы быть проведена. \mtodo{elaborate, ref to ring?}
+\mtodo{actually, even C + R is okay but whatever}
+Заметим, что в точке $C + R$, для начиная с достаточно большого $r$, функция $l(y)$ с зажата константами, не зависящами от $C$ и $R$. Это легко понять так как $\tanh y$ на бесконечности уходит к $1$, соответственно, $l(y)$ в пределе будет равно $1 - \frac{2 V}{V + 1}$. Это является довольно важным свойством данного квантового графа, если бы $l$ на бесконечности устремлялась к нулю, эта часть доказательства не могла бы быть проведена (см. \autoref{sec:ring}).
 
 В начале заметим, что на всем участке $Z \le y \le R + C$ у функции $\frac{1}{\sqrt{R - C + y}}$ нет сингулярности, и подынтегральное выражение (\ref{eq:int_f}) можно оценить как:
 \begin{equation}\label{eq:int_f_up}
