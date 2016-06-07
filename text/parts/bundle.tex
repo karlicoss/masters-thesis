@@ -10,9 +10,9 @@
 
 \subsection{Вычисление $S$-матрицы}
 \todo{System of equations}
-\todo{Solutions for transmission/refleсtion?}
+\mtodo{Solutions for transmission/refleсtion?}
 
-После решения систмы уравнений, мы получаем: \todo{индукция??}
+После решения систмы уравнений, мы получаем:
 \begin{equation*}
 \resizebox{0.85\hsize}{!}{$
 \det S(k) = \frac{W {\left(a + b\right)} k \cos\left(k\right) + 2 i \, W k^{2} \cos\left(k\right) + {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}{W {\left(a + b\right)} k \cos\left(k\right) - 2 i \, W k^{2} \cos\left(k\right) - {\left(i \, a + i \, b\right)} k \sin\left(k\right) - {\left({\left(W^{2} + 1\right)} k^{2} - a b\right)} \sin\left(k\right)}
@@ -321,7 +321,7 @@ $\int\limits_{Z}^{Z + \frac{1}{R}} \ln^2 f(y) dy$ легко вычислить 
 \frac{\ln \frac{2 (C + 1) C + R^2 - C^2 + 1}{2 (C + 1) (Z + \frac{1}{R}) + R^2 - C^2 + 1}}{2 (C + 1)} = \mcO\left( \frac{\ln R}{R} \right)
 \]
 
-При стремлении $R$ к бесконечности, $\ln^2 f(Z + \frac{1}{R})$ будет также стремиться к бесконечности, поэтому необходимо оценить порядок особенности. Так как $\ln f(Z + \frac{1}{R}) = \ln \left( \frac{l(C + R)}{C + R - Z} \frac{1}{R} \right) = C - \ln (C + R - Z) - \ln R$, легко видеть что $\ln^2 f(Z + \frac{1}{R}) = \mcO (\ln^2 R)$.
+При стремлении $R$ к бесконечности, $\ln^2 f(Z + \frac{1}{R})$ будет также стремиться к бесконечности, поэтому необходимо оценить порядок особенности. Так как $\ln f(Z + \frac{1}{R}) = \ln \left( \frac{l(C + R)}{C + R - Z} \frac{1}{R} \right) = \ln l(C + R) - \ln (C + R - Z) - \ln R$, легко видеть что $\ln^2 f(Z + \frac{1}{R}) = \mcO (\ln^2 R)$.
 
 В резульате, комбинируя все оценки, получаем: $\mcO (\ln^2 R) \mcO\left( \frac{\ln R}{R} \right) \frac{R}{\sqrt{R}} \frac{1}{\sqrt{R - C + Z}} = \mcO\left( \frac{\ln^3 R}{\sqrt{R}} \right)$, что означает что интеграл на этом участке стремится к $0$ с увеличением $r$.
 
