@@ -97,6 +97,53 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
 
 
 \subsection{Исследование полноты при $a \ne 0$}
+
+\todo{Результаты численного интегрирования}
+
+\todo{Обоснование, почему сходится}
+
+% % \ref{eq:ring_detS}
+% Оценим снизу выражение $\abs{\det S(k)}$, для этого отдельно оценим снизу модуль числителя и сверху модуль знаменателя:
+
+% \begin{align*}
+%        & \abs{\cos\left(k\right) + {\left(\frac{a}{2 k} - i\right)} \sin\left(k\right) - 1}
+% \\ =   & \abs{\eexp{-\iu k}  + \frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu} - 1}
+% \\ \le & \abs{\eexp{-\iu k}}  + \abs{\frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu}} + 1
+% \\ \le & \eexp{y} + \frac{a}{4 \sqrt{x^2 + y^2} } (\eexp{y} + \eexp{-y}) + 1
+% \end{align*}
+
+
+% \begin{align*}
+%        & \abs{\cos\left(k\right) + {\left(\frac{a}{2 k} + i\right)} \sin\left(k\right) - 1}
+% \\ =   & \abs{\eexp{\iu k}  + \frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu} - 1}
+% \\ =   & \abs{\eexp{\iu k} (1 + \frac{a}{4 \iu k}) + \frac{a}{4 \iu k} \eexp{-\iu k} - 1}
+% \\ =   & \abs{\eexp{\iu x} \eexp{-y}  (1 + \frac{a}{4 \iu k}) + \frac{a}{4 \iu k} \eexp{-\iu x} \eexp{y} - 1}
+% % \\ \le & \abs{\eexp{-\iu k}  + \frac{a}{2 k} \sin k - 1}
+% % \\ \le & \abs{\eexp{-\iu k}}  + \abs{\frac{a}{2 k} \sin k} + 1
+% % \\ \le & \eexp{y} + \abs{\frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu}} + 1
+% % \\ \le & \eexp{y} + \frac{a}{4 \sqrt{x^2 + y^2} } (\eexp{y} + \eexp{-y}) + 1
+% \end{align*}
+
+% Оценим выражение снизу модулем его мнимой части:
+
+% \begin{align*}
+% \Im &= \sin x \  \eexp{-y} (1 + \Re \frac{a}{4 \iu (x + \iu y)}) + \sin (-x) \eexp{y} \Re \frac{a}{4 \iu (x + \iu y)}
+% \\  &= \sin x \  \eexp{-y} (1 - \frac{a y}{4 (x^2 + y^2)}) + \sin x \ \eexp{y} \frac{a y}{4 (x^2 + y^2)}
+% \end{align*}
+
+% \begin{align*}
+% \Re &= \cos x \  \eexp{-y} (1 + \Re \frac{a}{4 \iu (x + \iu y)}) + \cos (-x) \eexp{y} \Re \frac{a}{4 \iu (x + \iu y)} - 1
+% \\  &= \cos x \  \eexp{-y} (1 - \frac{a y}{4 (x^2 + y^2)}) + \cos x \ \eexp{y} \frac{a y}{4 (x^2 + y^2)} - 1
+% \end{align*}
+
+
+% \det S = 
+% \frac
+% {\cos\left(k\right) + {\left(\frac{a}{2 k} + i\right)} \sin\left(k\right) - 1}
+% {\cos\left(k\right) + {\left(\frac{a}{2 k} - i\right)} \sin\left(k\right) - 1}
+% \end{equation}
+
+
 \todo{Доказать!}
 
 \todo{Объяснить результат}
