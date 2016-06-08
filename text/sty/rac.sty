@@ -9,6 +9,7 @@
 \def\kw@FIGURE{Рисунок}
 \def\kw@TABLESLIST{Перечень таблиц}
 \def\kw@APPENDICESLIST{Приложения}
+\def\kw@APPENDICES{Приложения}
 \def\kw@APPENDIX{Приложение}
 \def\kw@CHAPTER{Глава}
 \def\kw@CONCLUSION{Заключение}
@@ -453,15 +454,15 @@
  \let\chapter=\startanappendix
  \setcounter{chapter}{0}
  \setcounter{section}{0}
- \def\@chapapp{APPENDIX}
+ \def\@chapapp{\kw@APPENDIX}
  \def\tocname{loa}
  \pagestyle{plain}
  \clearpage
  \thispagestyle{chappage}
- \addcontentsline{toc}{chapter}{APPENDICES}
+ \addcontentsline{toc}{chapter}{\kw@APPENDICES}
  \hbox{ }
  \vfill
- \centerline{\large\bf APPENDICES}
+ \centerline{\large\bf \kw@APPENDICES}
  \vfill
 }
 

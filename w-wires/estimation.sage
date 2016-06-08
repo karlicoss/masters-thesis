@@ -16,21 +16,22 @@ def pvar(name):
 def icayley(z):
     return i * (1 + z) / (1 - z)
 
-
 def cayley(z):
     return (z - i) / (z + i)
+
 
 def my_numerical_integral(expr, x, ff, tt):
     f = fast_callable(expr, vars=[x], domain=CC)
     res, err = numerical_integral(f, ff, tt)
-    if err > 0.1: # meh
+    if err > 0.1:
         raise RuntimeError("Error is too large")
     return res 
+
 
 def complex_integral(expr, x, ff, tt):
     rp = fast_callable(expr.real(), vars=[x], domain=CC)
     ip = fast_callable(expr.imag(), vars=[x], domain=CC)
-    eps = 1e-02
+    eps = 1e-02 # TODO??
     rpart, _ = numerical_integral(rp, ff, tt, eps_rel=eps, rule=1)
     impart, _ = numerical_integral(ip, ff, tt, eps_rel=eps, rule=1)
     return rpart + i * impart

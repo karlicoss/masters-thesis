@@ -55,7 +55,7 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
 \end{equation}
 
 
-\subsection{Доказательство неполноты резонансных состояний при $a=0$}
+\subsection{Доказательство неполноты резонансных состояний при $a=0$}\label{sec:ring_incompl_proof}
 Рассмотрим случай $a=0$:
 \[
 \det S
@@ -90,62 +90,46 @@ T(k) = -\frac{2 i \, k \sin\left(k\right)}{2 \, k \cos\left(k\right) + {\left(a 
 \end{align*}
 
 % MINOR доинтегрировать
-
 Интегрируя, получаем $2 \pi r^2$, что значит, что предел мнимой части при $r \to 1$ равен $2 \pi$, следовательно, по критерию полноты, система резонатных состояний графа $\Gamma$ не является полной на кольце $\Omega$.
 
 \mtodo{график S-матрицы?}
 
-
 \subsection{Исследование полноты при $a \ne 0$}
 
-\todo{Результаты численного интегрирования}
+\mtodo{график S-матрицы?}
+При $a \ne 0$, определитель $S$-матрицы ($\ref{eq:ring_detS}$), и его нули имеют гораздо более сложную структуру, и не выразимы аналитически, что затрудняет исследование полноты. Однако, этот случай интересен тем, что при сколь угодно малом $a$, система резонансных состояний будет полна, что является качественным отличием от случая $a = 0$, в частности, это означает что исследуя кольцо как подграф некого квантового графа, мы не можем перейти к пределу $a=0$, постепенно уменьшая $a$, ведь мы можем потерять свойство полноты.
 
-\todo{Обоснование, почему сходится}
-
-% % \ref{eq:ring_detS}
-% Оценим снизу выражение $\abs{\det S(k)}$, для этого отдельно оценим снизу модуль числителя и сверху модуль знаменателя:
-
-% \begin{align*}
-%        & \abs{\cos\left(k\right) + {\left(\frac{a}{2 k} - i\right)} \sin\left(k\right) - 1}
-% \\ =   & \abs{\eexp{-\iu k}  + \frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu} - 1}
-% \\ \le & \abs{\eexp{-\iu k}}  + \abs{\frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu}} + 1
-% \\ \le & \eexp{y} + \frac{a}{4 \sqrt{x^2 + y^2} } (\eexp{y} + \eexp{-y}) + 1
-% \end{align*}
+Полнота в этом случае была исследована разбиением интеграла на две части пользуясь неравенством Коши-Буняковского, аналогично \ref{eq:split}, а далее проанализирована сходимость с помощью численного интегрирования. Его результаты приведены на \autoref{fig:ring_convergence} и \autoref{fig:ring_divergence}, а программа, проводящая интегрирование прикреплена в \autoref{app:ring_integation}.
 
 
-% \begin{align*}
-%        & \abs{\cos\left(k\right) + {\left(\frac{a}{2 k} + i\right)} \sin\left(k\right) - 1}
-% \\ =   & \abs{\eexp{\iu k}  + \frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu} - 1}
-% \\ =   & \abs{\eexp{\iu k} (1 + \frac{a}{4 \iu k}) + \frac{a}{4 \iu k} \eexp{-\iu k} - 1}
-% \\ =   & \abs{\eexp{\iu x} \eexp{-y}  (1 + \frac{a}{4 \iu k}) + \frac{a}{4 \iu k} \eexp{-\iu x} \eexp{y} - 1}
-% % \\ \le & \abs{\eexp{-\iu k}  + \frac{a}{2 k} \sin k - 1}
-% % \\ \le & \abs{\eexp{-\iu k}}  + \abs{\frac{a}{2 k} \sin k} + 1
-% % \\ \le & \eexp{y} + \abs{\frac{a}{2 k} \frac{\eexp{\iu k} + \eexp{-\iu k}}{2 \iu}} + 1
-% % \\ \le & \eexp{y} + \frac{a}{4 \sqrt{x^2 + y^2} } (\eexp{y} + \eexp{-y}) + 1
-% \end{align*}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots_converging.png}
+  \caption
+   {
+   Зависимость результата численного интегрирования выражения \ref{eq:split} при различных ненулевых $a$, где $r = 1 - 2^{-q}$. Можно наблюдать тенденцию к сходимости интегралов.
+   }\label{fig:ring_convergence}
+\end{figure}
 
-% Оценим выражение снизу модулем его мнимой части:
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots_diverging.png}
+  \caption
+   {
+   Зависимость результата численного интегрирования выражения \ref{eq:split} при $a = 0$, где $r = 1 - 2^{-q}$. Можно наблюдать тенденцию к расходимости интеграла.
+   }\label{fig:ring_divergence}
+\end{figure}
 
-% \begin{align*}
-% \Im &= \sin x \  \eexp{-y} (1 + \Re \frac{a}{4 \iu (x + \iu y)}) + \sin (-x) \eexp{y} \Re \frac{a}{4 \iu (x + \iu y)}
-% \\  &= \sin x \  \eexp{-y} (1 - \frac{a y}{4 (x^2 + y^2)}) + \sin x \ \eexp{y} \frac{a y}{4 (x^2 + y^2)}
-% \end{align*}
-
-% \begin{align*}
-% \Re &= \cos x \  \eexp{-y} (1 + \Re \frac{a}{4 \iu (x + \iu y)}) + \cos (-x) \eexp{y} \Re \frac{a}{4 \iu (x + \iu y)} - 1
-% \\  &= \cos x \  \eexp{-y} (1 - \frac{a y}{4 (x^2 + y^2)}) + \cos x \ \eexp{y} \frac{a y}{4 (x^2 + y^2)} - 1
-% \end{align*}
-
-
-% \det S = 
-% \frac
-% {\cos\left(k\right) + {\left(\frac{a}{2 k} + i\right)} \sin\left(k\right) - 1}
-% {\cos\left(k\right) + {\left(\frac{a}{2 k} - i\right)} \sin\left(k\right) - 1}
-% \end{equation}
-
-
-\todo{Доказать!}
-
-\todo{Объяснить результат}
-
-\todo{другие виды резонаторов?}
+Можно интуитивно обосновать, почему интеграл сходится. Рассмотрим $\det S(\iu y)$ при большом $y$, в этому случае получаем:
+\begin{align*}
+\det S(\iu y)
+&= 
+\frac
+{\eexp{\iu \iu y} + \frac{a}{2 \iu y} \frac{\eexp{\iu \iu y} + \eexp{-\iu \iu y}}{2\iu} - 1}
+{\eexp{-\iu \iu y} + \frac{a}{2 \iu y} \frac{\eexp{\iu \iu y} + \eexp{-\iu \iu y}}{2\iu} - 1}
+\\ &=
+\frac
+{\eexp{- y} - \frac{a}{4 y} (\eexp{- y} + \eexp{y}) - 1}
+{\eexp{y} - \frac{a}{4 y}  (\eexp{- y} + \eexp{y}) - 1}
+\end{align*}
+, так как $e^{-y} \to 0$, $y e^{-y} \to 0$, легко видеть, что выражение выше будет иметь порядок $\frac{a}{y}$, и, соответственно, его логарифм — порядок $\ln y$, что является принципиальным отличием от случая $a=0$, когда порядок логарифма был $y$ (см. \autoref{sec:ring_incompl_proof}). Однако, строгое обоснование данного факта требует более тщательного анализа.
