@@ -142,6 +142,17 @@ $k \to \iu C(r) + R(r) \eexp{\iu t}$
 
 
 
+% see stuff_for_paper in loop.sage
+\begin{frame}[plain]
+\begin{figure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pic/contour_white.png}
+{\caption{$\abs{\det S(k)}^{-1}$. Резонатор типа «пучок» ($W = 2$, $a = 1$, $b = -2$); $r = 0.9$}}
+% (complex_plot(abs(S), (-15, 15), (0, 20)) + circle((0, 7), 6.5)).show(figsize=[12, 6], aspect_ratio='equal')
+\end{figure}
+\end{frame}
+% SAY Проблема в том, что контур интегрирования может пересекать особенности
+
+
 \begin{frame}{Резонатор типа «кольцо»}
 
 \begin{figure}
@@ -166,12 +177,12 @@ $k \to \iu C(r) + R(r) \eexp{\iu t}$
 \end{itemize}
 \end{frame}
 
-\begin{frame}[plain]
-\begin{figure}
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pic/detSa1.png}
-\caption{$\abs{\det S(k)}$, $a = 1$}
-\end{figure}
-\end{frame}
+% \begin{frame}[plain]
+% \begin{figure}
+% \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pic/detSa1.png}
+% \caption{$\abs{\det S(k)}$, $a = 1$}
+% \end{figure}
+% \end{frame}
 
 
 % TODO meh. Просто упомянуть?
@@ -242,25 +253,37 @@ f(t) =  \mcO\left( \frac{\ln^3 R}{\sqrt{R}} \right)
 
 
 
-% TODO ВЗЯТЬ ДРУГУЮ КАРТИНКУ
-
-\begin{frame}[plain]
-\begin{figure}
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pic/contour.png}
-\caption{$\abs{\det S(k)}$, $W = 2$, $a = b = 0$}
-% (complex_plot(abs(S), (-15, 15), (0, 20)) + circle((0, 7), 6.5)).show(figsize=[12, 6], aspect_ratio='equal')
-\end{figure}
-\end{frame}
-% Проблема в том, что контур интегрирования может пересекать особенности
-
-
-
 \begin{frame}{Доказательство для произвольного графа}
 Хотелось бы использовать индукцию по количеству ребер.
 
 Но при «стягивании» ребер можно потерять полноту. % \todo{$S$-матрица в пределе?}
 % интересный результат: непрерывное изменение параметров приводит к внезапному разрыву 
 % возможно, необходим другой подход или более сложный инвариант индукции
+\end{frame}
+
+
+\begin{frame}{Резонатор из двух проводов разной длины}
+
+\begin{figure}
+\begin{tikzpicture}[scale=0.8]
+\input{pic/resonator_kinda_ring.tex}
+\end{tikzpicture}
+\end{figure}
+
+
+\[
+\det S(k) = 
+\frac{
+(2 \cos k  + 2 \iu \sin k) \cos(L k) + (2 \iu \cos k  - 3 \sin k) \sin(L k) - 2
+}
+{
+(2 \cos k  - 2 \iu \sin k) \cos(L k) + (-2 \iu \cos k  - 3 \sin k) \sin(L k) - 2
+}
+\]
+
+Полнота есть при любом $L \ne 0$!
+% SAY L = 0 — то же самое, что случай с кольцом
+
 \end{frame}
 
 

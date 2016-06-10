@@ -299,6 +299,9 @@ def icayley(z):
 def cayley(z):
     return (z - i) / (z + i)
 
+CCC(r) = ((icayley(r) + icayley(-r)) / 2).imag()
+RRR(r) = ((icayley(r) - icayley(-r)) / 2).imag()
+
 
 def changevar(f, eqn, newvar):
     dx = diff(eqn.rhs(), newvar)
@@ -348,12 +351,16 @@ def stuff_for_paper():
     rrange = (-50, 50)
     irange = (0, 50)
 
-    solver = LoopSolver(L=1)
-    Sdet = solver.analytic_Sdet()
-
-    view_later("S-matrix for a")
-    view_later(Sdet)
-    view_later(divide_both(Sdet, 2 * solver.k))
+    # solver = LoopSolver(L=1)
+    # Sdet = solver.analytic_Sdet()(a=1)
+    # Sdet = IntervalsSolver(L=1, a=1, b=-2, W=3).analytic_Sdet()
+    Sdet = IntervalLoopSolver(L=0.0001).analytic_Sdet()
+    # print(Sdet)
+    r = 0.9
+    (complex_plot(abs(Sdet), (-15, 15), (0, 20)) + circle((0, CCC(r)), RRR(r))).save('plot_a.png', figsize=[12, 6], aspect_ratio='equal')
+    # view_later("S-matrix for a")
+    # view_later(Sdet)
+    # view_later(divide_both(Sdet, 2 * solver.k))
     # solver0 = LoopSolver(a=0, L=1)
     # solver1 = LoopSolver(a=10, L=1)
     #
@@ -363,7 +370,7 @@ def stuff_for_paper():
     #     plot_all(Sdet, suffix="loop_%s" % solver.a, rrange=rrange, irange=irange)
     #     view_later("S-matrix for a = %s" % solver.a)
     #     view_later(Sdet)
-    view_all()
+    # view_all()
 
 
 # In Cayley space
@@ -404,3 +411,4 @@ def calculate_integral_symbolic():
     # pig = f(k=)
 
 
+stuff_for_paper()
