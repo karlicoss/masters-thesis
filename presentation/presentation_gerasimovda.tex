@@ -10,6 +10,10 @@
 \usepackage{comment}
 \usepackage{mathtools} % xmapsto, \Vector
 
+\usepackage[backend=biber,bibencoding=utf8,sorting=none,sortcites=true,bibstyle=sty/gost71,maxnames=99,citestyle=numeric-comp,babel=other]{biblatex
+}
+\addbibresource{thesis.bib}
+
 \usepackage{beamerthemesplit}
 \usetheme{Boadilla}
 \setbeamertemplate{caption}[numbered]
@@ -19,16 +23,12 @@
 \usepackage{tikz}
 
 \input{macros/macros.tex}
-\newcommand{\eexp}[1]{e^{#1}}
-\renewcommand{\Re}{\operatorname{Re}}
-\renewcommand{\Im}{\operatorname{Im}}
-\renewcommand{\phi}{\varphi}
 
 \title[]{Исследование полноты резонансных состояний оператора Шредингера
 для модели квантовых графов}
 \author[Дмитрий Герасимов]{Дмитрий Герасимов\\{\small научный руководитель: \\ д.ф.-м.н., профессор кафедры ВМ, И.Ю.Попов}}
 \institute[ИТМО]{Университет ИТМО}
-\date{24 мая 2016 года}
+\date{11 июня 2016 года}
 
 \begin{document}
 
@@ -40,35 +40,34 @@
 \item Задача полноты важна как в теории, так и на практике.
 % Задача полноты важна и с теоретической точки зрения (теория функций, дифференциальные уравнения), так и с практической (возможность разложить состояния в ряд Фурье, аппроксимации и т.п.)
 
-\item Рассматриваем резонатор и оператор Шредингера с граничным условием Дирихле (чисто дискретный спектр).
+\item Рассматриваем резонатор Гельмгольца и оператор Шредингера с граничным условием Дирихле или Неймана (чисто дискретный спектр).
 % Рассматривается некий резонатор, оператор Шредингера с граничным условием Дирихле в нем имеет чисто дискретный спектр, набор собственный функций полон в $\mcL^2(\Omega)$.
 
 \item Применяем возмущение, соединяя резонатор с волноводом (дискретный спектр смещается в резонансы)
 
-\item Интересным вопросом является нахождение домена, на котором резонансные состояния полны. \textbf{Гипотеза: на выпуклой оболочке рассеивателя}.
+\item Интересным вопросом является нахождение области, на котором резонансные состояния полны. \textbf{Гипотеза: на выпуклой оболочке рассеивателя}.
 \end{itemize}
 % 
 % Далее, рассматриваем возмущение этой задачи, соединяя резонатор с волноводом через небольшое отверстие. После этого дискретный спектр пропадает, а собственные значения «смещаются» в комплексную плоскость и становятся резонансами. Резонансные состояния формально удовлетворяют уравнению Шредингера и граничным условиям, однако не принадлежат L^2(Gamma). С другой стороны, при ограничении их на конечный домен Omega, они лежат в L^2(Omega). 
+\end{frame}
 
-% \todo{Картинка с резонатором}
 
-% \todo{Картинка с резонатором и проводами}
 
-% \todo{Картинка с резонансами, верхняя комплексная плоскость}
+% SAY: сказать тут, как вообще выглядит модель, свободное уравнение Шредингера, рассеиватель и т.п.
+\begin{frame}{Существующие результаты}
+\begin{figure}
+\begin{tikzpicture}[scale=0.8]
+\input{pic/resonator_segment.tex}
+\end{tikzpicture}
+\caption{Одномерный резонатор-отрезок с $\delta$-условием в $V$}
+\end{figure}
 \end{frame}
 
 
 
 \begin{frame}{Существующие результаты}
 \begin{figure}
-\begin{tikzpicture}[scale=0.5]
-\input{pic/resonator_segment.tex}
-\end{tikzpicture}
-\caption{Одномерный резонатор-отрезок с $\delta$-условием в $V$}
-\end{figure}
-
-\begin{figure}
-\begin{tikzpicture}[scale=0.5]
+\begin{tikzpicture}[scale=0.8]
 \input{pic/resonator_3d.tex}
 \end{tikzpicture}
 \caption{Трехмерный резонатор (квантовая точка)}
@@ -82,7 +81,6 @@
 % 
 % Задача: на каком домене полны резонансные состояния?
 \begin{frame}{Постановка задачи}
-% TODO домен оператора Шредингера
 Квантовый граф $\Gamma$, состоящий из резонатора $\Omega$ и полубесконечных ребер-волноводов.
 
 Оператор Шредингера $H$ действует как $-\dv[2]{\psi}{x}$ на ребрах.
@@ -102,24 +100,52 @@
 
 
 \begin{frame}{Критерий полноты}
-Используется матрица рассеивания:
+Матрица рассеяния (S-матрица):
 
+% SAY симметрия
 \[
 S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}
 \]
 
-Критерий полноты диссипативного оператора:
-\[
+% TODO спросить Попова про ссылки из текста презентации??
+% SAY Рассматриваем рассеяние в подходе Лакса-Филипса.
+Из теории рассеяния известно, что резонансные состояния являются собственными векторами так называемого диссипативного оператора $Z$.
+
+\begin{theorem}
+Оператор $Z$ полный $\iff$ $S$ — произведение Бляшке-Потапова.
+\end{theorem}
+
+Так как $S$-матрица конечномерна:
+\begin{theorem}
+$S$ — произведение Бляшке-Потапова $\iff$
+\begin{equation*}\label{eq:blaschke}
 \lim\limits_{r = 1} \int\limits_{\abs{\zeta} = r} \ln \abs{\det S(\zeta)} d \zeta = 0
+\end{equation*}
+\end{theorem}
+ % ,имеем простой критерий полноты диссипативного оператора:  %SAY сказать что-нибудь про Бляшке-Потапова
+\end{frame}
+
+
+\begin{frame}{Критерий полноты}
+$\zeta \to \iu \frac{z + \iu}{z - \iu}$
+
+\[
+\lim\limits_{r \to 1} \int\limits_{C_r} \ln \abs{\det S(k)} \frac{2 \iu}{(k + i)^2} dk = 0
 \]
 
+$k \to \iu C(r) + R(r) \eexp{\iu t}$
+
+\[
+\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(k)} \frac{R}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} dt = 0
+\]
 \end{frame}
+
 
 
 \begin{frame}{Резонатор типа «кольцо»}
 
 \begin{figure}
-\begin{tikzpicture}[scale=0.5]
+\begin{tikzpicture}[scale=0.8]
 \input{pic/resonator_ring.tex}
 \end{tikzpicture}
 \end{figure}
@@ -135,8 +161,8 @@ S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}
 
 \begin{frame}{Резонатор типа «кольцо»}
 \begin{itemize}
-\item $a \ne 0$: полнота присутствует
-\item $a = 0$: полноты нет, $\det S$ слишком быстро уходит в 0 на бесконечности!
+\item $a = 0$: полноты нет, $\det S$ слишком быстро уходит в 0 на бесконечности ($\log \det S(k) = \mcO(\Im k))$)
+\item $a \ne 0$: полнота присутствует, $\det S$ все еще уходит в 0, но не так быстро: ($\log \det S(k) = \mcO(\log \Im k))$)
 \end{itemize}
 \end{frame}
 
@@ -151,17 +177,41 @@ S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}
 % TODO meh. Просто упомянуть?
 % \begin{frame}{Резонатор типа «кольцо с петлей»}
 
-% \todo{fwefwe}
-
 % \end{frame}
 
-\begin{frame}{Резонатор из $W$ одинаковых ребер}
+\begin{frame}{Схема доказательства полноты}
+
+\[
+\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(k)} \frac{R}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} dt = 0
+\]
+
+Используем неравенство Коши-Буняковского: $\big| \langle f,g \rangle \big| \leq \left\|f\right\| \left\|g\right\|$
+
+\begin{align*}
+f(t)   &= \ln \abs{\det S(k)} \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
+g^*(t) &= \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
+\end{align*}
+
+\begin{align*}
+\norm{g} &\le \pi \\
+\lim_{R \to \infty} \norm{f} &= 0
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Резонатор типа «пучок» из $W$ одинаковых ребер}
 
 \begin{figure}
-\begin{tikzpicture}[scale=0.5]
+\begin{tikzpicture}[scale=0.8]
 \input{pic/resonator_bundle.tex}
 \end{tikzpicture}
 \end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Резонатор типа «пучок» из $W$ одинаковых ребер}
 
 {
 \scriptsize
@@ -170,6 +220,9 @@ S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}
 \]
 }
 
+\[
+f(t) =  \mcO\left( \frac{\ln^3 R}{\sqrt{R}} \right)
+\]
 \end{frame}
 
 % Since $S$-matrix is naturally defined on the complex plane, it is easier work in the upper complex plane. To do that, we apply the Cayley transorm $W(z) = \frac{z - \iu}{z + \iu}$, which maps upper complex plane to the unit disk, and its inverse $w(\zeta) = \iu \frac{1 + \zeta}{1 - \zeta}$, which yields:
@@ -188,19 +241,8 @@ S(k) = \begin{pmatrix} R(k) & T(k) \\ T(k) & R(k) \end{pmatrix}
 
 
 
-\begin{frame}{Схема доказательства полноты}
-\[
-\lim\limits_{r \to 1} \int\limits_{C_r} \ln \abs{\det S(k)} \frac{2 \iu}{(k + i)^2} dk = 0
-\]
 
-$k \to \iu C(r) + R(r) \eexp{\iu t}$
-
-\[
-\lim\limits_{r \to 1} \int\limits_{0}^{2 \pi} \ln \abs{\det S(k)} \frac{2 \iu}{(R(r) \eexp{\iu t} + \iu C(r) + i)^2} R \iu dt = 0
-\]
-\end{frame}
-
-
+% TODO ВЗЯТЬ ДРУГУЮ КАРТИНКУ
 
 \begin{frame}[plain]
 \begin{figure}
@@ -212,41 +254,30 @@ $k \to \iu C(r) + R(r) \eexp{\iu t}$
 % Проблема в том, что контур интегрирования может пересекать особенности
 
 
-\begin{frame}{Схема доказательства полноты (продолжение)}
-Используем неравенство Коши-Шварца: $\big| \langle f,g \rangle \big| \leq \left\|f\right\| \left\|g\right\|$
-
-\begin{align*}
-f(t)   &= \ln \abs{\det S(k)} \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i} \\
-g^*(t) &= 2 \iu \iu \frac{\sqrt{R}}{R \eexp{\iu t} + \iu C + i}
-\end{align*}
-
-\begin{align*}
-\norm{g} &\le 2 \pi \\
-\norm{f} &= \mcO\left(\frac{1}{\sqrt{R}}\right)
-\end{align*}
-\end{frame}
 
 \begin{frame}{Доказательство для произвольного графа}
 Хотелось бы использовать индукцию по количеству ребер.
 
 Но при «стягивании» ребер можно потерять полноту. % \todo{$S$-матрица в пределе?}
 % интересный результат: непрерывное изменение параметров приводит к внезапному разрыву 
+% возможно, необходим другой подход или более сложный инвариант индукции
 \end{frame}
 
-
-% \begin{frame}{\todo{Дальнейшие вариации задачи}}
-% \end{frame}
 
 \begin{frame}{Заключение}
 \begin{itemize}
 \item Построена $S$-матрица в аналитическом виде для различных квантовых графов
-\item Исследована полнота резонансных функций и показано качественно различное поведение при изменении параметров систем
+\item Исследована полнота резонансных функций и показано качественно различное поведение при изменении параметров и граничных условий систем
 \end{itemize}
 \end{frame}
 
 
-% TODO
-% \begin{frame}{Публикации}
-% \end{frame}
+\begin{frame}{Публикации}
+\begin{itemize}
+\item \fullcite{sbornik}
+\item \fullcite{diffdays}
+% SAY about almost ready paper?
+\end{itemize}
+\end{frame}
 
 \end{document}

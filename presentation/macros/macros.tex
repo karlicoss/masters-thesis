@@ -3,14 +3,20 @@
 \newcommand{\hank}[1]{H_{#1}^{(1)}}
 
 \newcommand{\mcF}{\mathcal{F}}
+\newcommand{\mcH}{\mathcal{H}} % ???
 \newcommand{\mcI}{\mathcal{I}}
-\newcommand{\mcL}{\mathcal{L}}
-\newcommand{\mcO}{\mathcal{O}}
+\newcommand{\mcL}{\mathcal{L}} % L2 space
+\newcommand{\mcO}{\mathcal{O}} % Big O
 \newcommand{\mcP}{\mathcal{P}}
-\newcommand{\bbC}{\mathbb{C}}
+
+
+\newcommand{\bbC}{\mathbb{C}} % complex plane
+\newcommand{\bbD}{\mathbb{D}} % complex unit disk
+\newcommand{\bbH}{\mathbb{H}} % complex upper half-plane TODO add to template
 \newcommand{\bbN}{\mathbb{N}}
 \newcommand{\bbK}{\mathbb{K}}
 \newcommand{\bbR}{\mathbb{R}}
+\newcommand{\bbT}{\mathbb{T}} % complex unit circle
 \newcommand{\bbZ}{\mathbb{Z}}
 
 \newcommand{\eqdef}{\overset{\mathrm{def}}{=\joinrel=}}
@@ -19,7 +25,7 @@
 \DeclareMathOperator{\ran}{Ran}
 \DeclareMathOperator{\rng}{rng}
 
-\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+% \newcommand{\todo}[1]{\textcolor{red}{{\large TODO: #1}}}
 
 \newenvironment{elist}{\begin{easylist}[enumerate]}{\end{easylist}}
 \newenvironment{ilist}{\begin{easylist}[itemize]}{\end{easylist}}
@@ -46,7 +52,28 @@
 \newcommand{\cls}{\overline}
 \newcommand{\eps}{\varepsilon}
 
-% \DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}
+
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\renewcommand{\phi}{\varphi} % TODO is there a prettier way to do that
+
+\newcommand{\eexp}[1]{e^{#1}}
+
+\DeclareMathOperator\atanh{atanh}
+
+% ???
+% \newcommand{\abs}[1]{\left| #1 \right|}
+% \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+% \newtheorem{theorem}{Theorem}[section]
+% \newtheorem{proposition}[theorem]{Proposition}
+% \newtheorem{corollary}[theorem]{Corollary}
+% \newtheorem{lemma}[theorem]{Lemma}
+% \newtheorem{definition}[theorem]{Definition}
+% \newtheorem{example}[theorem]{Example}
+% \newtheorem{remark}[theorem]{Remark}
+% \newtheorem{problem}[theorem]{Problem}
